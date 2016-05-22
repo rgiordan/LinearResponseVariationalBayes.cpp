@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o  -o transform_hessian_test -rdynamic -lgtest -lgtest_main ../libtransform_hessian.a 
