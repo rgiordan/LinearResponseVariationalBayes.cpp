@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/transform_hessian.cpp" "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/transform_hessian.dir/transform_hessian.cpp.o"
+  "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/exponential_families.cpp" "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/exponential_families.dir/exponential_families.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

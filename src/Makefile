@@ -102,6 +102,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named exponential_families
+
+# Build rule for target.
+exponential_families: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 exponential_families
+.PHONY : exponential_families
+
+# fast build rule for target.
+exponential_families/fast:
+	$(MAKE) -f CMakeFiles/exponential_families.dir/build.make CMakeFiles/exponential_families.dir/build
+.PHONY : exponential_families/fast
+
+#=============================================================================
 # Target rules for targets named transform_hessian
 
 # Build rule for target.
@@ -126,6 +139,30 @@ transform_hessian_test: cmake_check_build_system
 transform_hessian_test/fast:
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
 .PHONY : transform_hessian_test/fast
+
+exponential_families.o: exponential_families.cpp.o
+.PHONY : exponential_families.o
+
+# target to build an object file
+exponential_families.cpp.o:
+	$(MAKE) -f CMakeFiles/exponential_families.dir/build.make CMakeFiles/exponential_families.dir/exponential_families.cpp.o
+.PHONY : exponential_families.cpp.o
+
+exponential_families.i: exponential_families.cpp.i
+.PHONY : exponential_families.i
+
+# target to preprocess a source file
+exponential_families.cpp.i:
+	$(MAKE) -f CMakeFiles/exponential_families.dir/build.make CMakeFiles/exponential_families.dir/exponential_families.cpp.i
+.PHONY : exponential_families.cpp.i
+
+exponential_families.s: exponential_families.cpp.s
+.PHONY : exponential_families.s
+
+# target to generate assembly for a file
+exponential_families.cpp.s:
+	$(MAKE) -f CMakeFiles/exponential_families.dir/build.make CMakeFiles/exponential_families.dir/exponential_families.cpp.s
+.PHONY : exponential_families.cpp.s
 
 transform_hessian.o: transform_hessian.cpp.o
 .PHONY : transform_hessian.o
@@ -159,8 +196,12 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... exponential_families"
 	@echo "... transform_hessian"
 	@echo "... transform_hessian_test"
+	@echo "... exponential_families.o"
+	@echo "... exponential_families.i"
+	@echo "... exponential_families.s"
 	@echo "... transform_hessian.o"
 	@echo "... transform_hessian.i"
 	@echo "... transform_hessian.s"

@@ -1,0 +1,2 @@
+/usr/bin/ar cq libexponential_families.a  CMakeFiles/exponential_families.dir/exponential_families.cpp.o
+/usr/bin/ranlib libexponential_families.a

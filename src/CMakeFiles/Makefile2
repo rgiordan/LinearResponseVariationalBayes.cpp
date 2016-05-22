@@ -53,13 +53,48 @@ CMAKE_SOURCE_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalB
 CMAKE_BINARY_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src
 
 #=============================================================================
+# Target rules for target CMakeFiles/exponential_families.dir
+
+# All Build rule for target.
+CMakeFiles/exponential_families.dir/all:
+	$(MAKE) -f CMakeFiles/exponential_families.dir/build.make CMakeFiles/exponential_families.dir/depend
+	$(MAKE) -f CMakeFiles/exponential_families.dir/build.make CMakeFiles/exponential_families.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  1
+	@echo "Built target exponential_families"
+.PHONY : CMakeFiles/exponential_families.dir/all
+
+# Include target in all.
+all: CMakeFiles/exponential_families.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/exponential_families.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/exponential_families.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 0
+.PHONY : CMakeFiles/exponential_families.dir/rule
+
+# Convenience name for target.
+exponential_families: CMakeFiles/exponential_families.dir/rule
+.PHONY : exponential_families
+
+# clean rule for target.
+CMakeFiles/exponential_families.dir/clean:
+	$(MAKE) -f CMakeFiles/exponential_families.dir/build.make CMakeFiles/exponential_families.dir/clean
+.PHONY : CMakeFiles/exponential_families.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/exponential_families.dir/clean
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/transform_hessian.dir
 
 # All Build rule for target.
 CMakeFiles/transform_hessian.dir/all:
 	$(MAKE) -f CMakeFiles/transform_hessian.dir/build.make CMakeFiles/transform_hessian.dir/depend
 	$(MAKE) -f CMakeFiles/transform_hessian.dir/build.make CMakeFiles/transform_hessian.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  2
 	@echo "Built target transform_hessian"
 .PHONY : CMakeFiles/transform_hessian.dir/all
 
@@ -109,7 +144,7 @@ test/preinstall:
 test/CMakeFiles/transform_hessian_test.dir/all: CMakeFiles/transform_hessian.dir/all
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/depend
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  2
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  3
 	@echo "Built target transform_hessian_test"
 .PHONY : test/CMakeFiles/transform_hessian_test.dir/all
 
