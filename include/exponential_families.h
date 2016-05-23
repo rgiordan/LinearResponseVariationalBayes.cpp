@@ -32,9 +32,10 @@ using fvar = stan::math::fvar<var>;
 template <typename T> T multivariate_lgamma(T x, int p);
 template <typename T> T multivariate_digamma(T x, int p);
 
-template double multivariate_lgamma(double, int);
-template var multivariate_lgamma(var, int);
-template fvar multivariate_lgamma(fvar, int);
+// You can use this template to instantiate functions in static libraries.
+// template double multivariate_lgamma(double, int);
+// template var multivariate_lgamma(var, int);
+// template fvar multivariate_lgamma(fvar, int);
 
 // Note: this won't work with STAN hessians..
 template <typename T> T multivariate_trigamma(T x, int p);
@@ -103,7 +104,6 @@ T GetWishartEntropy(MatrixXT<T> const &v_par, T const n_par);
 
 ////////////////////////////////////////
 // Gamma distribution
-
 
 template <typename T> T get_e_log_gamma(T alpha, T beta);
 
