@@ -17,4 +17,4 @@ include_directories(${GIT_REPO_LOC}math/lib/boost_1.58.0/)
 include_directories(${GIT_REPO_LOC}/LinearResponseVariationalBayes.cpp/include)
 
 add_library(transform_hessian transform_hessian.cpp)
-add_library(exponential_families exponential_families.cpp)
+# add_library(exponential_families exponential_families.cpp)
