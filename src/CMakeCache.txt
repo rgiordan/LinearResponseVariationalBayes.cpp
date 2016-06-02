@@ -153,6 +153,9 @@ hessian_transform_SOURCE_DIR:STATIC=/home/rgiordan/Documents/git_repos/LinearRes
 //Dependencies for target
 transform_hessian_LIB_DEPENDS:STATIC=
 
+//Dependencies for target
+variational_parameters_LIB_DEPENDS:STATIC=
+
 
 ########################
 # INTERNAL cache entries

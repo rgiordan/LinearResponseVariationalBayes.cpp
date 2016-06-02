@@ -12,6 +12,14 @@ using Eigen::Dynamic;
 template <typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
 template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
+
+// The index in a vector of lower diagonal terms of a particular matrix value.
+int get_ud_index(int i, int j) {
+  // If the column is less than the row it's already an upper diagonal index.
+  return j <= i ? (j + i * (i + 1) / 2):
+                  (i + j * (j + 1) / 2);
+};
+
 ////////////////
 // Scalar parameters
 
@@ -103,12 +111,7 @@ public:
 // Positive definite matrices
 
 // The index in a vector of lower diagonal terms of a particular matrix value.
-int get_ud_index(int i, int j) {
-  // If the column is less than the row it's already an upper diagonal index.
-  return j <= i ? (j + i * (i + 1) / 2):
-                  (i + j * (j + 1) / 2);
-};
-
+int get_ud_index(int i, int j);
 
 template <class T> class PosDefMatrixParameter {
 private:

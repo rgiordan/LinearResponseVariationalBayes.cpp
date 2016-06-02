@@ -184,6 +184,104 @@ MatrixXd get_gamma_covariance(double alpha, double beta) {
   return gamma_cov;
 }
 
+////////////////////////////
+// Categorical
+
+MatrixXd GetCategoricalCovariance(VectorXd p) {
+  // Args:
+  //   p: A size k vector of the z probabilities.
+  // Returns:
+  //   The covariance matrix.
+  MatrixXd p_outer = (-1) * p * p.transpose();
+  MatrixXd p_diagonal = p.asDiagonal();
+  p_outer = p_outer + p_diagonal;
+  return p_outer;
+}
+
+
+std::vector<Triplet> GetCategoricalCovarianceTerms(VectorXd p, int offset) {
+  MatrixXd p_cov = GetCategoricalCovariance(p);
+  std::vector<Triplet> terms;
+  for (int i=0; i < p_cov.rows(); i++) {
+    for (int j=0; j < p_cov.cols(); j++) {
+      terms.push_back(Triplet(offset + i, offset + j, p_cov(i, j)));
+    }
+  }
+  return terms;
+}
+
+
+/////////////////////////////////
+// Dirichlet
+
+template <typename T> VectorXT<T> GetELogDirichlet(VectorXT<T> alpha) {
+  // Args:
+  //   - alpha: The dirichlet parameters Q ~ Dirichlet(alpha).  Should
+  //     be a k-dimensional vector.
+  // Returns:
+  //   - A k-dimensional matrix representing E(log Q).
+
+  int k = alpha.size();
+  T alpha_sum = 0.0;
+  for (int index = 0; index < k; index++) {
+    alpha_sum += alpha(index);
+  }
+  T digamma_alpha_sum = boost::math::digamma(alpha_sum);
+  VectorXT<T> e_log_alpha(k);
+  for (int index = 0; index < k; index++) {
+    e_log_alpha(index) = boost::math::digamma(alpha(index)) - digamma_alpha_sum;
+  }
+  return e_log_alpha;
+}
+
+
+MatrixXd GetLogDirichletCovariance(VectorXd alpha) {
+  // Args:
+  //  - alpha: A vector of dirichlet parameters.
+  //
+  // Returns:
+  //  - The covariance of the log of a dirichlet distribution
+  //    with parameters alpha.
+
+  int k = alpha.size();
+  int k_index;
+  MatrixXd cov_mat(k, k);
+
+  // Precomute the total.
+  double alpha_0 = 0.0;
+  for (k_index = 0; k_index < k; k_index++) {
+    alpha_0 += alpha(k_index);
+  }
+  double covariance_term = -1.0 * boost::math::trigamma(alpha_0);
+  cov_mat.setConstant(covariance_term);
+
+  // Only the diagonal entries deviate from covariance_term.
+  for (k_index = 0; k_index < k; k_index++) {
+    cov_mat(k_index, k_index) += boost::math::trigamma(alpha(k_index));
+  }
+  return cov_mat;
+}
+
+
+template <typename T> T GetDirichletEntropy(VectorXT<T> alpha) {
+  // Args:
+  //   - alpha: The dirichlet parameters Q ~ Dirichlet(alpha).  Should
+  //     be a k-dimensional vector.
+  // Returns:
+  //   - The entropy of the Dirichlet distribution.
+
+  int k = alpha.size();
+  T alpha_sum = alpha.sum();
+  T entropy = 0.0;
+  entropy += -lgamma(alpha_sum) - (k - alpha_sum) * digamma(alpha_sum);
+
+  for (int index = 0; index < k; index++) {
+    entropy += lgamma(alpha(index)) - (alpha(index) - 1) * digamma(alpha(index));
+  }
+
+  return entropy;
+}
+
 
 ///////////////////////////////////
 // Coordinates and covariances for sparse matrices
@@ -279,85 +377,17 @@ std::vector<Triplet> get_gamma_covariance_terms(
 }
 
 
-////////////////////////////
-// Categorical
-
-MatrixXd GetCategoricalCovariance(VectorXd p) {
-  // Args:
-  //   p: A size k vector of the z probabilities.
-  // Returns:
-  //   The covariance matrix.
-  MatrixXd p_outer = (-1) * p * p.transpose();
-  MatrixXd p_diagonal = p.asDiagonal();
-  p_outer = p_outer + p_diagonal;
-  return p_outer;
-}
-
-
-std::vector<Triplet> GetCategoricalCovarianceTerms(VectorXd p, int offset) {
-  MatrixXd p_cov = GetCategoricalCovariance(p);
+std::vector<Triplet> get_dirichlet_covariance_terms(VectorXd alpha, int offset) {
   std::vector<Triplet> terms;
-  for (int i=0; i < p_cov.rows(); i++) {
-    for (int j=0; j < p_cov.cols(); j++) {
-      terms.push_back(Triplet(offset + i, offset + j, p_cov(i, j)));
+  MatrixXd q_cov = GetLogDirichletCovariance(alpha);
+  for (int i=0; i < q_cov.rows(); i++) {
+    for (int j=0; j < q_cov.cols(); j++) {
+      terms.push_back(Triplet(offset + i, offset + j, q_cov(i, j)));
     }
   }
+
   return terms;
 }
-
-
-/////////////////////////////////
-// Dirichlet
-
-template <typename T> VectorXT<T> GetELogDirichlet(VectorXT<T> alpha) {
-  // Args:
-  //   - alpha: The dirichlet parameters Q ~ Dirichlet(alpha).  Should
-  //     be a k-dimensional vector.
-  // Returns:
-  //   - A k-dimensional matrix representing E(log Q).
-
-  int k = alpha.size();
-  T alpha_sum = 0.0;
-  for (int index = 0; index < k; index++) {
-    alpha_sum += alpha(index);
-  }
-  T digamma_alpha_sum = boost::math::digamma(alpha_sum);
-  VectorXT<T> e_log_alpha(k);
-  for (int index = 0; index < k; index++) {
-    e_log_alpha(index) = boost::math::digamma(alpha(index)) - digamma_alpha_sum;
-  }
-  return e_log_alpha;
-}
-
-
-MatrixXd GetLogDirichletCovariance(VectorXd alpha) {
-  // Args:
-  //  - alpha: A vector of dirichlet parameters.
-  //
-  // Returns:
-  //  - The covariance of the log of a dirichlet distribution
-  //    with parameters alpha.
-
-  int k = alpha.size();
-  int k_index;
-  MatrixXd cov_mat(k, k);
-
-  // Precomute the total.
-  double alpha_0 = 0.0;
-  for (k_index = 0; k_index < k; k_index++) {
-    alpha_0 += alpha(k_index);
-  }
-  double covariance_term = -1.0 * boost::math::trigamma(alpha_0);
-  cov_mat.setConstant(covariance_term);
-
-  // Only the diagonal entries deviate from covariance_term.
-  for (k_index = 0; k_index < k; k_index++) {
-    cov_mat(k_index, k_index) += boost::math::trigamma(alpha(k_index));
-  }
-  return cov_mat;
-}
-
-
 
 
 

@@ -1,0 +1,2 @@
+/usr/bin/ar cq libvariational_parameters.a  CMakeFiles/variational_parameters.dir/variational_parameters.cpp.o
+/usr/bin/ranlib libvariational_parameters.a
