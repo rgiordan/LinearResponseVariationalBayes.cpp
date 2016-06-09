@@ -93,7 +93,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=hessian_transform
+CMAKE_PROJECT_NAME:STATIC=LinearResponseVariationalBayes
 
 //Flags used by the linker during the creation of dll's.
 CMAKE_SHARED_LINKER_FLAGS:STRING=
@@ -140,6 +140,15 @@ CMAKE_USE_RELATIVE_PATHS:BOOL=OFF
 // during the make.  This is useful for debugging only. With Visual
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
+
+//Value Computed by CMake
+LinearResponseVariationalBayes_BINARY_DIR:STATIC=/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src
+
+//Dependencies for target
+LinearResponseVariationalBayes_LIB_DEPENDS:STATIC=
+
+//Value Computed by CMake
+LinearResponseVariationalBayes_SOURCE_DIR:STATIC=/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src
 
 //Dependencies for target
 exponential_families_LIB_DEPENDS:STATIC=

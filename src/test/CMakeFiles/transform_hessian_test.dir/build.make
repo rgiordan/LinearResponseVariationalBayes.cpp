@@ -81,7 +81,6 @@ transform_hessian_test_EXTERNAL_OBJECTS =
 
 test/transform_hessian_test: test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o
 test/transform_hessian_test: test/CMakeFiles/transform_hessian_test.dir/build.make
-test/transform_hessian_test: libtransform_hessian.a
 test/transform_hessian_test: test/CMakeFiles/transform_hessian_test.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable transform_hessian_test"
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/transform_hessian_test.dir/link.txt --verbose=$(VERBOSE)

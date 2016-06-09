@@ -70,6 +70,37 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: install/local
+.PHONY : install/local/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/progress.marks
@@ -102,17 +133,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named transform_hessian
+# Target rules for targets named LinearResponseVariationalBayes
 
 # Build rule for target.
-transform_hessian: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 transform_hessian
-.PHONY : transform_hessian
+LinearResponseVariationalBayes: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 LinearResponseVariationalBayes
+.PHONY : LinearResponseVariationalBayes
 
 # fast build rule for target.
-transform_hessian/fast:
-	$(MAKE) -f CMakeFiles/transform_hessian.dir/build.make CMakeFiles/transform_hessian.dir/build
-.PHONY : transform_hessian/fast
+LinearResponseVariationalBayes/fast:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/build
+.PHONY : LinearResponseVariationalBayes/fast
 
 #=============================================================================
 # Target rules for targets named transform_hessian_test
@@ -127,12 +158,36 @@ transform_hessian_test/fast:
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
 .PHONY : transform_hessian_test/fast
 
+exponential_families.o: exponential_families.cpp.o
+.PHONY : exponential_families.o
+
+# target to build an object file
+exponential_families.cpp.o:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o
+.PHONY : exponential_families.cpp.o
+
+exponential_families.i: exponential_families.cpp.i
+.PHONY : exponential_families.i
+
+# target to preprocess a source file
+exponential_families.cpp.i:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.i
+.PHONY : exponential_families.cpp.i
+
+exponential_families.s: exponential_families.cpp.s
+.PHONY : exponential_families.s
+
+# target to generate assembly for a file
+exponential_families.cpp.s:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.s
+.PHONY : exponential_families.cpp.s
+
 transform_hessian.o: transform_hessian.cpp.o
 .PHONY : transform_hessian.o
 
 # target to build an object file
 transform_hessian.cpp.o:
-	$(MAKE) -f CMakeFiles/transform_hessian.dir/build.make CMakeFiles/transform_hessian.dir/transform_hessian.cpp.o
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o
 .PHONY : transform_hessian.cpp.o
 
 transform_hessian.i: transform_hessian.cpp.i
@@ -140,7 +195,7 @@ transform_hessian.i: transform_hessian.cpp.i
 
 # target to preprocess a source file
 transform_hessian.cpp.i:
-	$(MAKE) -f CMakeFiles/transform_hessian.dir/build.make CMakeFiles/transform_hessian.dir/transform_hessian.cpp.i
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.i
 .PHONY : transform_hessian.cpp.i
 
 transform_hessian.s: transform_hessian.cpp.s
@@ -148,7 +203,7 @@ transform_hessian.s: transform_hessian.cpp.s
 
 # target to generate assembly for a file
 transform_hessian.cpp.s:
-	$(MAKE) -f CMakeFiles/transform_hessian.dir/build.make CMakeFiles/transform_hessian.dir/transform_hessian.cpp.s
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.s
 .PHONY : transform_hessian.cpp.s
 
 # Help Target
@@ -157,10 +212,16 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... LinearResponseVariationalBayes"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... transform_hessian"
+	@echo "... install"
+	@echo "... list_install_components"
+	@echo "... install/local"
 	@echo "... transform_hessian_test"
+	@echo "... exponential_families.o"
+	@echo "... exponential_families.i"
+	@echo "... exponential_families.s"
 	@echo "... transform_hessian.o"
 	@echo "... transform_hessian.i"
 	@echo "... transform_hessian.s"

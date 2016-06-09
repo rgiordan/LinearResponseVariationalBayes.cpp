@@ -42,6 +42,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/transform_hessian.dir/DependInfo.cmake"
+  "CMakeFiles/LinearResponseVariationalBayes.dir/DependInfo.cmake"
   "test/CMakeFiles/transform_hessian_test.dir/DependInfo.cmake"
   )
