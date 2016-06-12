@@ -206,6 +206,30 @@ transform_hessian.cpp.s:
 	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.s
 .PHONY : transform_hessian.cpp.s
 
+variational_parameters.o: variational_parameters.cpp.o
+.PHONY : variational_parameters.o
+
+# target to build an object file
+variational_parameters.cpp.o:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o
+.PHONY : variational_parameters.cpp.o
+
+variational_parameters.i: variational_parameters.cpp.i
+.PHONY : variational_parameters.i
+
+# target to preprocess a source file
+variational_parameters.cpp.i:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.i
+.PHONY : variational_parameters.cpp.i
+
+variational_parameters.s: variational_parameters.cpp.s
+.PHONY : variational_parameters.s
+
+# target to generate assembly for a file
+variational_parameters.cpp.s:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.s
+.PHONY : variational_parameters.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -225,6 +249,9 @@ help:
 	@echo "... transform_hessian.o"
 	@echo "... transform_hessian.i"
 	@echo "... transform_hessian.s"
+	@echo "... variational_parameters.o"
+	@echo "... variational_parameters.i"
+	@echo "... variational_parameters.s"
 .PHONY : help
 
 

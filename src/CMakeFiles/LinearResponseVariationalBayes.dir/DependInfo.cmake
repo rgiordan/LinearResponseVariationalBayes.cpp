@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/exponential_families.cpp" "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o"
   "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/transform_hessian.cpp" "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o"
+  "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/variational_parameters.cpp" "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

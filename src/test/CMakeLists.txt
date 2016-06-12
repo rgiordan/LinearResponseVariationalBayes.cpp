@@ -10,7 +10,7 @@ add_executable(transform_hessian_test transform_hessian_test.cpp)
 
 include_directories(${GIT_REPO_LOC}/math/lib/eigen_3.2.4/)
 include_directories(${GIT_REPO_LOC}/googletest/googletest/include)
-include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Only testing requires Stan (for autodiff)
 include_directories(${GIT_REPO_LOC}stan/)

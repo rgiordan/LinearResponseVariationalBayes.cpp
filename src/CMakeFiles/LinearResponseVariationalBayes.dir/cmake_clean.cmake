@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o"
   "CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o"
+  "CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o"
   "libLinearResponseVariationalBayes.pdb"
   "libLinearResponseVariationalBayes.so"
 )

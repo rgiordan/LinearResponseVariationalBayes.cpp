@@ -80,6 +80,10 @@ iostream
 transform_hessian.h
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/transform_hessian.h
 
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/variational_parameters.cpp
+variational_parameters.h
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/variational_parameters.h
+
 /home/rgiordan/Documents/git_repos/math/lib/boost_1.58.0/boost/aligned_storage.hpp
 cstddef
 -
