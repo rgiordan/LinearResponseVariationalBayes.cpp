@@ -20,4 +20,4 @@ include_directories(${GIT_REPO_LOC}math/lib/boost_1.58.0/)
 include_directories(${GIT_REPO_LOC}/LinearResponseVariationalBayes.cpp/include)
 
 target_link_libraries(transform_hessian_test gtest gtest_main)
-target_link_libraries(transform_hessian_test transform_hessian)
+target_link_libraries(transform_hessian_test LinearResponseVariationalBayes)

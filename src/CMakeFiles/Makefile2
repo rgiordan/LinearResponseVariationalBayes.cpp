@@ -106,7 +106,7 @@ test/preinstall:
 # Target rules for target test/CMakeFiles/transform_hessian_test.dir
 
 # All Build rule for target.
-test/CMakeFiles/transform_hessian_test.dir/all:
+test/CMakeFiles/transform_hessian_test.dir/all: CMakeFiles/LinearResponseVariationalBayes.dir/all
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/depend
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  3
@@ -119,7 +119,7 @@ all: test/CMakeFiles/transform_hessian_test.dir/all
 
 # Build rule for subdir invocation for target.
 test/CMakeFiles/transform_hessian_test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 3
 	$(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/transform_hessian_test.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 0
 .PHONY : test/CMakeFiles/transform_hessian_test.dir/rule
