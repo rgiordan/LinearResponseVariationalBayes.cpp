@@ -49,9 +49,32 @@ include CMakeFiles/LinearResponseVariationalBayes.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/LinearResponseVariationalBayes.dir/flags.make
 
+CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o: CMakeFiles/LinearResponseVariationalBayes.dir/flags.make
+CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o: kahan_summation.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_1)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o -c /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/kahan_summation.cpp
+
+CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/kahan_summation.cpp > CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.i
+
+CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/kahan_summation.cpp -o CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.s
+
+CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o.requires:
+.PHONY : CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o.requires
+
+CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o.provides: CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o.requires
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o.provides.build
+.PHONY : CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o.provides
+
+CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o.provides.build: CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o
+
 CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o: CMakeFiles/LinearResponseVariationalBayes.dir/flags.make
 CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o: exponential_families.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o -c /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/exponential_families.cpp
 
@@ -74,7 +97,7 @@ CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o.provide
 
 CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o: CMakeFiles/LinearResponseVariationalBayes.dir/flags.make
 CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o: transform_hessian.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_2)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_3)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o -c /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/transform_hessian.cpp
 
@@ -97,7 +120,7 @@ CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o.provides.b
 
 CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o: CMakeFiles/LinearResponseVariationalBayes.dir/flags.make
 CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o: variational_parameters.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_3)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_4)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o -c /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/variational_parameters.cpp
 
@@ -120,6 +143,7 @@ CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o.provi
 
 # Object files for target LinearResponseVariationalBayes
 LinearResponseVariationalBayes_OBJECTS = \
+"CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o" \
 "CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o" \
 "CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o" \
 "CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o"
@@ -127,6 +151,7 @@ LinearResponseVariationalBayes_OBJECTS = \
 # External object files for target LinearResponseVariationalBayes
 LinearResponseVariationalBayes_EXTERNAL_OBJECTS =
 
+libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o
 libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o
 libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o
 libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o
@@ -139,6 +164,7 @@ libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.
 CMakeFiles/LinearResponseVariationalBayes.dir/build: libLinearResponseVariationalBayes.so
 .PHONY : CMakeFiles/LinearResponseVariationalBayes.dir/build
 
+CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o.requires
 CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o.requires
 CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o.requires
 CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o.requires

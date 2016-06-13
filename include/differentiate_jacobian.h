@@ -17,6 +17,7 @@ using Eigen::VectorXd;
 using Eigen::Dynamic;
 using Eigen::VectorXd;
 
+template<typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
 
 // Given a vector to vector function y_to_x, return only x[i].
 template <typename F>

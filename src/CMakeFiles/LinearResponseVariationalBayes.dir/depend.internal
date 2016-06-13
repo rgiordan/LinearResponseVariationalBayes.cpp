@@ -3074,6 +3074,9 @@ CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o
  /home/rgiordan/Documents/git_repos/math/stan/math/rev/scal/meta/is_var.hpp
  /home/rgiordan/Documents/git_repos/math/stan/math/rev/scal/meta/partials_type.hpp
  /home/rgiordan/Documents/git_repos/math/stan/math/version.hpp
+CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o
+ /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/kahan_summation.h
+ /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/kahan_summation.cpp
 CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o
  /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/transform_hessian.h
  /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/transform_hessian.cpp

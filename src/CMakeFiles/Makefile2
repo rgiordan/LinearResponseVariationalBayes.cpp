@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalB
 CMakeFiles/LinearResponseVariationalBayes.dir/all:
 	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/depend
 	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  1 2 3
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  1 2 3 4
 	@echo "Built target LinearResponseVariationalBayes"
 .PHONY : CMakeFiles/LinearResponseVariationalBayes.dir/all
 
@@ -69,7 +69,7 @@ all: CMakeFiles/LinearResponseVariationalBayes.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/LinearResponseVariationalBayes.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 4
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/LinearResponseVariationalBayes.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 0
 .PHONY : CMakeFiles/LinearResponseVariationalBayes.dir/rule
@@ -91,10 +91,12 @@ clean: CMakeFiles/LinearResponseVariationalBayes.dir/clean
 # Directory level rules for directory test
 
 # Convenience name for "all" pass in the directory.
+test/all: test/CMakeFiles/kahan_summation_test.dir/all
 test/all: test/CMakeFiles/transform_hessian_test.dir/all
 .PHONY : test/all
 
 # Convenience name for "clean" pass in the directory.
+test/clean: test/CMakeFiles/kahan_summation_test.dir/clean
 test/clean: test/CMakeFiles/transform_hessian_test.dir/clean
 .PHONY : test/clean
 
@@ -103,13 +105,48 @@ test/preinstall:
 .PHONY : test/preinstall
 
 #=============================================================================
+# Target rules for target test/CMakeFiles/kahan_summation_test.dir
+
+# All Build rule for target.
+test/CMakeFiles/kahan_summation_test.dir/all: CMakeFiles/LinearResponseVariationalBayes.dir/all
+	$(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/depend
+	$(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  5
+	@echo "Built target kahan_summation_test"
+.PHONY : test/CMakeFiles/kahan_summation_test.dir/all
+
+# Include target in all.
+all: test/CMakeFiles/kahan_summation_test.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+test/CMakeFiles/kahan_summation_test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 5
+	$(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/kahan_summation_test.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 0
+.PHONY : test/CMakeFiles/kahan_summation_test.dir/rule
+
+# Convenience name for target.
+kahan_summation_test: test/CMakeFiles/kahan_summation_test.dir/rule
+.PHONY : kahan_summation_test
+
+# clean rule for target.
+test/CMakeFiles/kahan_summation_test.dir/clean:
+	$(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/clean
+.PHONY : test/CMakeFiles/kahan_summation_test.dir/clean
+
+# clean rule for target.
+clean: test/CMakeFiles/kahan_summation_test.dir/clean
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target test/CMakeFiles/transform_hessian_test.dir
 
 # All Build rule for target.
 test/CMakeFiles/transform_hessian_test.dir/all: CMakeFiles/LinearResponseVariationalBayes.dir/all
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/depend
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  4
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles  6
 	@echo "Built target transform_hessian_test"
 .PHONY : test/CMakeFiles/transform_hessian_test.dir/all
 
@@ -119,7 +156,7 @@ all: test/CMakeFiles/transform_hessian_test.dir/all
 
 # Build rule for subdir invocation for target.
 test/CMakeFiles/transform_hessian_test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 5
 	$(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/transform_hessian_test.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 0
 .PHONY : test/CMakeFiles/transform_hessian_test.dir/rule

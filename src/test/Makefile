@@ -133,6 +133,20 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+test/CMakeFiles/kahan_summation_test.dir/rule:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/kahan_summation_test.dir/rule
+.PHONY : test/CMakeFiles/kahan_summation_test.dir/rule
+
+# Convenience name for target.
+kahan_summation_test: test/CMakeFiles/kahan_summation_test.dir/rule
+.PHONY : kahan_summation_test
+
+# fast build rule for target.
+kahan_summation_test/fast:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/build
+.PHONY : kahan_summation_test/fast
+
+# Convenience name for target.
 test/CMakeFiles/transform_hessian_test.dir/rule:
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/transform_hessian_test.dir/rule
 .PHONY : test/CMakeFiles/transform_hessian_test.dir/rule
@@ -145,6 +159,30 @@ transform_hessian_test: test/CMakeFiles/transform_hessian_test.dir/rule
 transform_hessian_test/fast:
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
 .PHONY : transform_hessian_test/fast
+
+kahan_summation_test.o: kahan_summation_test.cpp.o
+.PHONY : kahan_summation_test.o
+
+# target to build an object file
+kahan_summation_test.cpp.o:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/kahan_summation_test.cpp.o
+.PHONY : kahan_summation_test.cpp.o
+
+kahan_summation_test.i: kahan_summation_test.cpp.i
+.PHONY : kahan_summation_test.i
+
+# target to preprocess a source file
+kahan_summation_test.cpp.i:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/kahan_summation_test.cpp.i
+.PHONY : kahan_summation_test.cpp.i
+
+kahan_summation_test.s: kahan_summation_test.cpp.s
+.PHONY : kahan_summation_test.s
+
+# target to generate assembly for a file
+kahan_summation_test.cpp.s:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/kahan_summation_test.cpp.s
+.PHONY : kahan_summation_test.cpp.s
 
 transform_hessian_test.o: transform_hessian_test.cpp.o
 .PHONY : transform_hessian_test.o
@@ -176,12 +214,16 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... kahan_summation_test"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... install"
 	@echo "... transform_hessian_test"
 	@echo "... list_install_components"
 	@echo "... install/local"
+	@echo "... kahan_summation_test.o"
+	@echo "... kahan_summation_test.i"
+	@echo "... kahan_summation_test.s"
 	@echo "... transform_hessian_test.o"
 	@echo "... transform_hessian_test.i"
 	@echo "... transform_hessian_test.s"

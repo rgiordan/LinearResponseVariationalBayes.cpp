@@ -31,21 +31,11 @@ vector
 -
 transform_hessian.h
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/transform_hessian.h
-transform_hessian_test_functions.h
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/transform_hessian_test_functions.h
 differentiate_jacobian.h
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/differentiate_jacobian.h
 stan/math.hpp
 -
 stan/math/mix/mat/functor/hessian.hpp
--
-gtest/gtest.h
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/gtest/gtest.h
-
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/transform_hessian_test_functions.h
-Eigen/Dense
--
-vector
 -
 stan/math/fwd/scal/fun/pow.hpp
 -
@@ -55,6 +45,8 @@ stan/math/fwd/scal/fun/log.hpp
 -
 stan/math/fwd/scal/fun/abs.hpp
 -
+gtest/gtest.h
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/gtest/gtest.h
 
 /home/rgiordan/Documents/git_repos/googletest/googletest/include/gtest/gtest-death-test.h
 gtest/internal/gtest-death-test-internal.h

@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o"
   "CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o"
   "CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o"
   "CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o"

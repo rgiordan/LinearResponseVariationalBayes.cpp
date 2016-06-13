@@ -24,6 +24,8 @@ stan/math/fwd/scal/fun/lgamma.hpp
 stan/math/fwd/scal/fun/digamma.hpp
 -
 
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/kahan_summation.h
+
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/transform_hessian.h
 Eigen/Dense
 -
@@ -69,6 +71,10 @@ stan/math/fwd/scal/fun/lgamma.hpp
 -
 stan/math/fwd/scal/fun/digamma.hpp
 -
+
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/kahan_summation.cpp
+kahan_summation.h
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/kahan_summation.h
 
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/transform_hessian.cpp
 Eigen/Dense

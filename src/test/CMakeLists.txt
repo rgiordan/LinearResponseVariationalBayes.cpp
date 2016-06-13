@@ -6,8 +6,6 @@ set(GIT_REPO_LOC $ENV{GIT_REPO_LOC})
 add_definitions(-std=c++11)
 add_definitions(-Wno-deprecated)
 
-add_executable(transform_hessian_test transform_hessian_test.cpp)
-
 include_directories(${GIT_REPO_LOC}/math/lib/eigen_3.2.4/)
 include_directories(${GIT_REPO_LOC}/googletest/googletest/include)
 include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -19,5 +17,10 @@ include_directories(${GIT_REPO_LOC}math/lib/eigen_3.2.4/)
 include_directories(${GIT_REPO_LOC}math/lib/boost_1.58.0/)
 include_directories(${GIT_REPO_LOC}/LinearResponseVariationalBayes.cpp/include)
 
+add_executable(transform_hessian_test transform_hessian_test.cpp)
 target_link_libraries(transform_hessian_test gtest gtest_main)
 target_link_libraries(transform_hessian_test LinearResponseVariationalBayes)
+
+add_executable(kahan_summation_test kahan_summation_test.cpp)
+target_link_libraries(kahan_summation_test gtest gtest_main)
+target_link_libraries(kahan_summation_test LinearResponseVariationalBayes)

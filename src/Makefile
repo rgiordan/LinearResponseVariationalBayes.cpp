@@ -146,6 +146,19 @@ LinearResponseVariationalBayes/fast:
 .PHONY : LinearResponseVariationalBayes/fast
 
 #=============================================================================
+# Target rules for targets named kahan_summation_test
+
+# Build rule for target.
+kahan_summation_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 kahan_summation_test
+.PHONY : kahan_summation_test
+
+# fast build rule for target.
+kahan_summation_test/fast:
+	$(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/build
+.PHONY : kahan_summation_test/fast
+
+#=============================================================================
 # Target rules for targets named transform_hessian_test
 
 # Build rule for target.
@@ -181,6 +194,30 @@ exponential_families.s: exponential_families.cpp.s
 exponential_families.cpp.s:
 	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.s
 .PHONY : exponential_families.cpp.s
+
+kahan_summation.o: kahan_summation.cpp.o
+.PHONY : kahan_summation.o
+
+# target to build an object file
+kahan_summation.cpp.o:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o
+.PHONY : kahan_summation.cpp.o
+
+kahan_summation.i: kahan_summation.cpp.i
+.PHONY : kahan_summation.i
+
+# target to preprocess a source file
+kahan_summation.cpp.i:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.i
+.PHONY : kahan_summation.cpp.i
+
+kahan_summation.s: kahan_summation.cpp.s
+.PHONY : kahan_summation.s
+
+# target to generate assembly for a file
+kahan_summation.cpp.s:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.s
+.PHONY : kahan_summation.cpp.s
 
 transform_hessian.o: transform_hessian.cpp.o
 .PHONY : transform_hessian.o
@@ -242,10 +279,14 @@ help:
 	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... install/local"
+	@echo "... kahan_summation_test"
 	@echo "... transform_hessian_test"
 	@echo "... exponential_families.o"
 	@echo "... exponential_families.i"
 	@echo "... exponential_families.s"
+	@echo "... kahan_summation.o"
+	@echo "... kahan_summation.i"
+	@echo "... kahan_summation.s"
 	@echo "... transform_hessian.o"
 	@echo "... transform_hessian.i"
 	@echo "... transform_hessian.s"

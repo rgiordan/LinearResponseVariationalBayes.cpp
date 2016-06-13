@@ -16,7 +16,8 @@ include_directories(${GIT_REPO_LOC}math/lib/eigen_3.2.4/)
 include_directories(${GIT_REPO_LOC}math/lib/boost_1.58.0/)
 include_directories(${GIT_REPO_LOC}/LinearResponseVariationalBayes.cpp/include)
 
-set(CC_SOURCES exponential_families.cpp transform_hessian.cpp variational_parameters.cpp)
+set(CC_SOURCES kahan_summation.cpp exponential_families.cpp
+               transform_hessian.cpp variational_parameters.cpp)
 add_library(LinearResponseVariationalBayes SHARED ${CC_SOURCES})
 
 # Run `sudo make install` to install.
