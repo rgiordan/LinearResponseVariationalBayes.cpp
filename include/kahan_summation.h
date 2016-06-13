@@ -33,4 +33,6 @@ public:
   }
 };
 
+extern template class KahanAccumulator<double>;
+
 # endif

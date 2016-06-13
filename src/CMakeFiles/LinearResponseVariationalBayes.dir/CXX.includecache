@@ -23,6 +23,10 @@ stan/math/fwd/scal/fun/lgamma.hpp
 -
 stan/math/fwd/scal/fun/digamma.hpp
 -
+stan/math.hpp
+-
+stan/math/mix/mat/functor/hessian.hpp
+-
 
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/kahan_summation.h
 
