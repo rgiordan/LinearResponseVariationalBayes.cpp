@@ -13,6 +13,8 @@ typedef Eigen::Triplet<double> Triplet; // For populating sparse matrices
 
 # include <stan/math.hpp>
 # include <stan/math/mix/mat/functor/hessian.hpp>
+using var = stan::math::var;
+using fvar = stan::math::fvar<var>;
 
 #include <stan/math/fwd/scal/fun/fabs.hpp>
 #include <stan/math/fwd/scal/fun/abs.hpp>
@@ -27,8 +29,6 @@ using boost::math::lgamma;
 using boost::math::digamma;
 using boost::math::trigamma;
 
-using var = stan::math::var;
-using fvar = stan::math::fvar<var>;
 
 ////////////////////////////////////////////
 // Some helper functions

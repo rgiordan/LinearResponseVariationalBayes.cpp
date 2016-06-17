@@ -141,12 +141,36 @@ CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o.provi
 
 CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o.provides.build: CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o
 
+CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o: CMakeFiles/LinearResponseVariationalBayes.dir/flags.make
+CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o: monte_carlo_parameters.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_5)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o -c /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/monte_carlo_parameters.cpp
+
+CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/monte_carlo_parameters.cpp > CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.i
+
+CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/monte_carlo_parameters.cpp -o CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.s
+
+CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o.requires:
+.PHONY : CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o.requires
+
+CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o.provides: CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o.requires
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o.provides.build
+.PHONY : CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o.provides
+
+CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o.provides.build: CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o
+
 # Object files for target LinearResponseVariationalBayes
 LinearResponseVariationalBayes_OBJECTS = \
 "CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o" \
 "CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o" \
 "CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o" \
-"CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o"
+"CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o" \
+"CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o"
 
 # External object files for target LinearResponseVariationalBayes
 LinearResponseVariationalBayes_EXTERNAL_OBJECTS =
@@ -155,6 +179,7 @@ libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.
 libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o
 libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o
 libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o
+libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o
 libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/build.make
 libLinearResponseVariationalBayes.so: CMakeFiles/LinearResponseVariationalBayes.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX shared library libLinearResponseVariationalBayes.so"
@@ -168,6 +193,7 @@ CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearRespons
 CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o.requires
 CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o.requires
 CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o.requires
+CMakeFiles/LinearResponseVariationalBayes.dir/requires: CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o.requires
 .PHONY : CMakeFiles/LinearResponseVariationalBayes.dir/requires
 
 CMakeFiles/LinearResponseVariationalBayes.dir/clean:

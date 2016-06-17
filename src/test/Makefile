@@ -147,6 +147,20 @@ kahan_summation_test/fast:
 .PHONY : kahan_summation_test/fast
 
 # Convenience name for target.
+test/CMakeFiles/monte_carlo_parameter_test.dir/rule:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/monte_carlo_parameter_test.dir/rule
+.PHONY : test/CMakeFiles/monte_carlo_parameter_test.dir/rule
+
+# Convenience name for target.
+monte_carlo_parameter_test: test/CMakeFiles/monte_carlo_parameter_test.dir/rule
+.PHONY : monte_carlo_parameter_test
+
+# fast build rule for target.
+monte_carlo_parameter_test/fast:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/monte_carlo_parameter_test.dir/build.make test/CMakeFiles/monte_carlo_parameter_test.dir/build
+.PHONY : monte_carlo_parameter_test/fast
+
+# Convenience name for target.
 test/CMakeFiles/transform_hessian_test.dir/rule:
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/transform_hessian_test.dir/rule
 .PHONY : test/CMakeFiles/transform_hessian_test.dir/rule
@@ -184,6 +198,30 @@ kahan_summation_test.cpp.s:
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/kahan_summation_test.cpp.s
 .PHONY : kahan_summation_test.cpp.s
 
+monte_carlo_parameter_test.o: monte_carlo_parameter_test.cpp.o
+.PHONY : monte_carlo_parameter_test.o
+
+# target to build an object file
+monte_carlo_parameter_test.cpp.o:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/monte_carlo_parameter_test.dir/build.make test/CMakeFiles/monte_carlo_parameter_test.dir/monte_carlo_parameter_test.cpp.o
+.PHONY : monte_carlo_parameter_test.cpp.o
+
+monte_carlo_parameter_test.i: monte_carlo_parameter_test.cpp.i
+.PHONY : monte_carlo_parameter_test.i
+
+# target to preprocess a source file
+monte_carlo_parameter_test.cpp.i:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/monte_carlo_parameter_test.dir/build.make test/CMakeFiles/monte_carlo_parameter_test.dir/monte_carlo_parameter_test.cpp.i
+.PHONY : monte_carlo_parameter_test.cpp.i
+
+monte_carlo_parameter_test.s: monte_carlo_parameter_test.cpp.s
+.PHONY : monte_carlo_parameter_test.s
+
+# target to generate assembly for a file
+monte_carlo_parameter_test.cpp.s:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/monte_carlo_parameter_test.dir/build.make test/CMakeFiles/monte_carlo_parameter_test.dir/monte_carlo_parameter_test.cpp.s
+.PHONY : monte_carlo_parameter_test.cpp.s
+
 transform_hessian_test.o: transform_hessian_test.cpp.o
 .PHONY : transform_hessian_test.o
 
@@ -220,10 +258,14 @@ help:
 	@echo "... install"
 	@echo "... transform_hessian_test"
 	@echo "... list_install_components"
+	@echo "... monte_carlo_parameter_test"
 	@echo "... install/local"
 	@echo "... kahan_summation_test.o"
 	@echo "... kahan_summation_test.i"
 	@echo "... kahan_summation_test.s"
+	@echo "... monte_carlo_parameter_test.o"
+	@echo "... monte_carlo_parameter_test.i"
+	@echo "... monte_carlo_parameter_test.s"
 	@echo "... transform_hessian_test.o"
 	@echo "... transform_hessian_test.i"
 	@echo "... transform_hessian_test.s"

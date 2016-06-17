@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/monte_carlo_parameter_test.dir/monte_carlo_parameter_test.cpp.o  -o monte_carlo_parameter_test -rdynamic -lgtest -lgtest_main ../libLinearResponseVariationalBayes.so -Wl,-rpath,/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src 

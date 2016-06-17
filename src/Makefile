@@ -159,6 +159,19 @@ kahan_summation_test/fast:
 .PHONY : kahan_summation_test/fast
 
 #=============================================================================
+# Target rules for targets named monte_carlo_parameter_test
+
+# Build rule for target.
+monte_carlo_parameter_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 monte_carlo_parameter_test
+.PHONY : monte_carlo_parameter_test
+
+# fast build rule for target.
+monte_carlo_parameter_test/fast:
+	$(MAKE) -f test/CMakeFiles/monte_carlo_parameter_test.dir/build.make test/CMakeFiles/monte_carlo_parameter_test.dir/build
+.PHONY : monte_carlo_parameter_test/fast
+
+#=============================================================================
 # Target rules for targets named transform_hessian_test
 
 # Build rule for target.
@@ -218,6 +231,30 @@ kahan_summation.s: kahan_summation.cpp.s
 kahan_summation.cpp.s:
 	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.s
 .PHONY : kahan_summation.cpp.s
+
+monte_carlo_parameters.o: monte_carlo_parameters.cpp.o
+.PHONY : monte_carlo_parameters.o
+
+# target to build an object file
+monte_carlo_parameters.cpp.o:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o
+.PHONY : monte_carlo_parameters.cpp.o
+
+monte_carlo_parameters.i: monte_carlo_parameters.cpp.i
+.PHONY : monte_carlo_parameters.i
+
+# target to preprocess a source file
+monte_carlo_parameters.cpp.i:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.i
+.PHONY : monte_carlo_parameters.cpp.i
+
+monte_carlo_parameters.s: monte_carlo_parameters.cpp.s
+.PHONY : monte_carlo_parameters.s
+
+# target to generate assembly for a file
+monte_carlo_parameters.cpp.s:
+	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.s
+.PHONY : monte_carlo_parameters.cpp.s
 
 transform_hessian.o: transform_hessian.cpp.o
 .PHONY : transform_hessian.o
@@ -281,12 +318,16 @@ help:
 	@echo "... install/local"
 	@echo "... kahan_summation_test"
 	@echo "... transform_hessian_test"
+	@echo "... monte_carlo_parameter_test"
 	@echo "... exponential_families.o"
 	@echo "... exponential_families.i"
 	@echo "... exponential_families.s"
 	@echo "... kahan_summation.o"
 	@echo "... kahan_summation.i"
 	@echo "... kahan_summation.s"
+	@echo "... monte_carlo_parameters.o"
+	@echo "... monte_carlo_parameters.i"
+	@echo "... monte_carlo_parameters.s"
 	@echo "... transform_hessian.o"
 	@echo "... transform_hessian.i"
 	@echo "... transform_hessian.s"
