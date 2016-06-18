@@ -38,8 +38,10 @@ TEST(monte_carlo_parameters, is_correct) {
   VectorXd check_vec = norm_param.Evaluate(target_mean, target_var);
 
   mean_and_var = GetMeanAndVar(check_vec);
-  EXPECT_TRUE(abs(mean_and_var.mean - target_mean) < 3 / sqrt(n_sim)) << mean_and_var.mean;
-  EXPECT_TRUE(abs(mean_and_var.var - target_var) < 6 / sqrt(n_sim))  << mean_and_var.var;
+  EXPECT_TRUE(abs(mean_and_var.mean - target_mean) < 3 / sqrt(n_sim)) <<
+    mean_and_var.mean;
+  EXPECT_TRUE(abs(mean_and_var.var - target_var) < 6 / sqrt(n_sim))  <<
+    mean_and_var.var;
 
 };
 

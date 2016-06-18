@@ -12,9 +12,6 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
 #include "boost/random.hpp"
 #include "boost/generator_iterator.hpp"
-// #include <boost/random/linear_congruential.hpp>
-// #include <boost/random/variate_generator.hpp>
-// #include <boost/generator_iterator.hpp>
 #include <boost/random/normal_distribution.hpp>
 
 

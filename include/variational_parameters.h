@@ -16,6 +16,8 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 ////////////////
 // Scalar parameters
 
+// TODO: get rid of the scalar and vector types which don't serve any purpose.
+
 template <class T> class ScalarParameter {
 private:
   T value;
@@ -107,13 +109,13 @@ public:
 int get_ud_index(int i, int j);
 
 template <class T> class PosDefMatrixParameter {
-private:
-  MatrixXT<T> mat_value;
+// private:
 
 public:
   int size;
   int size_ud;
   std::string name;
+  MatrixXT<T> mat_value;
 
   PosDefMatrixParameter(int size_, std::string name_):
       size(size_), name(name_) {
@@ -147,6 +149,7 @@ public:
     }
   }
 
+  // TODO: don't use the get() method.
   MatrixXT<T> get() const {
     return mat_value;
   }
@@ -220,6 +223,67 @@ public:
     }
     return free_vec;
   }
+};
+
+
+/////////////////////////////////////
+// Variational parameters.
+
+template <class T> Wishart {
+  int dim;
+  PosDefMatrixParameter<T> e_mat;
+  T e_log_det;
+}
+
+
+template <class T> MultivatiateNormal {
+  int dim;
+  VectorXT<T> e_vec;
+  PosDefMatrixParameter<T> e_outer;
+
+
+  MultivariateNormal(int dim): dim(dim) {};
+
+  // Set from a vector of another type.
+  template <typename Tnew> MultivariateNormal(VectorXT<TNew> mean) const {
+    dim = mean.size();
+    e_vec = mean.template cast<T>();
+    e_outer = e_vec * e_vec.transpose();
+  };
+
+  // Convert to another type.
+  template <typename Tnew> operator MultivatiateNormal<Tnew>() const {
+    MultivatiateNormal<Tnew> mvn(dim);
+    mvn.e_vec = e_vec;
+    mvn.e_outer = e_outer;
+  };
+
+  // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
+  T ExpectedLogLikelihood(MultivatiateNormal<T> mean, Wishart<T> info) const {
+    MatrixXT<T> mean_outer_prods = mean.e_vec * e_vec.transpose() +
+                                   e_vec * mean.e_vec.transpose();
+    return
+      -0.5 * (info.e_mat * (e_outer + mean_outer_prods + mean.e_outer)).trace() +
+      0.5 * info.e_log_det;
+  };
+
+  T ExpectedLogLikelihood(VectorXT<T> mean, Wishart<T> info) const {
+    MatrixXT<T> mean_outer_prods = mean * e_vec.transpose() +
+                                   e_vec * mean.transpose();
+    MatrixXT<T> mean_outer = mean * mean.transpose();
+    return
+      -0.5 * (info.e_mat * (e_outer + mean_outer_prods + mean_outer)).trace() +
+      0.5 * info.e_log_det;
+  };
+
+  T ExpectedLogLikelihood(VectorXT<T> mean, MatrixXT<T> info) const {
+    MatrixXT<T> mean_outer_prods = mean * e_vec.transpose() +
+                                   e_vec * mean.transpose();
+    MatrixXT<T> mean_outer = mean * mean.transpose();
+    return
+      -0.5 * (info * (e_outer + mean_outer_prods + mean_outer)).trace() +
+      0.5 * log(info.determinant());
+  };
 };
 
 
