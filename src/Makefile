@@ -184,6 +184,19 @@ transform_hessian_test/fast:
 	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
 .PHONY : transform_hessian_test/fast
 
+#=============================================================================
+# Target rules for targets named variational_parameter_test
+
+# Build rule for target.
+variational_parameter_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 variational_parameter_test
+.PHONY : variational_parameter_test
+
+# fast build rule for target.
+variational_parameter_test/fast:
+	$(MAKE) -f test/CMakeFiles/variational_parameter_test.dir/build.make test/CMakeFiles/variational_parameter_test.dir/build
+.PHONY : variational_parameter_test/fast
+
 exponential_families.o: exponential_families.cpp.o
 .PHONY : exponential_families.o
 
@@ -317,6 +330,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... install/local"
 	@echo "... kahan_summation_test"
+	@echo "... variational_parameter_test"
 	@echo "... transform_hessian_test"
 	@echo "... monte_carlo_parameter_test"
 	@echo "... exponential_families.o"

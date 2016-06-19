@@ -174,6 +174,20 @@ transform_hessian_test/fast:
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
 .PHONY : transform_hessian_test/fast
 
+# Convenience name for target.
+test/CMakeFiles/variational_parameter_test.dir/rule:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/variational_parameter_test.dir/rule
+.PHONY : test/CMakeFiles/variational_parameter_test.dir/rule
+
+# Convenience name for target.
+variational_parameter_test: test/CMakeFiles/variational_parameter_test.dir/rule
+.PHONY : variational_parameter_test
+
+# fast build rule for target.
+variational_parameter_test/fast:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/variational_parameter_test.dir/build.make test/CMakeFiles/variational_parameter_test.dir/build
+.PHONY : variational_parameter_test/fast
+
 kahan_summation_test.o: kahan_summation_test.cpp.o
 .PHONY : kahan_summation_test.o
 
@@ -246,6 +260,30 @@ transform_hessian_test.cpp.s:
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.s
 .PHONY : transform_hessian_test.cpp.s
 
+variational_parameter_test.o: variational_parameter_test.cpp.o
+.PHONY : variational_parameter_test.o
+
+# target to build an object file
+variational_parameter_test.cpp.o:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/variational_parameter_test.dir/build.make test/CMakeFiles/variational_parameter_test.dir/variational_parameter_test.cpp.o
+.PHONY : variational_parameter_test.cpp.o
+
+variational_parameter_test.i: variational_parameter_test.cpp.i
+.PHONY : variational_parameter_test.i
+
+# target to preprocess a source file
+variational_parameter_test.cpp.i:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/variational_parameter_test.dir/build.make test/CMakeFiles/variational_parameter_test.dir/variational_parameter_test.cpp.i
+.PHONY : variational_parameter_test.cpp.i
+
+variational_parameter_test.s: variational_parameter_test.cpp.s
+.PHONY : variational_parameter_test.s
+
+# target to generate assembly for a file
+variational_parameter_test.cpp.s:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(MAKE) -f test/CMakeFiles/variational_parameter_test.dir/build.make test/CMakeFiles/variational_parameter_test.dir/variational_parameter_test.cpp.s
+.PHONY : variational_parameter_test.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -253,6 +291,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... kahan_summation_test"
+	@echo "... variational_parameter_test"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... install"
@@ -269,6 +308,9 @@ help:
 	@echo "... transform_hessian_test.o"
 	@echo "... transform_hessian_test.i"
 	@echo "... transform_hessian_test.s"
+	@echo "... variational_parameter_test.o"
+	@echo "... variational_parameter_test.i"
+	@echo "... variational_parameter_test.s"
 .PHONY : help
 
 

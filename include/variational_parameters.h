@@ -18,89 +18,89 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
 // TODO: get rid of the scalar and vector types which don't serve any purpose.
 
-template <class T> class ScalarParameter {
-private:
-  T value;
-
-public:
-  std::string name;
-
-  ScalarParameter(std::string name_): name(name_) {
-    value = 0.0;
-  };
-
-  ScalarParameter() {
-    ScalarParameter("Uninitialized");
-  };
-
-  template <typename TNumeric>
-  void set(TNumeric new_value) {
-    value = T(new_value);
-  };
-
-  T get() const {
-    return value;
-  };
-
-  template <typename Tnew>
-  operator ScalarParameter<Tnew>() const {
-    ScalarParameter<Tnew> sp = ScalarParameter<Tnew>(name);
-    sp.set(value);
-    return sp;
-  }
-};
-
-
-////////////////////////
-// Vector parameters
-
-template <class T> class VectorParameter {
-private:
-  VectorXT<T> value;
-
-public:
-  int size;
-  std::string name;
-
-  VectorParameter(int size_, std::string name_):
-      size(size_), name(name_) {
-    value = VectorXT<T>::Zero(size_);
-  }
-
-  VectorParameter(){
-    VectorParameter(1, "uninitialized");
-  }
-
-  template <typename TNumeric>
-  void set(VectorXT<TNumeric> new_value) {
-    if (new_value.size() != size) {
-      throw std::runtime_error("new_value must be the same size as the old");
-    }
-    for (int row=0; row < size; row++) {
-      value(row) = T(new_value(row));
-    }
-  }
-
-  template <typename TNumeric>
-  void set_vec(VectorXT<TNumeric> new_value) {
-    set(new_value);
-  }
-
-  VectorXT<T> get() const {
-    return value;
-  }
-
-  VectorXT<T> get_vec() const {
-    return value;
-  }
-
-  template <typename Tnew>
-  operator VectorParameter<Tnew>() const {
-    VectorParameter<Tnew> vp = VectorParameter<Tnew>(size, name);
-    vp.set(value);
-    return vp;
-  }
-};
+// template <class T> class ScalarParameter {
+// private:
+//   T value;
+//
+// public:
+//   std::string name;
+//
+//   ScalarParameter(std::string name_): name(name_) {
+//     value = 0.0;
+//   };
+//
+//   ScalarParameter() {
+//     ScalarParameter("Uninitialized");
+//   };
+//
+//   template <typename TNumeric>
+//   void set(TNumeric new_value) {
+//     value = T(new_value);
+//   };
+//
+//   T get() const {
+//     return value;
+//   };
+//
+//   template <typename Tnew>
+//   operator ScalarParameter<Tnew>() const {
+//     ScalarParameter<Tnew> sp = ScalarParameter<Tnew>(name);
+//     sp.set(value);
+//     return sp;
+//   }
+// };
+//
+//
+// ////////////////////////
+// // Vector parameters
+//
+// template <class T> class VectorParameter {
+// private:
+//   VectorXT<T> value;
+//
+// public:
+//   int size;
+//   std::string name;
+//
+//   VectorParameter(int size_, std::string name_):
+//       size(size_), name(name_) {
+//     value = VectorXT<T>::Zero(size_);
+//   }
+//
+//   VectorParameter(){
+//     VectorParameter(1, "uninitialized");
+//   }
+//
+//   template <typename TNumeric>
+//   void set(VectorXT<TNumeric> new_value) {
+//     if (new_value.size() != size) {
+//       throw std::runtime_error("new_value must be the same size as the old");
+//     }
+//     for (int row=0; row < size; row++) {
+//       value(row) = T(new_value(row));
+//     }
+//   }
+//
+//   template <typename TNumeric>
+//   void set_vec(VectorXT<TNumeric> new_value) {
+//     set(new_value);
+//   }
+//
+//   VectorXT<T> get() const {
+//     return value;
+//   }
+//
+//   VectorXT<T> get_vec() const {
+//     return value;
+//   }
+//
+//   template <typename Tnew>
+//   operator VectorParameter<Tnew>() const {
+//     VectorParameter<Tnew> vp = VectorParameter<Tnew>(size, name);
+//     vp.set(value);
+//     return vp;
+//   }
+// };
 
 ////////////////////////////////////
 // Positive definite matrices
@@ -229,7 +229,8 @@ public:
 /////////////////////////////////////
 // Variational parameters.
 
-template <class T> Gamma {
+template <class T> class Gamma {
+public:
   int dim;
 
   // TODO: constrain these to always be consistent?
@@ -242,12 +243,12 @@ template <class T> Gamma {
   Gamma() {
     e = 1;
     e_log = 0;
-  }
-}
+  };
+};
 
 
-
-template <class T> Wishart {
+template <class T> class Wishart {
+public:
   int dim;
 
   // TODO: constrain these to always be consistent?
@@ -263,11 +264,12 @@ template <class T> Wishart {
 
     e_log_det = 0;
     e_mat = MatrixXT<T>::Zero(dim, dim);
-  }
-}
+  };
+};
 
 
-template <class T> MultivatiateNormal {
+template <class T> class MultivariateNormal {
+public:
   int dim;
   VectorXT<T> e_vec;
   PosDefMatrixParameter<T> e_outer;
@@ -282,7 +284,7 @@ template <class T> MultivatiateNormal {
   };
 
   // Set from a vector of another type.
-  template <typename Tnew> MultivariateNormal(VectorXT<TNew> mean) const {
+  template <typename Tnew> MultivariateNormal(VectorXT<Tnew> mean) {
     dim = mean.size();
     e_vec = mean.template cast<T>();
     e_outer = PosDefMatrixParameter<T>(dim);
@@ -290,14 +292,14 @@ template <class T> MultivatiateNormal {
   };
 
   // Convert to another type.
-  template <typename Tnew> operator MultivatiateNormal<Tnew>() const {
-    MultivatiateNormal<Tnew> mvn(dim);
+  template <typename Tnew> operator MultivariateNormal<Tnew>() const {
+    MultivariateNormal<Tnew> mvn(dim);
     mvn.e_vec = e_vec;
     mvn.e_outer = e_outer;
   };
 
   // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
-  T ExpectedLogLikelihood(MultivatiateNormal<T> mean, Wishart<T> info) const {
+  T ExpectedLogLikelihood(MultivariateNormal<T> mean, Wishart<T> info) const {
     MatrixXT<T> mean_outer_prods = mean.e_vec * e_vec.transpose() +
                                    e_vec * mean.e_vec.transpose();
     return

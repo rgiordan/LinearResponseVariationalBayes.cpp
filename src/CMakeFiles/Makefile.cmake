@@ -44,6 +44,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/LinearResponseVariationalBayes.dir/DependInfo.cmake"
   "test/CMakeFiles/kahan_summation_test.dir/DependInfo.cmake"
+  "test/CMakeFiles/variational_parameter_test.dir/DependInfo.cmake"
   "test/CMakeFiles/transform_hessian_test.dir/DependInfo.cmake"
   "test/CMakeFiles/monte_carlo_parameter_test.dir/DependInfo.cmake"
   )

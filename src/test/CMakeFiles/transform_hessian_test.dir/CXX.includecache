@@ -24,6 +24,8 @@ Eigen/Dense
 vector
 -
 
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/test_eigen.h
+
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/transform_hessian_test.cpp
 Eigen/Dense
 -
@@ -47,6 +49,8 @@ stan/math/fwd/scal/fun/abs.hpp
 -
 gtest/gtest.h
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/gtest/gtest.h
+test_eigen.h
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/test_eigen.h
 
 /home/rgiordan/Documents/git_repos/googletest/googletest/include/gtest/gtest-death-test.h
 gtest/internal/gtest-death-test-internal.h
