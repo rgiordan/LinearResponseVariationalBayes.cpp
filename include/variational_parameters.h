@@ -115,12 +115,12 @@ public:
   int size;
   int size_ud;
   std::string name;
-  MatrixXT<T> mat_value;
+  MatrixXT<T> mat;
 
   PosDefMatrixParameter(int size_, std::string name_):
       size(size_), name(name_) {
     size_ud = size * (size + 1) / 2;
-    mat_value = MatrixXT<T>::Zero(size, size);
+    mat = MatrixXT<T>::Zero(size, size);
   }
 
   PosDefMatrixParameter() {
@@ -132,8 +132,8 @@ public:
     for (int row=0; row < size; row++) {
       for (int col=0; col <= row; col++) {
         T this_value = T(set_value(row, col));
-        mat_value(row, col) = this_value;
-        mat_value(col, row) = this_value;
+        mat(row, col) = this_value;
+        mat(col, row) = this_value;
       }
     }
   }
@@ -143,22 +143,22 @@ public:
     for (int row=0; row < size; row++) {
       for (int col=0; col <= row; col++) {
         T this_value = T(set_value(get_ud_index(row, col)));
-        mat_value(row, col) = this_value;
-        mat_value(col, row) = this_value;
+        mat(row, col) = this_value;
+        mat(col, row) = this_value;
       }
     }
   }
 
   // TODO: don't use the get() method.
   MatrixXT<T> get() const {
-    return mat_value;
+    return mat;
   }
 
   VectorXT<T> get_vec() const {
     VectorXT<T> vec_value(size_ud);
     for (int row=0; row < size; row++) {
       for (int col=0; col <= row; col++) {
-        vec_value(get_ud_index(row, col)) = mat_value(row, col);
+        vec_value(get_ud_index(row, col)) = mat(row, col);
       }
     }
     return vec_value;
@@ -167,7 +167,7 @@ public:
   template <typename Tnew>
   operator PosDefMatrixParameter<Tnew>() const {
     PosDefMatrixParameter<Tnew> pdmp = PosDefMatrixParameter<Tnew>(size, name);
-    pdmp.set(mat_value);
+    pdmp.set(mat);
     return pdmp;
   }
 
@@ -189,10 +189,10 @@ public:
         }
       }
     }
-    mat_value = chol_mat * chol_mat.transpose();
+    mat = chol_mat * chol_mat.transpose();
     if (min_diag > 0) {
       for (int k = 0; k < size; k++) {
-        mat_value(k, k) += min_diag;
+        mat(k, k) += min_diag;
       }
     }
   }
@@ -202,7 +202,7 @@ public:
       throw std::runtime_error("min_diag must be non-negative");
     }
     VectorXT<T> free_vec(size_ud);
-    MatrixXT<T> mat_minus_diag(mat_value);
+    MatrixXT<T> mat_minus_diag(mat);
     if (min_diag > 0) {
       for (int k = 0; k < size; k++) {
         mat_minus_diag(k, k) -= min_diag;
@@ -229,10 +229,41 @@ public:
 /////////////////////////////////////
 // Variational parameters.
 
+template <class T> Gamma {
+  int dim;
+
+  // TODO: constrain these to always be consistent?
+  T scale;
+  T shape;
+
+  T e;
+  T e_log;
+
+  Gamma() {
+    e = 1;
+    e_log = 0;
+  }
+}
+
+
+
 template <class T> Wishart {
   int dim;
+
+  // TODO: constrain these to always be consistent?
+  PosDefMatrixParameter<T> v;
+  T n;
+
   PosDefMatrixParameter<T> e_mat;
   T e_log_det;
+
+  Wishart(int dim): dim(dim) {
+    n = 0;
+    v = MatrixXT<T>::Zero(dim, dim);
+
+    e_log_det = 0;
+    e_mat = MatrixXT<T>::Zero(dim, dim);
+  }
 }
 
 
@@ -241,14 +272,21 @@ template <class T> MultivatiateNormal {
   VectorXT<T> e_vec;
   PosDefMatrixParameter<T> e_outer;
 
+  MultivariateNormal(int dim): dim(dim) {
+    e_vec = VectorXT<T>::Zero(dim);
+    e_outer = MatrixXT<T>::Zero(dim, dim);
+  };
 
-  MultivariateNormal(int dim): dim(dim) {};
+  MultivariateNormal() {
+    MultivariateNormal(1);
+  };
 
   // Set from a vector of another type.
   template <typename Tnew> MultivariateNormal(VectorXT<TNew> mean) const {
     dim = mean.size();
     e_vec = mean.template cast<T>();
-    e_outer = e_vec * e_vec.transpose();
+    e_outer = PosDefMatrixParameter<T>(dim);
+    e_outer.mat = e_vec * e_vec.transpose();
   };
 
   // Convert to another type.
@@ -263,7 +301,7 @@ template <class T> MultivatiateNormal {
     MatrixXT<T> mean_outer_prods = mean.e_vec * e_vec.transpose() +
                                    e_vec * mean.e_vec.transpose();
     return
-      -0.5 * (info.e_mat * (e_outer + mean_outer_prods + mean.e_outer)).trace() +
+      -0.5 * (info.e_mat * (e_outer.mat + mean_outer_prods + mean.e_outer.mat)).trace() +
       0.5 * info.e_log_det;
   };
 
@@ -272,7 +310,7 @@ template <class T> MultivatiateNormal {
                                    e_vec * mean.transpose();
     MatrixXT<T> mean_outer = mean * mean.transpose();
     return
-      -0.5 * (info.e_mat * (e_outer + mean_outer_prods + mean_outer)).trace() +
+      -0.5 * (info.e_mat * (e_outer.mat + mean_outer_prods + mean_outer)).trace() +
       0.5 * info.e_log_det;
   };
 
@@ -281,7 +319,7 @@ template <class T> MultivatiateNormal {
                                    e_vec * mean.transpose();
     MatrixXT<T> mean_outer = mean * mean.transpose();
     return
-      -0.5 * (info * (e_outer + mean_outer_prods + mean_outer)).trace() +
+      -0.5 * (info * (e_outer.mat + mean_outer_prods + mean_outer)).trace() +
       0.5 * log(info.determinant());
   };
 };
