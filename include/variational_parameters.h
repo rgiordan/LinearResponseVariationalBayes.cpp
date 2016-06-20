@@ -13,95 +13,6 @@ template <typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
 template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
 
-////////////////
-// Scalar parameters
-
-// TODO: get rid of the scalar and vector types which don't serve any purpose.
-
-// template <class T> class ScalarParameter {
-// private:
-//   T value;
-//
-// public:
-//   std::string name;
-//
-//   ScalarParameter(std::string name_): name(name_) {
-//     value = 0.0;
-//   };
-//
-//   ScalarParameter() {
-//     ScalarParameter("Uninitialized");
-//   };
-//
-//   template <typename TNumeric>
-//   void set(TNumeric new_value) {
-//     value = T(new_value);
-//   };
-//
-//   T get() const {
-//     return value;
-//   };
-//
-//   template <typename Tnew>
-//   operator ScalarParameter<Tnew>() const {
-//     ScalarParameter<Tnew> sp = ScalarParameter<Tnew>(name);
-//     sp.set(value);
-//     return sp;
-//   }
-// };
-//
-//
-// ////////////////////////
-// // Vector parameters
-//
-// template <class T> class VectorParameter {
-// private:
-//   VectorXT<T> value;
-//
-// public:
-//   int size;
-//   std::string name;
-//
-//   VectorParameter(int size_, std::string name_):
-//       size(size_), name(name_) {
-//     value = VectorXT<T>::Zero(size_);
-//   }
-//
-//   VectorParameter(){
-//     VectorParameter(1, "uninitialized");
-//   }
-//
-//   template <typename TNumeric>
-//   void set(VectorXT<TNumeric> new_value) {
-//     if (new_value.size() != size) {
-//       throw std::runtime_error("new_value must be the same size as the old");
-//     }
-//     for (int row=0; row < size; row++) {
-//       value(row) = T(new_value(row));
-//     }
-//   }
-//
-//   template <typename TNumeric>
-//   void set_vec(VectorXT<TNumeric> new_value) {
-//     set(new_value);
-//   }
-//
-//   VectorXT<T> get() const {
-//     return value;
-//   }
-//
-//   VectorXT<T> get_vec() const {
-//     return value;
-//   }
-//
-//   template <typename Tnew>
-//   operator VectorParameter<Tnew>() const {
-//     VectorParameter<Tnew> vp = VectorParameter<Tnew>(size, name);
-//     vp.set(value);
-//     return vp;
-//   }
-// };
-
 ////////////////////////////////////
 // Positive definite matrices
 
@@ -114,17 +25,15 @@ template <class T> class PosDefMatrixParameter {
 public:
   int size;
   int size_ud;
-  std::string name;
   MatrixXT<T> mat;
 
-  PosDefMatrixParameter(int size_, std::string name_):
-      size(size_), name(name_) {
+  PosDefMatrixParameter(int size_): size(size_) {
     size_ud = size * (size + 1) / 2;
     mat = MatrixXT<T>::Zero(size, size);
   }
 
   PosDefMatrixParameter() {
-    PosDefMatrixParameter(1, "uninitialized");
+    PosDefMatrixParameter(1);
   }
 
   template <typename TNumeric>
@@ -166,7 +75,7 @@ public:
 
   template <typename Tnew>
   operator PosDefMatrixParameter<Tnew>() const {
-    PosDefMatrixParameter<Tnew> pdmp = PosDefMatrixParameter<Tnew>(size, name);
+    PosDefMatrixParameter<Tnew> pdmp = PosDefMatrixParameter<Tnew>(size);
     pdmp.set(mat);
     return pdmp;
   }
@@ -255,15 +164,17 @@ public:
   PosDefMatrixParameter<T> v;
   T n;
 
-  PosDefMatrixParameter<T> e_mat;
+  PosDefMatrixParameter<T> e;
   T e_log_det;
 
   Wishart(int dim): dim(dim) {
     n = 0;
-    v = MatrixXT<T>::Zero(dim, dim);
+    v = PosDefMatrixParameter<T>(dim);
+    v.mat = MatrixXT<T>::Zero(dim, dim);
 
     e_log_det = 0;
-    e_mat = MatrixXT<T>::Zero(dim, dim);
+    e = PosDefMatrixParameter<T>(dim);
+    e.mat = MatrixXT<T>::Zero(dim, dim);
   };
 };
 
@@ -276,7 +187,8 @@ public:
 
   MultivariateNormal(int dim): dim(dim) {
     e_vec = VectorXT<T>::Zero(dim);
-    e_outer = MatrixXT<T>::Zero(dim, dim);
+    e_outer = PosDefMatrixParameter<T>(dim);
+    e_outer.mat = MatrixXT<T>::Zero(dim, dim);
   };
 
   MultivariateNormal() {
@@ -287,15 +199,17 @@ public:
   template <typename Tnew> MultivariateNormal(VectorXT<Tnew> mean) {
     dim = mean.size();
     e_vec = mean.template cast<T>();
-    e_outer = PosDefMatrixParameter<T>(dim);
-    e_outer.mat = e_vec * e_vec.transpose();
+    MatrixXT<T> e_vec_outer = e_vec * e_vec.transpose();
+    e_outer = PosDefMatrixParameter<Tnew>(dim);
+    e_outer.set(e_vec_outer);
   };
 
   // Convert to another type.
   template <typename Tnew> operator MultivariateNormal<Tnew>() const {
     MultivariateNormal<Tnew> mvn(dim);
-    mvn.e_vec = e_vec;
-    mvn.e_outer = e_outer;
+    mvn.e_vec = e_vec.template cast <Tnew>();
+    mvn.e_outer.mat = e_outer.mat.template cast<Tnew>();
+    return mvn;
   };
 
   // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
@@ -303,7 +217,7 @@ public:
     MatrixXT<T> mean_outer_prods = mean.e_vec * e_vec.transpose() +
                                    e_vec * mean.e_vec.transpose();
     return
-      -0.5 * (info.e_mat * (e_outer.mat + mean_outer_prods + mean.e_outer.mat)).trace() +
+      -0.5 * (info.e.mat * (e_outer.mat + mean_outer_prods + mean.e_outer.mat)).trace() +
       0.5 * info.e_log_det;
   };
 
@@ -312,7 +226,7 @@ public:
                                    e_vec * mean.transpose();
     MatrixXT<T> mean_outer = mean * mean.transpose();
     return
-      -0.5 * (info.e_mat * (e_outer.mat + mean_outer_prods + mean_outer)).trace() +
+      -0.5 * (info.e.mat * (e_outer.mat + mean_outer_prods + mean_outer)).trace() +
       0.5 * info.e_log_det;
   };
 
