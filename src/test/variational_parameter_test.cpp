@@ -38,6 +38,7 @@ TEST(PosDefMatrixParameter, basic) {
   EXPECT_MATRIX_EQ(pd_mat.get(), pd_mat2.get());
 }
 
+
 TEST(MultivariateNormal, basic) {
   int dim = 3;
   VectorXd mean(dim);

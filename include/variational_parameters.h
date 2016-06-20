@@ -241,4 +241,43 @@ public:
 };
 
 
+template <class T> class UnivariateNormal {
+public:
+  T e;  // The expectation.
+  T e2; // The expectation of the square.
+
+  UnivariateNormal() {
+    e = 0;
+    e2 = 0;
+  };
+
+  // Set from a vector of another type.
+  template <typename Tnew> UnivariateNormal(Tnew mean) {
+    e = mean;
+    e2 = mean * mean;
+  };
+
+  // Convert to another type.
+  template <typename Tnew> operator UnivariateNormal<Tnew>() const {
+    UnivariateNormal<Tnew> uvn;
+    uvn.e = e;
+    uvn.e2 = e2;
+    return uvn;
+  };
+
+  // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
+  T ExpectedLogLikelihood(UnivariateNormal<T> mean, Gamma<T> info) const {
+    return -0.5 * info.e * (e2 + 2 * mean.e * e + mean.e2) + 0.5 * info.e_log;
+  };
+
+  T ExpectedLogLikelihood(T mean, Gamma<T> info) const {
+    return -0.5 * info.e * (e2 + 2 * mean * e + mean * mean) + 0.5 * info.e_log;
+  };
+
+  T ExpectedLogLikelihood(T mean, T info) const {
+    return -0.5 * info.e * (e2 + 2 * mean * e + mean * mean) + 0.5 * log(info);
+  };
+};
+
+
 # endif
