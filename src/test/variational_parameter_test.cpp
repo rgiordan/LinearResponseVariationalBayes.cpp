@@ -61,6 +61,9 @@ TEST(MultivariateNormal, basic) {
   info_mat << 1,   0.1, 0.1,
               0.1, 1,   0.1,
               0.1, 0.1, 1;
+  WishartNatural<double> info_nat(dim);
+  info_nat.v.mat = info_mat;
+  info_nat.n = 1;
   WishartMoments<double> info(dim);
   info.e.mat = info_mat;
   info.e_log_det = log(info_mat.determinant());
@@ -75,6 +78,31 @@ TEST(MultivariateNormal, basic) {
 
   EXPECT_DOUBLE_EQ(log_lik_1, log_lik_2);
   EXPECT_DOUBLE_EQ(log_lik_1, log_lik_3);
+}
+
+
+TEST(Wishart, basic) {
+  MatrixXd v(3, 3);
+  v << 1,   0.1, 0.1,
+       0.1, 1,   0.1,
+       0.1, 0.1, 1;
+  double n = 3;
+  WishartNatural<double> wishart_nat(3);
+  wishart_nat.v.mat = v;
+  wishart_nat.n = n;
+
+  WishartMoments<double> wishart(wishart_nat);
+  MatrixXd e_wishart = v * n;
+  EXPECT_MATRIX_EQ(e_wishart, wishart.e.mat);
+  EXPECT_DOUBLE_EQ(GetELogDetWishart(v, n), wishart.e_log_det);
+}
+
+
+TEST(Gamma, basic) {
+  Gamma<double> gamma;
+  Gamma<float> gamma2(gamma);
+  EXPECT_DOUBLE_EQ(gamma.e, gamma2.e);
+  EXPECT_DOUBLE_EQ(gamma.e_log, gamma2.e_log);
 }
 
 
