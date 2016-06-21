@@ -4,6 +4,8 @@
 # include <Eigen/Dense>
 # include <vector>
 
+# include "exponential_families.h"
+
 using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -140,12 +142,8 @@ public:
 
 template <class T> class Gamma {
 public:
-  int dim;
 
   // TODO: constrain these to always be consistent?
-  T scale;
-  T shape;
-
   T e;
   T e_log;
 
@@ -153,28 +151,73 @@ public:
     e = 1;
     e_log = 0;
   };
+
+  template <typename Tnew> operator Gamma<Tnew>() const {
+    Gamma<Tnew> gamma_new;
+    gamma_new.e = e;
+    gamma_new.e_log = e_log;
+
+    return gamma_new;
+  };
+
 };
 
 
-template <class T> class Wishart {
+template <class T> class WishartNatural {
 public:
   int dim;
 
-  // TODO: constrain these to always be consistent?
   PosDefMatrixParameter<T> v;
   T n;
+
+  WishartNatural(int dim): dim(dim) {
+    n = 0;
+    v = PosDefMatrixParameter<T>(dim);
+    v.mat = MatrixXT<T>::Zero(dim, dim);
+  };
+
+  WishartNatural() {
+    WishartNatural(1);
+  }
+
+  template <typename Tnew> operator WishartNatural<Tnew>() const {
+    WishartNatural<Tnew> wishart_new(dim);
+    wishart_new.dim = dim;
+    wishart_new.v = v;
+    wishart_new.n = n;
+  };
+};
+
+
+template <class T> class WishartMoments {
+public:
+  int dim;
 
   PosDefMatrixParameter<T> e;
   T e_log_det;
 
-  Wishart(int dim): dim(dim) {
-    n = 0;
-    v = PosDefMatrixParameter<T>(dim);
-    v.mat = MatrixXT<T>::Zero(dim, dim);
-
+  WishartMoments(int dim): dim(dim) {
     e_log_det = 0;
     e = PosDefMatrixParameter<T>(dim);
     e.mat = MatrixXT<T>::Zero(dim, dim);
+  };
+
+  WishartMoments() {
+    WishartMoments(1);
+  }
+
+  WishartMoments(WishartNatural<T> wishart_nat) {
+    dim = wishart_nat.dim;
+    e = PosDefMatrixParameter<T>(dim);
+    e.mat = wishart_nat.v.mat * wishart_nat.n;
+    e_log_det = GetELogDetWishart(wishart_nat.v.mat, wishart_nat.n);
+  }
+
+  template <typename Tnew> operator WishartMoments<Tnew>() const {
+    WishartMoments<Tnew> wishart_new(dim);
+    wishart_new.e = e;
+    wishart_new.e_log_det = e_log_det;
+    return wishart_new;
   };
 };
 
@@ -186,7 +229,7 @@ public:
   PosDefMatrixParameter<T> e_outer;
 
   MultivariateNormal(int dim): dim(dim) {
-    e_vec = VectorXT<T>::Zero(dim);
+  e_vec = VectorXT<T>::Zero(dim);
     e_outer = PosDefMatrixParameter<T>(dim);
     e_outer.mat = MatrixXT<T>::Zero(dim, dim);
   };
@@ -213,7 +256,7 @@ public:
   };
 
   // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
-  T ExpectedLogLikelihood(MultivariateNormal<T> mean, Wishart<T> info) const {
+  T ExpectedLogLikelihood(MultivariateNormal<T> mean, WishartMoments<T> info) const {
     MatrixXT<T> mean_outer_prods = mean.e_vec * e_vec.transpose() +
                                    e_vec * mean.e_vec.transpose();
     return
@@ -221,7 +264,7 @@ public:
       0.5 * info.e_log_det;
   };
 
-  T ExpectedLogLikelihood(VectorXT<T> mean, Wishart<T> info) const {
+  T ExpectedLogLikelihood(VectorXT<T> mean, WishartMoments<T> info) const {
     MatrixXT<T> mean_outer_prods = mean * e_vec.transpose() +
                                    e_vec * mean.transpose();
     MatrixXT<T> mean_outer = mean * mean.transpose();

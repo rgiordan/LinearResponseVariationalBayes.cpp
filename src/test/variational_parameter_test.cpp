@@ -61,7 +61,7 @@ TEST(MultivariateNormal, basic) {
   info_mat << 1,   0.1, 0.1,
               0.1, 1,   0.1,
               0.1, 0.1, 1;
-  Wishart<double> info(dim);
+  WishartMoments<double> info(dim);
   info.e.mat = info_mat;
   info.e_log_det = log(info_mat.determinant());
 
