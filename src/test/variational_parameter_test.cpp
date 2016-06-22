@@ -50,12 +50,12 @@ TEST(MultivariateNormal, basic) {
   mvn.e_outer.set(mean_outer);
 
   MultivariateNormal<float> mvn_float(mean);
-  EXPECT_VECTOR_EQ(mean, mvn_float.e_vec);
-  EXPECT_MATRIX_EQ(mean_outer, mvn_float.e_outer.mat);
+  EXPECT_FLOAT_VECTOR_EQ(mean, mvn_float.e_vec);
+  EXPECT_FLOAT_MATRIX_EQ(mean_outer, mvn_float.e_outer.mat);
 
   MultivariateNormal<float> mvn_float2 = mvn;
-  EXPECT_VECTOR_EQ(mvn.e_vec, mvn_float2.e_vec);
-  EXPECT_MATRIX_EQ(mvn.e_outer.mat, mvn_float2.e_outer.mat);
+  EXPECT_FLOAT_VECTOR_EQ(mvn.e_vec, mvn_float2.e_vec);
+  EXPECT_FLOAT_MATRIX_EQ(mvn.e_outer.mat, mvn_float2.e_outer.mat);
 
   MatrixXd info_mat(3, 3);
   info_mat << 1,   0.1, 0.1,
@@ -95,14 +95,25 @@ TEST(Wishart, basic) {
   MatrixXd e_wishart = v * n;
   EXPECT_MATRIX_EQ(e_wishart, wishart.e.mat);
   EXPECT_DOUBLE_EQ(GetELogDetWishart(v, n), wishart.e_log_det);
+
+  // Test copying
+  WishartNatural<float> wishart_nat_float(wishart_nat);
+  EXPECT_FLOAT_MATRIX_EQ(wishart_nat_float.v.mat, wishart_nat.v.mat);
+  EXPECT_FLOAT_EQ(wishart_nat_float.n, wishart_nat.n);
+
+  // Test copying
+  WishartMoments<float> wishart_float(wishart);
+  EXPECT_FLOAT_MATRIX_EQ(wishart_float.e.mat, wishart.e.mat);
+  EXPECT_FLOAT_EQ(wishart_float.e_log_det, wishart.e_log_det);
+
 }
 
 
 TEST(Gamma, basic) {
   Gamma<double> gamma;
   Gamma<float> gamma2(gamma);
-  EXPECT_DOUBLE_EQ(gamma.e, gamma2.e);
-  EXPECT_DOUBLE_EQ(gamma.e_log, gamma2.e_log);
+  EXPECT_FLOAT_EQ(gamma.e, gamma2.e);
+  EXPECT_FLOAT_EQ(gamma.e_log, gamma2.e_log);
 }
 
 

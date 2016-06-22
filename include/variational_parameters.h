@@ -185,6 +185,7 @@ public:
     wishart_new.dim = dim;
     wishart_new.v = v;
     wishart_new.n = n;
+    return wishart_new;
   };
 };
 
