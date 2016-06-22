@@ -261,7 +261,7 @@ public:
     MatrixXT<T> mean_outer_prods = mean.e_vec * e_vec.transpose() +
                                    e_vec * mean.e_vec.transpose();
     return
-      -0.5 * (info.e.mat * (e_outer.mat + mean_outer_prods + mean.e_outer.mat)).trace() +
+      -0.5 * (info.e.mat * (e_outer.mat - mean_outer_prods + mean.e_outer.mat)).trace() +
       0.5 * info.e_log_det;
   };
 
@@ -270,7 +270,7 @@ public:
                                    e_vec * mean.transpose();
     MatrixXT<T> mean_outer = mean * mean.transpose();
     return
-      -0.5 * (info.e.mat * (e_outer.mat + mean_outer_prods + mean_outer)).trace() +
+      -0.5 * (info.e.mat * (e_outer.mat - mean_outer_prods + mean_outer)).trace() +
       0.5 * info.e_log_det;
   };
 
@@ -279,7 +279,7 @@ public:
                                    e_vec * mean.transpose();
     MatrixXT<T> mean_outer = mean * mean.transpose();
     return
-      -0.5 * (info * (e_outer.mat + mean_outer_prods + mean_outer)).trace() +
+      -0.5 * (info * (e_outer.mat - mean_outer_prods + mean_outer)).trace() +
       0.5 * log(info.determinant());
   };
 };
@@ -311,15 +311,15 @@ public:
 
   // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
   T ExpectedLogLikelihood(UnivariateNormal<T> mean, Gamma<T> info) const {
-    return -0.5 * info.e * (e2 + 2 * mean.e * e + mean.e2) + 0.5 * info.e_log;
+    return -0.5 * info.e * (e2 - 2 * mean.e * e + mean.e2) + 0.5 * info.e_log;
   };
 
   T ExpectedLogLikelihood(T mean, Gamma<T> info) const {
-    return -0.5 * info.e * (e2 + 2 * mean * e + mean * mean) + 0.5 * info.e_log;
+    return -0.5 * info.e * (e2 - 2 * mean * e + mean * mean) + 0.5 * info.e_log;
   };
 
   T ExpectedLogLikelihood(T mean, T info) const {
-    return -0.5 * info.e * (e2 + 2 * mean * e + mean * mean) + 0.5 * log(info);
+    return -0.5 * info.e * (e2 - 2 * mean * e + mean * mean) + 0.5 * log(info);
   };
 };
 
