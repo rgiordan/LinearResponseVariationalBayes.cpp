@@ -135,6 +135,9 @@ TEST(Gamma, basic) {
   gamma = GammaMoments<double>(gamma_nat);
   EXPECT_DOUBLE_EQ(alpha / beta, gamma.e);
   EXPECT_DOUBLE_EQ(get_e_log_gamma(alpha, beta), gamma.e_log);
+
+  // Just test that this runs.
+  double e_log_lik = gamma.ExpectedLogLikelihood(alpha, beta);
 }
 
 

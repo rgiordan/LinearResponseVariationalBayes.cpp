@@ -186,6 +186,10 @@ public:
     e = gamma_nat.alpha / gamma_nat.beta;
     e_log = get_e_log_gamma(gamma_nat.alpha, gamma_nat.beta);
   };
+
+  T ExpectedLogLikelihood(T alpha, T beta) {
+    return (alpha - 1) * e - beta * e_log;
+  }
 };
 
 

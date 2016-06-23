@@ -7,8 +7,6 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
-// #include "variational_parameters.h"
-
 #include <Eigen/Sparse>
 typedef Eigen::Triplet<double> Triplet; // For populating sparse matrices
 
