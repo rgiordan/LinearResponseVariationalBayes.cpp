@@ -140,28 +140,56 @@ public:
 /////////////////////////////////////
 // Variational parameters.
 
-template <class T> class Gamma {
+
+//////// Gamma
+
+template <class T> class GammaNatural {
 public:
 
-  // TODO: constrain these to always be consistent?
-  T e;
-  T e_log;
+  T alpha;
+  T beta;
 
-  Gamma() {
-    e = 1;
-    e_log = 0;
+  GammaNatural() {
+    alpha = 3;
+    beta = 3;
   };
 
-  template <typename Tnew> operator Gamma<Tnew>() const {
-    Gamma<Tnew> gamma_new;
-    gamma_new.e = e;
-    gamma_new.e_log = e_log;
+  template <typename Tnew> operator GammaNatural<Tnew>() const {
+    GammaNatural<Tnew> gamma_new;
+    gamma_new.alpha = alpha;
+    gamma_new.beta = beta;
 
     return gamma_new;
   };
 
 };
 
+
+template <class T> class GammaMoments {
+public:
+  T e;
+  T e_log;
+
+  GammaMoments() {
+    e = 1;
+    e_log = 0;
+  };
+
+  template <typename Tnew> operator GammaMoments<Tnew>() const {
+    GammaMoments<Tnew> gamma_new;
+    gamma_new.e = e;
+    gamma_new.e_log = e_log;
+    return gamma_new;
+  };
+
+  GammaMoments(GammaNatural<T> gamma_nat) {
+    e = gamma_nat.alpha / gamma_nat.beta;
+    e_log = get_e_log_gamma(gamma_nat.alpha, gamma_nat.beta);
+  };
+};
+
+
+//////// Wishart
 
 template <class T> class WishartNatural {
 public:
@@ -223,24 +251,53 @@ public:
 };
 
 
-template <class T> class MultivariateNormal {
+//////// Multivariate Normal
+
+
+template <class T> class MultivariateNormalNatural {
+public:
+  int dim;
+  VectorXT<T> loc;
+  PosDefMatrixParameter<T> info;
+
+  MultivariateNormalNatural(int dim): dim(dim) {
+    loc = VectorXT<T>::Zero(dim);
+    info = PosDefMatrixParameter<T>(dim);
+    info.mat = MatrixXT<T>::Zero(dim, dim);
+  };
+
+  MultivariateNormalNatural() {
+    MultivariateNormalNatural(1);
+  };
+
+  // Convert to another type.
+  template <typename Tnew> operator MultivariateNormalNatural<Tnew>() const {
+    MultivariateNormalNatural<Tnew> mvn(dim);
+    mvn.loc = loc.template cast <Tnew>();
+    mvn.info.mat = info.mat.template cast<Tnew>();
+    return mvn;
+  };
+};
+
+
+template <class T> class MultivariateNormalMoments {
 public:
   int dim;
   VectorXT<T> e_vec;
   PosDefMatrixParameter<T> e_outer;
 
-  MultivariateNormal(int dim): dim(dim) {
-  e_vec = VectorXT<T>::Zero(dim);
+  MultivariateNormalMoments(int dim): dim(dim) {
+    e_vec = VectorXT<T>::Zero(dim);
     e_outer = PosDefMatrixParameter<T>(dim);
     e_outer.mat = MatrixXT<T>::Zero(dim, dim);
   };
 
-  MultivariateNormal() {
-    MultivariateNormal(1);
+  MultivariateNormalMoments() {
+    MultivariateNormalMoments(1);
   };
 
   // Set from a vector of another type.
-  template <typename Tnew> MultivariateNormal(VectorXT<Tnew> mean) {
+  template <typename Tnew> MultivariateNormalMoments(VectorXT<Tnew> mean) {
     dim = mean.size();
     e_vec = mean.template cast<T>();
     MatrixXT<T> e_vec_outer = e_vec * e_vec.transpose();
@@ -248,16 +305,25 @@ public:
     e_outer.set(e_vec_outer);
   };
 
+  // Set from natural parameters.
+  MultivariateNormalMoments(MultivariateNormalNatural<T> mvn_nat) {
+    e_vec = mvn_nat.loc;
+    MatrixXT<T> e_outer_mat =
+      e_vec * e_vec.transpose() + mvn_nat.info.mat.inverse();
+    e_outer = PosDefMatrixParameter<T>(e_vec.size());
+    e_outer.set(e_outer_mat);
+  };
+
   // Convert to another type.
-  template <typename Tnew> operator MultivariateNormal<Tnew>() const {
-    MultivariateNormal<Tnew> mvn(dim);
+  template <typename Tnew> operator MultivariateNormalMoments<Tnew>() const {
+    MultivariateNormalMoments<Tnew> mvn(dim);
     mvn.e_vec = e_vec.template cast <Tnew>();
     mvn.e_outer.mat = e_outer.mat.template cast<Tnew>();
     return mvn;
   };
 
   // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
-  T ExpectedLogLikelihood(MultivariateNormal<T> mean, WishartMoments<T> info) const {
+  T ExpectedLogLikelihood(MultivariateNormalMoments<T> mean, WishartMoments<T> info) const {
     MatrixXT<T> mean_outer_prods = mean.e_vec * e_vec.transpose() +
                                    e_vec * mean.e_vec.transpose();
     return
@@ -310,11 +376,11 @@ public:
   };
 
   // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
-  T ExpectedLogLikelihood(UnivariateNormal<T> mean, Gamma<T> info) const {
+  T ExpectedLogLikelihood(UnivariateNormal<T> mean, GammaMoments<T> info) const {
     return -0.5 * info.e * (e2 - 2 * mean.e * e + mean.e2) + 0.5 * info.e_log;
   };
 
-  T ExpectedLogLikelihood(T mean, Gamma<T> info) const {
+  T ExpectedLogLikelihood(T mean, GammaMoments<T> info) const {
     return -0.5 * info.e * (e2 - 2 * mean * e + mean * mean) + 0.5 * info.e_log;
   };
 

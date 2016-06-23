@@ -45,19 +45,19 @@ TEST(MultivariateNormal, basic) {
   mean << 1, 2, 3;
   MatrixXd mean_outer = mean * mean.transpose();
 
-  MultivariateNormal<double> mvn(dim);
+  MultivariateNormalMoments<double> mvn(dim);
   mvn.e_vec = mean;
   mvn.e_outer.set(mean_outer);
 
-  MultivariateNormal<float> mvn_float(mean);
+  MultivariateNormalMoments<float> mvn_float(mean);
   EXPECT_FLOAT_VECTOR_EQ(mean, mvn_float.e_vec);
   EXPECT_FLOAT_MATRIX_EQ(mean_outer, mvn_float.e_outer.mat);
 
-  MultivariateNormal<float> mvn_float2 = mvn;
+  MultivariateNormalMoments<float> mvn_float2 = mvn;
   EXPECT_FLOAT_VECTOR_EQ(mvn.e_vec, mvn_float2.e_vec);
   EXPECT_FLOAT_MATRIX_EQ(mvn.e_outer.mat, mvn_float2.e_outer.mat);
 
-  MatrixXd info_mat(3, 3);
+  MatrixXd info_mat(dim, dim);
   info_mat << 1,   0.1, 0.1,
               0.1, 1,   0.1,
               0.1, 0.1, 1;
@@ -70,7 +70,7 @@ TEST(MultivariateNormal, basic) {
 
   VectorXd mean_center(dim);
   mean_center << 1.1, 2.1, 3.1;
-  MultivariateNormal<double> mvn_center(mean_center);
+  MultivariateNormalMoments<double> mvn_center(mean_center);
 
   double log_lik_1 = mvn.ExpectedLogLikelihood(mvn_center, info);
   double log_lik_2 = mvn.ExpectedLogLikelihood(mean_center, info);
@@ -78,6 +78,16 @@ TEST(MultivariateNormal, basic) {
 
   EXPECT_DOUBLE_EQ(log_lik_1, log_lik_2);
   EXPECT_DOUBLE_EQ(log_lik_1, log_lik_3);
+
+  // Test conversion from natural parameters.
+  MultivariateNormalNatural<double> mvn_nat(dim);
+  mvn_nat.loc = 2 * mean;
+  mvn_nat.info.mat = info_mat;
+  mvn = MultivariateNormalMoments<double>(mvn_nat);
+  EXPECT_VECTOR_EQ(mvn_nat.loc, mvn.e_vec);
+  MatrixXd expected_outer =
+    info_mat.inverse() + mvn_nat.loc * mvn_nat.loc.transpose();
+  EXPECT_MATRIX_EQ(expected_outer, mvn.e_outer.mat);
 }
 
 
@@ -110,10 +120,21 @@ TEST(Wishart, basic) {
 
 
 TEST(Gamma, basic) {
-  Gamma<double> gamma;
-  Gamma<float> gamma2(gamma);
+  GammaMoments<double> gamma;
+  gamma.e = 5;
+  gamma.e_log = -3;
+  GammaMoments<float> gamma2(gamma);
   EXPECT_FLOAT_EQ(gamma.e, gamma2.e);
   EXPECT_FLOAT_EQ(gamma.e_log, gamma2.e_log);
+
+  GammaNatural<double> gamma_nat;
+  double alpha = 4;
+  double beta = 5;
+  gamma_nat.alpha = alpha;
+  gamma_nat.beta = beta;
+  gamma = GammaMoments<double>(gamma_nat);
+  EXPECT_DOUBLE_EQ(alpha / beta, gamma.e);
+  EXPECT_DOUBLE_EQ(get_e_log_gamma(alpha, beta), gamma.e_log);
 }
 
 
