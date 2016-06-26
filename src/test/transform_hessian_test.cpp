@@ -85,7 +85,7 @@ TEST(y_to_x_to_y, is_inverse) {
   ASSERT_EQ(x.size(), y.size());
   VectorXd y_trans = x_to_y(x);
   ASSERT_EQ(y_trans.size(), x.size());
-  EXPECT_VECTOR_EQ(y_trans, y);
+  EXPECT_VECTOR_EQ(y_trans, y, "y_trans");
   EXPECT_DOUBLE_EQ(f_of_y(y), f_of_x(x));
 };
 
@@ -101,10 +101,10 @@ TEST(hessian_transforms, correct) {
   // Currently, stan::math::jacobian returns the transpose of the Jacobian!
   stan::math::set_zero_all_adjoints();
   stan::math::jacobian(y_to_x, y, x, dxt_dy);
-  EXPECT_VECTOR_EQ(x, y_to_x(y));
+  EXPECT_VECTOR_EQ(x, y_to_x(y), "x");
 
   stan::math::jacobian(x_to_y, x, y, dyt_dx);
-  EXPECT_VECTOR_EQ(y, x_to_y(x));
+  EXPECT_VECTOR_EQ(y, x_to_y(x), "y");
 
   double f_y_val;
   VectorXd df_dy(2);
@@ -120,10 +120,10 @@ TEST(hessian_transforms, correct) {
 
   // The inverse of dxt_dy is dyt_dx.
   VectorXd df_dx_from_jac2 = dyt_dx * df_dy;
-  EXPECT_VECTOR_EQ(df_dx, df_dx_from_jac2);
+  EXPECT_VECTOR_EQ(df_dx, df_dx_from_jac2, "df_dx_from_jac2");
 
   VectorXd df_dx_from_jac = dxt_dy.colPivHouseholderQr().solve(df_dy);
-  EXPECT_VECTOR_EQ(df_dx, df_dx_from_jac);
+  EXPECT_VECTOR_EQ(df_dx, df_dx_from_jac, "df_dx_from_jac");
 
   // Test the transformed hessian.
 
@@ -141,7 +141,7 @@ TEST(hessian_transforms, correct) {
   printf(".\n");
   stan::math::hessian(f_of_x, x, f_x_val, x_grad_unused, d2f_dx2_test);
 
-  EXPECT_MATRIX_EQ(d2f_dx2, d2f_dx2_test);
+  EXPECT_MATRIX_EQ(d2f_dx2, d2f_dx2_test, "d2f_dx2_test");
 };
 
 

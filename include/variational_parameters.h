@@ -60,7 +60,7 @@ public:
     }
   }
 
-  // TODO: don't use the get() method.
+  // TODO: don't use the get() method, just access the matrix directly.
   MatrixXT<T> get() const {
     return mat;
   }
@@ -89,7 +89,7 @@ public:
       throw std::runtime_error("min_diag must be non-negative");
     }
     MatrixXT<T> chol_mat(size, size);
-    for (int row=0; row < size; row++) {
+        for (int row=0; row < size; row++) {
       for (int col=0; col <= row; col++) {
         T this_value = T(set_value(get_ud_index(row, col)));
         if (col == row) {
@@ -149,19 +149,49 @@ public:
   T alpha;
   T beta;
 
+  // For unconstrained encoding.
+  T alpha_min;
+  T beta_min;
+
   GammaNatural() {
     alpha = 3;
     beta = 3;
+
+    alpha_min = 0;
+    beta_min = 0;
   };
 
   template <typename Tnew> operator GammaNatural<Tnew>() const {
     GammaNatural<Tnew> gamma_new;
     gamma_new.alpha = alpha;
     gamma_new.beta = beta;
+    gamma_new.alpha_min = alpha_min;
+    gamma_new.beta_min = beta_min;
 
     return gamma_new;
   };
 
+  VectorXT<T> encode_vector(bool unconstrained) {
+    VectorXT<T> vec(2);
+    if (unconstrained) {
+      vec(0) = log(alpha - alpha_min);
+      vec(1) = log(beta - beta_min);
+    } else {
+      vec(0) = alpha;
+      vec(1) = beta;
+    }
+    return vec;
+  }
+
+  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+    if (unconstrained) {
+      alpha = exp(vec(0)) + alpha_min;
+      beta = exp(vec(1)) + beta_min;
+    } else {
+      alpha = vec(0);
+      beta = vec(1);
+    }
+  }
 };
 
 
@@ -170,15 +200,20 @@ public:
   T e;
   T e_log;
 
+  // For unconstrained encoding.
+  T e_min;
+
   GammaMoments() {
     e = 1;
     e_log = 0;
+    e_min = 0;
   };
 
   template <typename Tnew> operator GammaMoments<Tnew>() const {
     GammaMoments<Tnew> gamma_new;
     gamma_new.e = e;
     gamma_new.e_log = e_log;
+    gamma_new.e_min = e_min;
     return gamma_new;
   };
 
@@ -190,6 +225,27 @@ public:
   T ExpectedLogLikelihood(T alpha, T beta) {
     return (alpha - 1) * e - beta * e_log;
   }
+
+  VectorXT<T> encode_vector(bool unconstrained) {
+    VectorXT<T> vec(2);
+    vec(1) = e_log;
+    if (unconstrained) {
+      vec(0) = log(e - e_min);
+    } else {
+      vec(0) = e;
+    }
+    return vec;
+  }
+
+  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+    e_log = vec(1);
+    if (unconstrained) {
+      e = exp(vec(0)) + e_min;
+    } else {
+      e = vec(0);
+    }
+  }
+
 };
 
 
@@ -202,10 +258,16 @@ public:
   PosDefMatrixParameter<T> v;
   T n;
 
+  // For unconstrained encoding.
+  T n_min;
+  T diag_min;
+
   WishartNatural(int dim): dim(dim) {
     n = 0;
     v = PosDefMatrixParameter<T>(dim);
     v.mat = MatrixXT<T>::Zero(dim, dim);
+    diag_min = 0;
+    n_min = 0;
   };
 
   WishartNatural() {
@@ -217,7 +279,32 @@ public:
     wishart_new.dim = dim;
     wishart_new.v = v;
     wishart_new.n = n;
+    wishart_new.diag_min = diag_min;
+    wishart_new.n_min = n_min;
     return wishart_new;
+  };
+
+  VectorXT<T> encode_vector(bool unconstrained) {
+    VectorXT<T> vec(1 + v.size_ud);
+    if (unconstrained) {
+      vec(0) = log(n - n_min);
+      vec.segment(1, v.size_ud) = v.get_unconstrained_vec(diag_min);
+    } else {
+      vec(0) = n;
+      vec.segment(1, v.size_ud) = v.get_vec();
+    }
+    return vec;
+  };
+
+  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+    VectorXT<T> v_vec = vec.segment(1, v.size_ud);
+    if (unconstrained) {
+      n = exp(vec(0)) + n_min;
+      v.set_unconstrained_vec(v_vec, diag_min);
+    } else {
+      n = vec(0);
+      v.set_vec(v_vec);
+    }
   };
 };
 
@@ -229,10 +316,14 @@ public:
   PosDefMatrixParameter<T> e;
   T e_log_det;
 
+  // For the unconstrained parameterization.
+  T diag_min;
+
   WishartMoments(int dim): dim(dim) {
     e_log_det = 0;
     e = PosDefMatrixParameter<T>(dim);
     e.mat = MatrixXT<T>::Zero(dim, dim);
+    diag_min = 0;
   };
 
   WishartMoments() {
@@ -250,7 +341,29 @@ public:
     WishartMoments<Tnew> wishart_new(dim);
     wishart_new.e = e;
     wishart_new.e_log_det = e_log_det;
+    wishart_new.diag_min = diag_min;
     return wishart_new;
+  };
+
+  VectorXT<T> encode_vector(bool unconstrained) {
+    VectorXT<T> vec(1 + e.size_ud);
+    vec(0) = e_log_det;
+    if (unconstrained) {
+      vec.segment(1, e.size_ud) = e.get_unconstrained_vec(diag_min);
+    } else {
+      vec.segment(1, e.size_ud) = e.get_vec();
+    }
+    return vec;
+  };
+
+  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+    VectorXT<T> e_vec = vec.segment(1, e.size_ud);
+    e_log_det = vec(0);
+    if (unconstrained) {
+      e.set_unconstrained_vec(e_vec, diag_min);
+    } else {
+      e.set_vec(e_vec);
+    }
   };
 };
 
@@ -264,10 +377,13 @@ public:
   VectorXT<T> loc;
   PosDefMatrixParameter<T> info;
 
+  T diag_min;
+
   MultivariateNormalNatural(int dim): dim(dim) {
     loc = VectorXT<T>::Zero(dim);
     info = PosDefMatrixParameter<T>(dim);
     info.mat = MatrixXT<T>::Zero(dim, dim);
+    diag_min = 0;
   };
 
   MultivariateNormalNatural() {
@@ -279,7 +395,30 @@ public:
     MultivariateNormalNatural<Tnew> mvn(dim);
     mvn.loc = loc.template cast <Tnew>();
     mvn.info.mat = info.mat.template cast<Tnew>();
+    mvn.diag_min = diag_min;
     return mvn;
+  };
+
+  VectorXT<T> encode_vector(bool unconstrained) {
+    VectorXT<T> vec(dim + info.size_ud);
+    vec.segment(0, dim) = loc;
+    if (unconstrained) {
+      vec.segment(dim, info.size_ud) = info.get_unconstrained_vec(diag_min);
+    } else {
+      vec.segment(dim, info.size_ud) = info.get_vec();
+    }
+    return vec;
+  };
+
+  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+    VectorXT<T> sub_vec = vec.segment(0, dim);
+    loc = sub_vec;
+    sub_vec = vec.segment(dim, info.size_ud);
+    if (unconstrained) {
+      info.set_unconstrained_vec(sub_vec, diag_min);
+    } else {
+      info.set_vec(sub_vec);
+    }
   };
 };
 
@@ -290,10 +429,13 @@ public:
   VectorXT<T> e_vec;
   PosDefMatrixParameter<T> e_outer;
 
+  T diag_min;
+
   MultivariateNormalMoments(int dim): dim(dim) {
     e_vec = VectorXT<T>::Zero(dim);
     e_outer = PosDefMatrixParameter<T>(dim);
     e_outer.mat = MatrixXT<T>::Zero(dim, dim);
+    diag_min = 0;
   };
 
   MultivariateNormalMoments() {
@@ -307,15 +449,18 @@ public:
     MatrixXT<T> e_vec_outer = e_vec * e_vec.transpose();
     e_outer = PosDefMatrixParameter<Tnew>(dim);
     e_outer.set(e_vec_outer);
+    diag_min = 0;
   };
 
   // Set from natural parameters.
   MultivariateNormalMoments(MultivariateNormalNatural<T> mvn_nat) {
+    dim = mvn_nat.dim;
     e_vec = mvn_nat.loc;
     MatrixXT<T> e_outer_mat =
       e_vec * e_vec.transpose() + mvn_nat.info.mat.inverse();
     e_outer = PosDefMatrixParameter<T>(e_vec.size());
     e_outer.set(e_outer_mat);
+    diag_min = 0;
   };
 
   // Convert to another type.
@@ -323,7 +468,30 @@ public:
     MultivariateNormalMoments<Tnew> mvn(dim);
     mvn.e_vec = e_vec.template cast <Tnew>();
     mvn.e_outer.mat = e_outer.mat.template cast<Tnew>();
+    mvn.diag_min = diag_min;
     return mvn;
+  };
+
+  VectorXT<T> encode_vector(bool unconstrained) {
+    VectorXT<T> vec(dim + e_outer.size_ud);
+    vec.segment(0, dim) = e_vec;
+    if (unconstrained) {
+      vec.segment(dim, e_outer.size_ud) = e_outer.get_unconstrained_vec(diag_min);
+    } else {
+      vec.segment(dim, e_outer.size_ud) = e_outer.get_vec();
+    }
+    return vec;
+  };
+
+  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+    VectorXT<T> sub_vec = vec.segment(0, dim);
+    e_vec = sub_vec;
+    sub_vec = vec.segment(dim, e_outer.size_ud);
+    if (unconstrained) {
+      e_outer.set_unconstrained_vec(sub_vec, diag_min);
+    } else {
+      e_outer.set_vec(sub_vec);
+    }
   };
 
   // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
@@ -354,6 +522,8 @@ public:
   };
 };
 
+
+//////// Univariate Normal
 
 template <class T> class UnivariateNormal {
 public:

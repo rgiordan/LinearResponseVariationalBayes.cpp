@@ -33,6 +33,8 @@ variational_parameters.h
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/variational_parameters.h
 gtest/gtest.h
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/gtest/gtest.h
+string
+-
 Eigen/Dense
 -
 test_eigen.h
