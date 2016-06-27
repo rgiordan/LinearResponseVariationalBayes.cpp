@@ -105,6 +105,8 @@ TEST(MultivariateNormalMoments, encoding) {
   MultivariateNormalMoments<double> mvn_copy(dim);
   mvn.e_vec = vec;
   mvn.e_outer.set(mat);
+  // The matrix must still be positive definite after
+  // subtracting this from the diagonal.
   mvn.diag_min = 0.2;
   mvn_copy.diag_min = mvn.diag_min;
 
@@ -134,6 +136,8 @@ TEST(MultivariateNormalNatural, encoding) {
   MultivariateNormalNatural<double> mvn_copy(dim);
   mvn.loc = vec;
   mvn.info.set(mat);
+  // The matrix must still be positive definite after
+  // subtracting this from the diagonal.
   mvn.diag_min = 0.2;
   mvn_copy.diag_min = mvn.diag_min;
 
@@ -178,6 +182,63 @@ TEST(Wishart, basic) {
 }
 
 
+TEST(WishartNatural, encoding) {
+  int dim = 3;
+  MatrixXd mat(dim, dim);
+  mat <<  1,   0.1, 0.1,
+          0.1, 1,   0.1,
+          0.1, 0.1, 1;
+
+  WishartNatural<double> wishart(dim);
+  WishartNatural<double> wishart_copy(dim);
+  wishart.n = 5.0;
+  wishart.v.set(mat);
+  wishart.diag_min = 0.2;
+  wishart.n_min = 0.4;
+  wishart_copy.diag_min = wishart.diag_min;
+  wishart_copy.n_min = wishart.n_min;
+
+  for (int ind = 0; ind < 2; ind++) {
+    bool unconstrained = (ind == 0 ? true: false);
+    std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
+    VectorXd encoded_vec = wishart.encode_vector(unconstrained);
+    wishart_copy.n = 0.0;
+    wishart_copy.v.mat = MatrixXd::Zero(dim, dim);
+    wishart_copy.decode_vector(encoded_vec, unconstrained);
+    EXPECT_DOUBLE_EQ(wishart.n, wishart_copy.n) << unconstrained_str;
+    EXPECT_MATRIX_EQ(wishart.v.mat, wishart_copy.v.mat, unconstrained_str);
+  }
+}
+
+
+TEST(WishartMoments, encoding) {
+  int dim = 3;
+  MatrixXd mat(dim, dim);
+  mat <<  1,   0.1, 0.1,
+          0.1, 1,   0.1,
+          0.1, 0.1, 1;
+
+  WishartMoments<double> wishart(dim);
+  WishartMoments<double> wishart_copy(dim);
+  wishart.e_log_det = 5.0;
+  wishart.e.set(mat);
+  wishart.diag_min = 0.2;
+  wishart_copy.diag_min = wishart.diag_min;
+
+  for (int ind = 0; ind < 2; ind++) {
+    bool unconstrained = (ind == 0 ? true: false);
+    std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
+    VectorXd encoded_vec = wishart.encode_vector(unconstrained);
+    wishart_copy.e_log_det = 0.0;
+    wishart_copy.e.mat = MatrixXd::Zero(dim, dim);
+    wishart_copy.decode_vector(encoded_vec, unconstrained);
+    EXPECT_DOUBLE_EQ(wishart.e_log_det, wishart_copy.e_log_det) << unconstrained_str;
+    EXPECT_MATRIX_EQ(wishart.e.mat, wishart_copy.e.mat, unconstrained_str);
+  }
+}
+
+
+
 TEST(Gamma, basic) {
   GammaMoments<double> gamma;
   gamma.e = 5;
@@ -197,6 +258,50 @@ TEST(Gamma, basic) {
 
   // Just test that this runs.
   double e_log_lik = gamma.ExpectedLogLikelihood(alpha, beta);
+}
+
+
+TEST(GammaNatural, encoding) {
+  GammaNatural<double> gamma;
+  GammaNatural<double> gamma_copy;
+  gamma.alpha = 3.0;
+  gamma.beta = 4.0;
+  gamma.alpha_min = 0.1;
+  gamma.beta_min = 0.2;
+  gamma_copy.alpha_min = gamma.alpha_min;
+  gamma_copy.beta_min = gamma.beta_min;
+
+  for (int ind = 0; ind < 2; ind++) {
+    bool unconstrained = (ind == 0 ? true: false);
+    std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
+    VectorXd encoded_vec = gamma.encode_vector(unconstrained);
+    gamma_copy.alpha = 0.0;
+    gamma_copy.beta = 0.0;
+    gamma_copy.decode_vector(encoded_vec, unconstrained);
+    EXPECT_DOUBLE_EQ(gamma.alpha, gamma_copy.alpha) << unconstrained_str;
+    EXPECT_DOUBLE_EQ(gamma.beta, gamma_copy.beta) << unconstrained_str;
+  }
+}
+
+
+TEST(GammaMoments, encoding) {
+  GammaMoments<double> gamma;
+  GammaMoments<double> gamma_copy;
+  gamma.e = 3.0;
+  gamma.e_log = 4.0;
+  gamma.e_min = 0.1;
+  gamma_copy.e_min = gamma.e_min;
+
+  for (int ind = 0; ind < 2; ind++) {
+    bool unconstrained = (ind == 0 ? true: false);
+    std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
+    VectorXd encoded_vec = gamma.encode_vector(unconstrained);
+    gamma_copy.e = 0.0;
+    gamma_copy.e_log = 0.0;
+    gamma_copy.decode_vector(encoded_vec, unconstrained);
+    EXPECT_DOUBLE_EQ(gamma.e, gamma_copy.e) << unconstrained_str;
+    EXPECT_DOUBLE_EQ(gamma.e_log, gamma_copy.e_log) << unconstrained_str;
+  }
 }
 
 
