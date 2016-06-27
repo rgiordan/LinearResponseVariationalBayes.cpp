@@ -105,6 +105,7 @@ TEST(MultivariateNormalMoments, encoding) {
   MultivariateNormalMoments<double> mvn_copy(dim);
   mvn.e_vec = vec;
   mvn.e_outer.set(mat);
+  mvn.diag_min = 0.2;
   mvn_copy.diag_min = mvn.diag_min;
 
   for (int ind = 0; ind < 2; ind++) {
@@ -133,17 +134,18 @@ TEST(MultivariateNormalNatural, encoding) {
   MultivariateNormalNatural<double> mvn_copy(dim);
   mvn.loc = vec;
   mvn.info.set(mat);
+  mvn.diag_min = 0.2;
   mvn_copy.diag_min = mvn.diag_min;
 
   for (int ind = 0; ind < 2; ind++) {
-    bool constrained = (ind == 0 ? true: false);
-    std::string constrained_str = (constrained ? "constrained": "unconstrained");
-    VectorXd encoded_vec = mvn.encode_vector(constrained);
+    bool unconstrained = (ind == 0 ? true: false);
+    std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
+    VectorXd encoded_vec = mvn.encode_vector(unconstrained);
     mvn_copy.loc = VectorXd::Zero(dim);
     mvn_copy.info.mat = MatrixXd::Zero(dim, dim);
-    mvn_copy.decode_vector(encoded_vec, constrained);
-    EXPECT_VECTOR_EQ(mvn.loc, mvn_copy.loc, constrained_str);
-    EXPECT_MATRIX_EQ(mvn.info.mat, mvn_copy.info.mat, constrained_str);
+    mvn_copy.decode_vector(encoded_vec, unconstrained);
+    EXPECT_VECTOR_EQ(mvn.loc, mvn_copy.loc, unconstrained_str);
+    EXPECT_MATRIX_EQ(mvn.info.mat, mvn_copy.info.mat, unconstrained_str);
   }
 }
 

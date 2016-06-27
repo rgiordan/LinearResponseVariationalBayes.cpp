@@ -89,7 +89,7 @@ public:
       throw std::runtime_error("min_diag must be non-negative");
     }
     MatrixXT<T> chol_mat(size, size);
-        for (int row=0; row < size; row++) {
+    for (int row=0; row < size; row++) {
       for (int col=0; col <= row; col++) {
         T this_value = T(set_value(get_ud_index(row, col)));
         if (col == row) {
