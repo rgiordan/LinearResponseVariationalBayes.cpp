@@ -21,6 +21,7 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 // The index in a vector of lower diagonal terms of a particular matrix value.
 int get_ud_index(int i, int j);
 
+
 template <class T> class PosDefMatrixParameter {
 // private:
 
@@ -153,6 +154,8 @@ public:
   T alpha_min;
   T beta_min;
 
+  int encoded_size = 2;
+
   GammaNatural() {
     alpha = 3;
     beta = 3;
@@ -171,8 +174,8 @@ public:
     return gamma_new;
   };
 
-  VectorXT<T> encode_vector(bool unconstrained) {
-    VectorXT<T> vec(2);
+  VectorXT<T> encode_vector(bool unconstrained) const {
+    VectorXT<T> vec(encoded_size);
     if (unconstrained) {
       vec(0) = log(alpha - alpha_min);
       vec(1) = log(beta - beta_min);
@@ -183,7 +186,8 @@ public:
     return vec;
   }
 
-  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+  template <typename Tnew>
+  void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
     if (unconstrained) {
       alpha = exp(vec(0)) + alpha_min;
       beta = exp(vec(1)) + beta_min;
@@ -202,6 +206,7 @@ public:
 
   // For unconstrained encoding.
   T e_min;
+  int encoded_size = 2;
 
   GammaMoments() {
     e = 1;
@@ -226,8 +231,8 @@ public:
     return (alpha - 1) * e - beta * e_log;
   }
 
-  VectorXT<T> encode_vector(bool unconstrained) {
-    VectorXT<T> vec(2);
+  VectorXT<T> encode_vector(bool unconstrained) const {
+    VectorXT<T> vec(encoded_size);
     vec(1) = e_log;
     if (unconstrained) {
       vec(0) = log(e - e_min);
@@ -237,7 +242,8 @@ public:
     return vec;
   }
 
-  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+  template <typename Tnew>
+  void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
     e_log = vec(1);
     if (unconstrained) {
       e = exp(vec(0)) + e_min;
@@ -261,6 +267,7 @@ public:
   // For unconstrained encoding.
   T n_min;
   T diag_min;
+  int encoded_size;
 
   WishartNatural(int dim): dim(dim) {
     n = 0;
@@ -268,6 +275,7 @@ public:
     v.mat = MatrixXT<T>::Zero(dim, dim);
     diag_min = 0;
     n_min = 0;
+    encoded_size = 1 + v.size_ud;
   };
 
   WishartNatural() {
@@ -281,11 +289,12 @@ public:
     wishart_new.n = n;
     wishart_new.diag_min = diag_min;
     wishart_new.n_min = n_min;
+    wishart_new.encoded_size = encoded_size;
     return wishart_new;
   };
 
-  VectorXT<T> encode_vector(bool unconstrained) {
-    VectorXT<T> vec(1 + v.size_ud);
+  VectorXT<T> encode_vector(bool unconstrained) const {
+    VectorXT<T> vec(encoded_size);
     if (unconstrained) {
       vec(0) = log(n - n_min);
       vec.segment(1, v.size_ud) = v.get_unconstrained_vec(diag_min);
@@ -296,7 +305,8 @@ public:
     return vec;
   };
 
-  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+  template <typename Tnew>
+  void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
     VectorXT<T> v_vec = vec.segment(1, v.size_ud);
     if (unconstrained) {
       n = exp(vec(0)) + n_min;
@@ -318,12 +328,14 @@ public:
 
   // For the unconstrained parameterization.
   T diag_min;
+  int encoded_size;
 
   WishartMoments(int dim): dim(dim) {
     e_log_det = 0;
     e = PosDefMatrixParameter<T>(dim);
     e.mat = MatrixXT<T>::Zero(dim, dim);
     diag_min = 0;
+    encoded_size = 1 + e.size_ud;
   };
 
   WishartMoments() {
@@ -335,6 +347,7 @@ public:
     e = PosDefMatrixParameter<T>(dim);
     e.mat = wishart_nat.v.mat * wishart_nat.n;
     e_log_det = GetELogDetWishart(wishart_nat.v.mat, wishart_nat.n);
+    encoded_size = 1 + e.size_ud;
   }
 
   template <typename Tnew> operator WishartMoments<Tnew>() const {
@@ -345,8 +358,8 @@ public:
     return wishart_new;
   };
 
-  VectorXT<T> encode_vector(bool unconstrained) {
-    VectorXT<T> vec(1 + e.size_ud);
+  VectorXT<T> encode_vector(bool unconstrained) const {
+    VectorXT<T> vec(encoded_size);
     vec(0) = e_log_det;
     if (unconstrained) {
       vec.segment(1, e.size_ud) = e.get_unconstrained_vec(diag_min);
@@ -356,7 +369,8 @@ public:
     return vec;
   };
 
-  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+  template <typename Tnew>
+  void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
     VectorXT<T> e_vec = vec.segment(1, e.size_ud);
     e_log_det = vec(0);
     if (unconstrained) {
@@ -378,12 +392,14 @@ public:
   PosDefMatrixParameter<T> info;
 
   T diag_min;
+  int encoded_size;
 
   MultivariateNormalNatural(int dim): dim(dim) {
     loc = VectorXT<T>::Zero(dim);
     info = PosDefMatrixParameter<T>(dim);
     info.mat = MatrixXT<T>::Zero(dim, dim);
     diag_min = 0;
+    encoded_size = dim + info.size_ud;
   };
 
   MultivariateNormalNatural() {
@@ -396,11 +412,12 @@ public:
     mvn.loc = loc.template cast <Tnew>();
     mvn.info.mat = info.mat.template cast<Tnew>();
     mvn.diag_min = diag_min;
+    mvn.encoded_size = dim + info.size_ud;
     return mvn;
   };
 
-  VectorXT<T> encode_vector(bool unconstrained) {
-    VectorXT<T> vec(dim + info.size_ud);
+  VectorXT<T> encode_vector(bool unconstrained) const {
+    VectorXT<T> vec(encoded_size);
     vec.segment(0, dim) = loc;
     if (unconstrained) {
       vec.segment(dim, info.size_ud) = info.get_unconstrained_vec(diag_min);
@@ -410,7 +427,8 @@ public:
     return vec;
   };
 
-  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+  template <typename Tnew>
+  void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
     VectorXT<T> sub_vec = vec.segment(0, dim);
     loc = sub_vec;
     sub_vec = vec.segment(dim, info.size_ud);
@@ -430,12 +448,14 @@ public:
   PosDefMatrixParameter<T> e_outer;
 
   T diag_min;
+  int encoded_size;
 
   MultivariateNormalMoments(int dim): dim(dim) {
     e_vec = VectorXT<T>::Zero(dim);
     e_outer = PosDefMatrixParameter<T>(dim);
     e_outer.mat = MatrixXT<T>::Zero(dim, dim);
     diag_min = 0;
+    encoded_size = dim + e_outer.size_ud;
   };
 
   MultivariateNormalMoments() {
@@ -445,6 +465,7 @@ public:
   // Set from a vector of another type.
   template <typename Tnew> MultivariateNormalMoments(VectorXT<Tnew> mean) {
     dim = mean.size();
+    encoded_size = dim + e_outer.size_ud;
     e_vec = mean.template cast<T>();
     MatrixXT<T> e_vec_outer = e_vec * e_vec.transpose();
     e_outer = PosDefMatrixParameter<Tnew>(dim);
@@ -455,6 +476,7 @@ public:
   // Set from natural parameters.
   MultivariateNormalMoments(MultivariateNormalNatural<T> mvn_nat) {
     dim = mvn_nat.dim;
+    encoded_size = dim + e_outer.size_ud;
     e_vec = mvn_nat.loc;
     MatrixXT<T> e_outer_mat =
       e_vec * e_vec.transpose() + mvn_nat.info.mat.inverse();
@@ -472,8 +494,8 @@ public:
     return mvn;
   };
 
-  VectorXT<T> encode_vector(bool unconstrained) {
-    VectorXT<T> vec(dim + e_outer.size_ud);
+  VectorXT<T> encode_vector(bool unconstrained) const {
+    VectorXT<T> vec(encoded_size);
     vec.segment(0, dim) = e_vec;
     if (unconstrained) {
       vec.segment(dim, e_outer.size_ud) = e_outer.get_unconstrained_vec(diag_min);
@@ -483,7 +505,8 @@ public:
     return vec;
   };
 
-  template <typename Tnew> void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+  template <typename Tnew>
+  void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
     VectorXT<T> sub_vec = vec.segment(0, dim);
     e_vec = sub_vec;
     sub_vec = vec.segment(dim, e_outer.size_ud);
@@ -525,32 +548,110 @@ public:
 
 //////// Univariate Normal
 
-template <class T> class UnivariateNormal {
+template <class T> class UnivariateNormalNatural {
+public:
+  T loc;  // The expectation.
+  T info; // The expectation of the square.
+
+  T info_min;
+  int encoded_size = 2;
+
+  UnivariateNormalNatural() {
+    loc = 0;
+    info = 0;
+    info_min = 0;
+  };
+
+  // Convert to another type.
+  template <typename Tnew> operator UnivariateNormalNatural<Tnew>() const {
+    UnivariateNormalNatural<Tnew> uvn;
+    uvn.loc = loc;
+    uvn.info = info;
+    uvn.info_min = info_min;
+    return uvn;
+  };
+
+  VectorXT<T> encode_vector(bool unconstrained) const {
+    VectorXT<T> vec(encoded_size);
+    if (unconstrained) {
+      vec(0) = loc;
+      vec(1) = log(info - info_min);
+    } else {
+      vec(0) = loc;
+      vec(1) = info;
+    }
+    return vec;
+  }
+
+  template <typename Tnew>
+  void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+    if (unconstrained) {
+      loc = vec(0);
+      info = exp(vec(1)) + info_min;
+    } else {
+      loc = vec(0);
+      info = vec(1);
+    }
+  }
+};
+
+
+template <class T> class UnivariateNormalMoments {
 public:
   T e;  // The expectation.
   T e2; // The expectation of the square.
 
-  UnivariateNormal() {
+  T e2_min;
+  int encoded_size = 2;
+
+  UnivariateNormalMoments() {
     e = 0;
     e2 = 0;
+    e2_min = 0;
   };
 
-  // Set from a vector of another type.
-  template <typename Tnew> UnivariateNormal(Tnew mean) {
-    e = mean;
-    e2 = mean * mean;
+  // Set from natural parameters.
+  UnivariateNormalMoments(UnivariateNormalNatural<T> uvn_nat) {
+    e = uvn_nat.loc;
+    e2 = 1 / uvn_nat.info + pow(uvn_nat.loc, 2);
+    e2_min = 0;
   };
 
   // Convert to another type.
-  template <typename Tnew> operator UnivariateNormal<Tnew>() const {
-    UnivariateNormal<Tnew> uvn;
+  template <typename Tnew> operator UnivariateNormalMoments<Tnew>() const {
+    UnivariateNormalMoments<Tnew> uvn;
     uvn.e = e;
     uvn.e2 = e2;
+    uvn.e2_min = e2_min;
     return uvn;
   };
 
+  VectorXT<T> encode_vector(bool unconstrained) const {
+    VectorXT<T> vec(encoded_size);
+    if (unconstrained) {
+      vec(0) = e;
+      vec(1) = log(e2 - e2_min);
+    } else {
+      vec(0) = e;
+      vec(1) = e2;
+    }
+    return vec;
+  }
+
+  template <typename Tnew>
+  void decode_vector(VectorXT<Tnew> vec, bool unconstrained) {
+    if (unconstrained) {
+      e = vec(0);
+      e2 = exp(vec(1)) + e2_min;
+    } else {
+      e = vec(0);
+      e2 = vec(1);
+    }
+  }
+
+
   // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
-  T ExpectedLogLikelihood(UnivariateNormal<T> mean, GammaMoments<T> info) const {
+  T ExpectedLogLikelihood(UnivariateNormalMoments<T> mean, GammaMoments<T> info) const {
     return -0.5 * info.e * (e2 - 2 * mean.e * e + mean.e2) + 0.5 * info.e_log;
   };
 
@@ -562,6 +663,8 @@ public:
     return -0.5 * info.e * (e2 - 2 * mean * e + mean * mean) + 0.5 * log(info);
   };
 };
+
+
 
 
 # endif

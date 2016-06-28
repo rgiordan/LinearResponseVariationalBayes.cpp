@@ -305,6 +305,63 @@ TEST(GammaMoments, encoding) {
 }
 
 
+TEST(UnivariateNormal, basic) {
+  UnivariateNormalNatural<double> uvn_nat;
+  uvn_nat.loc = 3.0;
+  uvn_nat.info = 4.0;
+
+  UnivariateNormalMoments<double> uvn(uvn_nat);
+  EXPECT_DOUBLE_EQ(uvn_nat.loc, uvn.e);
+  EXPECT_DOUBLE_EQ(1 / uvn_nat.info, uvn.e2 - pow(uvn.e, 2));
+
+  UnivariateNormalMoments<float> uvn_float(uvn);
+  EXPECT_FLOAT_EQ(uvn.e, uvn_float.e);
+  EXPECT_FLOAT_EQ(uvn.e2, uvn_float.e2);
+}
+
+
+TEST(UnivariateNormalMoments, encoding) {
+  UnivariateNormalMoments<double> uvn;
+  UnivariateNormalMoments<double> uvn_copy;
+  uvn.e = 3.0;
+  uvn.e2 = 4.0;
+  uvn.e2_min = 0.1;
+  uvn_copy.e2_min = uvn.e2_min;
+
+  for (int ind = 0; ind < 2; ind++) {
+    bool unconstrained = (ind == 0 ? true: false);
+    std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
+    VectorXd encoded_vec = uvn.encode_vector(unconstrained);
+    uvn_copy.e = 0.0;
+    uvn_copy.e2 = 0.0;
+    uvn_copy.decode_vector(encoded_vec, unconstrained);
+    EXPECT_DOUBLE_EQ(uvn.e, uvn_copy.e) << unconstrained_str;
+    EXPECT_DOUBLE_EQ(uvn.e2, uvn_copy.e2) << unconstrained_str;
+  }
+}
+
+
+TEST(UnivariateNormalNatural, encoding) {
+  UnivariateNormalNatural<double> uvn;
+  UnivariateNormalNatural<double> uvn_copy;
+  uvn.loc = 3.0;
+  uvn.info = 4.0;
+  uvn.info_min = 0.1;
+  uvn_copy.info_min = uvn.info_min;
+
+  for (int ind = 0; ind < 2; ind++) {
+    bool unconstrained = (ind == 0 ? true: false);
+    std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
+    VectorXd encoded_vec = uvn.encode_vector(unconstrained);
+    uvn_copy.loc = 0.0;
+    uvn_copy.info = 0.0;
+    uvn_copy.decode_vector(encoded_vec, unconstrained);
+    EXPECT_DOUBLE_EQ(uvn.loc, uvn_copy.loc) << unconstrained_str;
+    EXPECT_DOUBLE_EQ(uvn.info, uvn_copy.info) << unconstrained_str;
+  }
+}
+
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
