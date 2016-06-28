@@ -8,6 +8,11 @@ using std::vector;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+// A function to check whether Stan is returning the jacobian or its transpose.
+// If true, then the Jacobian returned by Stan is in the standard orientation,
+// otherwise it needs to be transposed.
+bool CheckJacobianCorrectOrientation();
+
 // Input variables:
 //   dx_dy[i, j] = dx[i] / dy[j]
 //   d2x_dy2[k][i, j] = d2 x[k] / (dy[i] dy[j])

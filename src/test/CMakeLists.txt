@@ -6,15 +6,14 @@ set(GIT_REPO_LOC $ENV{GIT_REPO_LOC})
 add_definitions(-std=c++11)
 add_definitions(-Wno-deprecated)
 
-include_directories(${GIT_REPO_LOC}/math/lib/eigen_3.2.4/)
 include_directories(${GIT_REPO_LOC}/googletest/googletest/include)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Only testing requires Stan (for autodiff)
 include_directories(${GIT_REPO_LOC}stan/)
 include_directories(${GIT_REPO_LOC}math/)
-include_directories(${GIT_REPO_LOC}math/lib/eigen_3.2.4/)
-include_directories(${GIT_REPO_LOC}math/lib/boost_1.58.0/)
+include_directories(${GIT_REPO_LOC}/math/lib/eigen_3.2.8/)
+include_directories(${GIT_REPO_LOC}/math/lib/boost_1.60.0/)
 include_directories(${GIT_REPO_LOC}/LinearResponseVariationalBayes.cpp/include)
 
 add_executable(transform_hessian_test transform_hessian_test.cpp)

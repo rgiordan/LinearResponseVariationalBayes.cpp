@@ -20,8 +20,8 @@ set(CMAKE_TARGET_LINKED_INFO_FILES
 set(CMAKE_C_TARGET_INCLUDE_PATH
   "/home/rgiordan/Documents/git_repos/stan"
   "/home/rgiordan/Documents/git_repos/math"
-  "/home/rgiordan/Documents/git_repos/math/lib/eigen_3.2.4"
-  "/home/rgiordan/Documents/git_repos/math/lib/boost_1.58.0"
+  "/home/rgiordan/Documents/git_repos/math/lib/eigen_3.2.8"
+  "/home/rgiordan/Documents/git_repos/math/lib/boost_1.60.0"
   "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include"
   )
 set(CMAKE_CXX_TARGET_INCLUDE_PATH ${CMAKE_C_TARGET_INCLUDE_PATH})

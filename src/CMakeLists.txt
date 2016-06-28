@@ -10,10 +10,10 @@ add_definitions(-Wno-deprecated)
 
 add_subdirectory(test)
 
-include_directories(${GIT_REPO_LOC}stan/)
-include_directories(${GIT_REPO_LOC}math/)
-include_directories(${GIT_REPO_LOC}math/lib/eigen_3.2.4/)
-include_directories(${GIT_REPO_LOC}math/lib/boost_1.58.0/)
+include_directories(${GIT_REPO_LOC}/stan/)
+include_directories(${GIT_REPO_LOC}/math/)
+include_directories(${GIT_REPO_LOC}/math/lib/eigen_3.2.8/)
+include_directories(${GIT_REPO_LOC}/math/lib/boost_1.60.0/)
 include_directories(${GIT_REPO_LOC}/LinearResponseVariationalBayes.cpp/include)
 
 set(CC_SOURCES kahan_summation.cpp exponential_families.cpp

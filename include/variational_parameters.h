@@ -660,7 +660,7 @@ public:
   };
 
   T ExpectedLogLikelihood(T mean, T info) const {
-    return -0.5 * info.e * (e2 - 2 * mean * e + mean * mean) + 0.5 * log(info);
+    return -0.5 * info * (e2 - 2 * mean * e + mean * mean) + 0.5 * log(info);
   };
 };
 
