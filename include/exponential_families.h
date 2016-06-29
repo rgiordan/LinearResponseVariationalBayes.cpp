@@ -19,7 +19,7 @@ using boost::math::digamma;
 using boost::math::trigamma;
 
 // # include <stan/math.hpp>
-// # include <stan/math/mix/mat/functor/hessian.hpp>
+// # include "stan/math/fwd/scal.hpp"
 //
 // using var = stan::math::var;
 // using fvar = stan::math::fvar<var>;

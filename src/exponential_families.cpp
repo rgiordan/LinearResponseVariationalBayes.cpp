@@ -11,8 +11,12 @@
 #include <Eigen/Sparse>
 typedef Eigen::Triplet<double> Triplet; // For populating sparse matrices
 
+
 // # include <stan/math.hpp>
-// # include <stan/math/mix/mat/functor/hessian.hpp>
+// # include "stan/math/fwd/scal.hpp"
+//
+// // # include <stan/math.hpp>
+// // # include <stan/math/mix/mat/functor/hessian.hpp>
 // using var = stan::math::var;
 // using fvar = stan::math::fvar<var>;
 
@@ -42,6 +46,7 @@ template double multivariate_digamma(double x, int p);
 // template fvar multivariate_digamma(fvar x, int p);
 
 template double multivariate_trigamma(double x, int p);
+// Not implemented.
 // template var multivariate_trigamma(var x, int p);
 // template fvar multivariate_trigamma(fvar x, int p);
 
