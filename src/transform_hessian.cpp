@@ -13,6 +13,7 @@ using Eigen::Dynamic;
 template <typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
 template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
+
 // Check whether Stan's Jacobian is correct.
 struct TestJacobianObjective {
   // Evaluates y = A * theta.  The Jacobian of y(theta) is traditionally

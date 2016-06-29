@@ -104,10 +104,10 @@ TEST(hessian_transforms, correct) {
   MatrixXd dx_dyt(2, 2);
 
   stan::math::set_zero_all_adjoints();
-  stan::math::jacobian(y_to_x, y, x, dy_dxt);
+  stan::math::jacobian(y_to_x, y, x, dx_dyt);
   EXPECT_VECTOR_EQ(x, y_to_x(y), "x");
 
-  stan::math::jacobian(x_to_y, x, y, dx_dyt);
+  stan::math::jacobian(x_to_y, x, y, dy_dxt);
   EXPECT_VECTOR_EQ(y, x_to_y(x), "y");
 
   MatrixXd dxt_dy = dx_dyt.transpose();
