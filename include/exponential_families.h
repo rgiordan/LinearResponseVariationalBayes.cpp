@@ -1,6 +1,10 @@
 # ifndef EXPONENTIAL_FAMILIES_H
 # define EXPONENTIAL_FAMILIES_H
 
+// Set to 0 to not instantiate.
+// See https://github.com/stan-dev/math/issues/311#
+# define INSTANTIATE_EXPONENTIAL_FAMILIES_H 1
+
 #include <cmath>
 
 #include <boost/math/special_functions/trigamma.hpp>
@@ -10,19 +14,9 @@
 #include <Eigen/Sparse>
 typedef Eigen::Triplet<double> Triplet; // For populating sparse matrices
 
-// #include <stan/math/fwd/scal/fun/lgamma.hpp>
-// #include <stan/math/fwd/scal/fun/digamma.hpp>
-// #include <stan/math/fwd/scal/fun/trigamma.hpp> // Missing!
-
 using boost::math::lgamma;
 using boost::math::digamma;
 using boost::math::trigamma;
-
-// # include <stan/math.hpp>
-// # include "stan/math/fwd/scal.hpp"
-//
-// using var = stan::math::var;
-// using fvar = stan::math::fvar<var>;
 
 using Eigen::Matrix;
 using Eigen::MatrixXd;
@@ -32,9 +26,22 @@ using Eigen::Dynamic;
 template <typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
 template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
+# if INSTANTIATE_EXPONENTIAL_FAMILIES_H
+  // For instantiation:
+  # include <stan/math.hpp>
+  # include "stan/math/fwd/scal.hpp"
+
+  using var = stan::math::var;
+  using fvar = stan::math::fvar<var>;
+# endif
+
+
+// The index in a vector of lower diagonal terms of a particular matrix value.
+int get_ud_index(int i, int j);
+
 
 ////////////////////////////////////////////
-// Some helper functions
+// Mulitvariate log gamma and its derivatives.
 
 template <typename T> T multivariate_lgamma(T x, int p) {
   T result = log(M_PI) * p * (p - 1.0) / 4.0;
@@ -63,18 +70,19 @@ template <typename T> T multivariate_trigamma(T x, int p) {
   return result;
 }
 
-extern template double multivariate_lgamma(double x, int p);
-// extern template var multivariate_lgamma(var x, int p);
-// extern template fvar multivariate_lgamma(fvar x, int p);
+# if INSTANTIATE_EXPONENTIAL_FAMILIES_H
+  extern template double multivariate_lgamma(double x, int p);
+  extern template var multivariate_lgamma(var x, int p);
+  extern template fvar multivariate_lgamma(fvar x, int p);
 
-extern template double multivariate_digamma(double x, int p);
-// extern template var multivariate_digamma(var x, int p);
-// extern template fvar multivariate_digamma(fvar x, int p);
+  extern template double multivariate_digamma(double x, int p);
+  extern template var multivariate_digamma(var x, int p);
+  extern template fvar multivariate_digamma(fvar x, int p);
 
-extern template double multivariate_trigamma(double x, int p);
-// extern template var multivariate_trigamma(var x, int p);
-// extern template fvar multivariate_trigamma(fvar x, int p);
-
+  extern template double multivariate_trigamma(double x, int p);
+  // extern template var multivariate_trigamma(var x, int p);
+  // extern template fvar multivariate_trigamma(fvar x, int p);
+# endif
 
 ///////////////////////////
 // Multivariate normals
@@ -108,14 +116,15 @@ T GetWishartEntropy(MatrixXT<T> const &v_par, T const n_par) {
 }
 
 
-extern template double GetELogDetWishart(MatrixXT<double> v_par, double n_par);
-// extern template var GetELogDetWishart(MatrixXT<var> v_par, var n_par);
-// extern template fvar GetELogDetWishart(MatrixXT<fvar> v_par, fvar n_par);
+# if INSTANTIATE_EXPONENTIAL_FAMILIES_H
+  extern template double GetELogDetWishart(MatrixXT<double> v_par, double n_par);
+  extern template var GetELogDetWishart(MatrixXT<var> v_par, var n_par);
+  extern template fvar GetELogDetWishart(MatrixXT<fvar> v_par, fvar n_par);
 
-extern template double GetWishartEntropy(MatrixXT<double> const &v_par, double const n_par);
-// extern template var GetWishartEntropy(MatrixXT<var> const &v_par, var const n_par);
-// extern template fvar GetWishartEntropy(MatrixXT<fvar> const &v_par, fvar const n_par);
-
+  extern template double GetWishartEntropy(MatrixXT<double> const &v_par, double const n_par);
+  extern template var GetWishartEntropy(MatrixXT<var> const &v_par, var const n_par);
+  extern template fvar GetWishartEntropy(MatrixXT<fvar> const &v_par, fvar const n_par);
+# endif
 
 ////////////////////////////////////////
 // Gamma distribution
@@ -125,9 +134,11 @@ template <typename T> T get_e_log_gamma(T alpha, T beta) {
   return digamma(alpha) - log(beta);
 }
 
-extern template double get_e_log_gamma(double alpha, double beta);
-// extern template var get_e_log_gamma(var alpha, var beta);
-// extern template fvar get_e_log_gamma(fvar alpha, fvar beta);
+# if INSTANTIATE_EXPONENTIAL_FAMILIES_H
+  extern template double get_e_log_gamma(double alpha, double beta);
+  extern template var get_e_log_gamma(var alpha, var beta);
+  extern template fvar get_e_log_gamma(fvar alpha, fvar beta);
+# endif
 
 // Return a matrix with Cov((g, log(g))) where
 // g ~ Gamma(alpha, beta) (parameterization E[g] = alpha / beta)
@@ -192,15 +203,15 @@ template <typename T> T GetDirichletEntropy(VectorXT<T> alpha) {
 
 MatrixXd GetLogDirichletCovariance(VectorXd alpha);
 
+# if INSTANTIATE_EXPONENTIAL_FAMILIES_H
+  extern template VectorXT<double> GetELogDirichlet(VectorXT<double> alpha);
+  extern template VectorXT<var> GetELogDirichlet(VectorXT<var> alpha);
+  extern template VectorXT<fvar> GetELogDirichlet(VectorXT<fvar> alpha);
 
-extern template VectorXT<double> GetELogDirichlet(VectorXT<double> alpha);
-// extern template VectorXT<var> GetELogDirichlet(VectorXT<var> alpha);
-// extern template VectorXT<fvar> GetELogDirichlet(VectorXT<fvar> alpha);
-
-extern template double GetDirichletEntropy(VectorXT<double> alpha);
-// extern template var GetDirichletEntropy(VectorXT<var> alpha);
-// extern template fvar GetDirichletEntropy(VectorXT<fvar> alpha);
-
+  extern template double GetDirichletEntropy(VectorXT<double> alpha);
+  extern template var GetDirichletEntropy(VectorXT<var> alpha);
+  extern template fvar GetDirichletEntropy(VectorXT<fvar> alpha);
+# endif
 
 ///////////////////////////////////
 // Coordinates and covariances for sparse matrices

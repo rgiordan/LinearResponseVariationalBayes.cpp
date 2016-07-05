@@ -1,6 +1,10 @@
 # ifndef VARIATIONAL_PARAMETERS_H
 # define VARIATIONAL_PARAMETERS_H
 
+// Set to 0 to not instantiate.
+// See https://github.com/stan-dev/math/issues/311#
+# define INSTANTIATE_VARIATIONAL_PARAMETERS_H 1
+
 # include <Eigen/Dense>
 # include <vector>
 
@@ -15,12 +19,17 @@ template <typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
 template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
 
+# if INSTANTIATE_VARIATIONAL_PARAMETERS_H
+  // For instantiation:
+  # include <stan/math.hpp>
+  # include "stan/math/fwd/scal.hpp"
+
+  using var = stan::math::var;
+  using fvar = stan::math::fvar<var>;
+# endif
+
 ////////////////////////////////////
 // Positive definite matrices
-
-// The index in a vector of lower diagonal terms of a particular matrix value.
-int get_ud_index(int i, int j);
-
 
 template <class T> class PosDefMatrixParameter {
 // private:
@@ -664,6 +673,44 @@ public:
   };
 };
 
+
+# if INSTANTIATE_VARIATIONAL_PARAMETERS_H
+  extern template class PosDefMatrixParameter<double>;
+  extern template class PosDefMatrixParameter<var>;
+  extern template class PosDefMatrixParameter<fvar>;
+
+  extern template class GammaNatural<double>;
+  extern template class GammaNatural<var>;
+  extern template class GammaNatural<fvar>;
+
+  extern template class GammaMoments<double>;
+  extern template class GammaMoments<var>;
+  extern template class GammaMoments<fvar>;
+
+  extern template class WishartNatural<double>;
+  extern template class WishartNatural<var>;
+  extern template class WishartNatural<fvar>;
+
+  extern template class WishartMoments<double>;
+  extern template class WishartMoments<var>;
+  extern template class WishartMoments<fvar>;
+
+  extern template class MultivariateNormalNatural<double>;
+  extern template class MultivariateNormalNatural<var>;
+  extern template class MultivariateNormalNatural<fvar>;
+
+  extern template class MultivariateNormalMoments<double>;
+  extern template class MultivariateNormalMoments<var>;
+  extern template class MultivariateNormalMoments<fvar>;
+
+  extern template class UnivariateNormalNatural<double>;
+  extern template class UnivariateNormalNatural<var>;
+  extern template class UnivariateNormalNatural<fvar>;
+
+  extern template class UnivariateNormalMoments<double>;
+  extern template class UnivariateNormalMoments<var>;
+  extern template class UnivariateNormalMoments<fvar>;
+# endif
 
 
 
