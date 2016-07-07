@@ -23,6 +23,10 @@ stan/math/fwd/scal.hpp
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/stan/math/fwd/scal.hpp
 
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/kahan_summation.h
+stan/math.hpp
+-
+stan/math/fwd/scal.hpp
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/stan/math/fwd/scal.hpp
 
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/monte_carlo_parameters.h
 Eigen/Dense
@@ -33,6 +37,10 @@ boost/generator_iterator.hpp
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/boost/generator_iterator.hpp
 boost/random/normal_distribution.hpp
 -
+stan/math.hpp
+-
+stan/math/fwd/scal.hpp
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/stan/math/fwd/scal.hpp
 
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/transform_hessian.h
 Eigen/Dense

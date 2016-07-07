@@ -1,6 +1,11 @@
 # ifndef MONTE_CARLO_PARAMETERS_H
 # define MONTE_CARLO_PARAMETERS_H
 
+
+// Set to 0 to not instantiate.
+// See https://github.com/stan-dev/math/issues/311#
+# define INSTANTIATE_MONTE_CARLO_PARAMETERS_H 1
+
 /////////////////////////////////
 // Monte Carlo normal parameters
 
@@ -13,6 +18,15 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 #include "boost/random.hpp"
 #include "boost/generator_iterator.hpp"
 #include <boost/random/normal_distribution.hpp>
+
+# if INSTANTIATE_MONTE_CARLO_PARAMETERS_H
+  // For instantiation:
+  # include <stan/math.hpp>
+  # include "stan/math/fwd/scal.hpp"
+
+  using var = stan::math::var;
+  using fvar = stan::math::fvar<var>;
+# endif
 
 
 // This is a typedef for a random number generator.
@@ -28,6 +42,7 @@ public:
 
   void SetDraws(int n_sim) {
     std_draws = VectorXT<T>(n_sim);
+
     RNGType rng;
     boost::normal_distribution<> norm_dist(0,1);
     boost::variate_generator<RNGType, boost::normal_distribution<>>
@@ -48,6 +63,12 @@ public:
 // private:
   VectorXT<T> std_draws;
 };
+
+# if INSTANTIATE_MONTE_CARLO_PARAMETERS_H
+  extern template class MonteCarloNormalParameter<double>;
+  extern template class MonteCarloNormalParameter<var>;
+  extern template class MonteCarloNormalParameter<fvar>;
+# endif
 
 
 # endif
