@@ -492,12 +492,12 @@ public:
     // Set from natural parameters.
     MultivariateNormalMoments(MultivariateNormalNatural<T> mvn_nat) {
         dim = mvn_nat.dim;
-        encoded_size = dim + e_outer.size_ud;
         e_vec = mvn_nat.loc;
         MatrixXT<T> e_outer_mat =
             e_vec * e_vec.transpose() + mvn_nat.info.mat.inverse();
         e_outer = PosDefMatrixParameter<T>(e_vec.size());
         e_outer.set(e_outer_mat);
+        encoded_size = dim + e_outer.size_ud;
         diag_min = 0;
     };
 
