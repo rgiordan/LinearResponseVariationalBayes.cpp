@@ -129,20 +129,34 @@ T GetWishartEntropy(MatrixXT<T> const &v_par, T const n_par) {
 ////////////////////////////////////////
 // Gamma distribution
 
+// Dig that the distribution is parameterized so that the expectation
+// is alpha / beta.
 
 template <typename T> T get_e_log_gamma(T alpha, T beta) {
   return digamma(alpha) - log(beta);
 }
 
+template <typename T> T GetGammaEntropy(T alpha, T beta) {
+    return alpha - log(beta) + lgamma(alpha) + (1 - alpha) * digamma(alpha);
+}
+
+
 # if INSTANTIATE_EXPONENTIAL_FAMILIES_H
   extern template double get_e_log_gamma(double alpha, double beta);
   extern template var get_e_log_gamma(var alpha, var beta);
   extern template fvar get_e_log_gamma(fvar alpha, fvar beta);
+
+  extern template double GetGammaEntropy(double, double);
+  extern template var GetGammaEntropy(var, var);
+  extern template fvar GetGammaEntropy(fvar, fvar);
 # endif
 
 // Return a matrix with Cov((g, log(g))) where
 // g ~ Gamma(alpha, beta) (parameterization E[g] = alpha / beta)
 MatrixXd get_gamma_covariance(double alpha, double beta);
+
+
+
 
 
 ////////////////////////////
@@ -212,6 +226,37 @@ MatrixXd GetLogDirichletCovariance(VectorXd alpha);
   extern template var GetDirichletEntropy(VectorXT<var> alpha);
   extern template fvar GetDirichletEntropy(VectorXT<fvar> alpha);
 # endif
+
+
+/////////////////////////////////////////
+// Normal entropies
+
+template <typename T> T GetMultivariateNormalEntropy(MatrixXT<T> info) {
+    if (info.rows() != info.cols()) {
+        throw std::runtime_error("info is not square");
+    }
+    int k = info.rows();
+    T info_det = info.deterimant();
+    return 0.5 * k * (1 + log(M_PI)) + 0.5 * log(info_det);
+}
+
+
+template <typename T> T GetUnivariateNormalEntropy(T info) {
+    return 0.5 * (1 + log(M_PI)) + 0.5 * log(info);
+}
+
+
+# if INSTANTIATE_EXPONENTIAL_FAMILIES_H
+    extern template double GetMultivariateNormalEntropy(MatrixXT<double>);
+    extern template var GetMultivariateNormalEntropy(MatrixXT<var>);
+    extern template fvar GetMultivariateNormalEntropy(MatrixXT<fvar>);
+
+    extern template double GetUnivariateNormalEntropy(double);
+    extern template var GetUnivariateNormalEntropy(var);
+    extern template fvar GetUnivariateNormalEntropy(fvar);
+# endif
+
+
 
 ///////////////////////////////////
 // Coordinates and covariances for sparse matrices

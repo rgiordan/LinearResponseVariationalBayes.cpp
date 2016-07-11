@@ -454,7 +454,7 @@ public:
             info.set_vec(sub_vec);
         }
     };
-    };
+};
 
 
 template <class T> class MultivariateNormalMoments: public Parameter<T> {
@@ -534,16 +534,15 @@ public:
 
     // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
     T ExpectedLogLikelihood(MultivariateNormalMoments<T> mean, WishartMoments<T> info) const {
-        MatrixXT<T> mean_outer_prods = mean.e_vec * e_vec.transpose() +
-                                                                        e_vec * mean.e_vec.transpose();
+        MatrixXT<T> mean_outer_prods =
+            mean.e_vec * e_vec.transpose() + e_vec * mean.e_vec.transpose();
         return
             -0.5 * (info.e.mat * (e_outer.mat - mean_outer_prods + mean.e_outer.mat)).trace() +
             0.5 * info.e_log_det;
     };
 
     T ExpectedLogLikelihood(VectorXT<T> mean, WishartMoments<T> info) const {
-        MatrixXT<T> mean_outer_prods = mean * e_vec.transpose() +
-                                                                        e_vec * mean.transpose();
+        MatrixXT<T> mean_outer_prods = mean * e_vec.transpose() + e_vec * mean.transpose();
         MatrixXT<T> mean_outer = mean * mean.transpose();
         return
             -0.5 * (info.e.mat * (e_outer.mat - mean_outer_prods + mean_outer)).trace() +
@@ -551,8 +550,7 @@ public:
     };
 
     T ExpectedLogLikelihood(VectorXT<T> mean, MatrixXT<T> info) const {
-        MatrixXT<T> mean_outer_prods = mean * e_vec.transpose() +
-                                                                        e_vec * mean.transpose();
+        MatrixXT<T> mean_outer_prods = mean * e_vec.transpose() + e_vec * mean.transpose();
         MatrixXT<T> mean_outer = mean * mean.transpose();
         return
             -0.5 * (info * (e_outer.mat - mean_outer_prods + mean_outer)).trace() +
