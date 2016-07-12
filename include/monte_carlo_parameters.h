@@ -12,6 +12,7 @@
 #include <Eigen/Dense>
 
 using Eigen::Dynamic;
+using Eigen::VectorXd;
 template <typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
 template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
@@ -29,22 +30,25 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 # endif
 
 
-// This is a typedef for a random number generator.
-// Try boost::mt19937 or boost::ecuyer1988 instead of boost::minstd_rand
-typedef boost::mt19937 RNGType;
 
-template  <class T>
 class MonteCarloNormalParameter {
 public:
+  VectorXd std_draws;
+
   MonteCarloNormalParameter(int n_sim) {
     SetDraws(n_sim);
   }
 
-  void SetDraws(int n_sim) {
-    std_draws = VectorXT<T>(n_sim);
+  MonteCarloNormalParameter(VectorXd std_draws): std_draws(std_draws) {}
 
+  void SetDraws(int n_sim) {
+    std_draws = VectorXd(n_sim);
+
+    // This is a typedef for a random number generator.
+    // Try boost::mt19937 or boost::ecuyer1988 instead of boost::minstd_rand
+    typedef boost::mt19937 RNGType;
     RNGType rng;
-    boost::normal_distribution<> norm_dist(0,1);
+    boost::normal_distribution<> norm_dist(0, 1);
     boost::variate_generator<RNGType, boost::normal_distribution<>>
       norm_rng(rng, norm_dist);
     for (int n=0; n < n_sim; n++) {
@@ -52,7 +56,12 @@ public:
     }
   }
 
-  VectorXT<T> Evaluate(T mean, T var) {
+  void SetDraws(VectorXd draws) {
+      std_draws = draws;
+  }
+
+  // We may have to differnetiate with respect to the mean and variance.
+  template  <class T> VectorXT<T> Evaluate(T mean, T var) {
     VectorXT<T> output_vec(std_draws.size());
     for (int n=0; n < std_draws.size(); n++) {
       output_vec(n) = sqrt(var) * std_draws(n) + mean;
@@ -60,14 +69,12 @@ public:
     return output_vec;
   }
 
-// private:
-  VectorXT<T> std_draws;
 };
 
 # if INSTANTIATE_MONTE_CARLO_PARAMETERS_H
-  extern template class MonteCarloNormalParameter<double>;
-  extern template class MonteCarloNormalParameter<var>;
-  extern template class MonteCarloNormalParameter<fvar>;
+  extern template VectorXT<double> MonteCarloNormalParameter::Evaluate(double, double);
+  extern template VectorXT<var> MonteCarloNormalParameter::Evaluate(var, var);
+  extern template VectorXT<fvar> MonteCarloNormalParameter::Evaluate(fvar, fvar);
 # endif
 
 

@@ -27,6 +27,10 @@ gtest/gtest.h
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/gtest/gtest.h
 Eigen/Dense
 -
+test_eigen.h
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/test_eigen.h
+
+/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/test_eigen.h
 
 /home/rgiordan/Documents/git_repos/googletest/googletest/include/gtest/gtest-death-test.h
 gtest/internal/gtest-death-test-internal.h
