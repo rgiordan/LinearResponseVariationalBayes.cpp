@@ -236,7 +236,7 @@ template <typename T> T GetMultivariateNormalEntropy(MatrixXT<T> info) {
         throw std::runtime_error("info is not square");
     }
     int k = info.rows();
-    T info_det = info.deterimant();
+    T info_det = info.determinant();
     return 0.5 * k * (1 + log(M_PI)) + 0.5 * log(info_det);
 }
 
