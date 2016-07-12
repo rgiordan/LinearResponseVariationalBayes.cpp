@@ -103,6 +103,7 @@ TEST(MultivariateNormalMoments, encoding) {
 
   MultivariateNormalMoments<double> mvn(dim);
   MultivariateNormalMoments<double> mvn_copy(dim);
+
   mvn.e_vec = vec;
   mvn.e_outer.set(mat);
   // The matrix must still be positive definite after
@@ -120,6 +121,17 @@ TEST(MultivariateNormalMoments, encoding) {
     EXPECT_VECTOR_EQ(mvn.e_vec, mvn_copy.e_vec, unconstrained_str);
     EXPECT_MATRIX_EQ(mvn.e_outer.mat, mvn_copy.e_outer.mat, unconstrained_str);
   }
+
+  MultivariateNormalNatural<double> mvn_nat(dim);
+  mvn_nat.loc = vec;
+  mvn_nat.info.set(mat);
+  mvn = MultivariateNormalMoments<double>(mvn_nat);
+  VectorXd encoded_vec = mvn.encode_vector(false);
+  mvn_copy.e_vec = VectorXd::Zero(dim);
+  mvn_copy.e_outer.mat = MatrixXd::Zero(dim, dim);
+  mvn_copy.decode_vector(encoded_vec, false);
+  EXPECT_VECTOR_EQ(mvn.e_vec, mvn_copy.e_vec, "natural parameters");
+  EXPECT_MATRIX_EQ(mvn.e_outer.mat, mvn_copy.e_outer.mat, "natural parameters");
 }
 
 
@@ -235,6 +247,18 @@ TEST(WishartMoments, encoding) {
     EXPECT_DOUBLE_EQ(wishart.e_log_det, wishart_copy.e_log_det) << unconstrained_str;
     EXPECT_MATRIX_EQ(wishart.e.mat, wishart_copy.e.mat, unconstrained_str);
   }
+
+  WishartNatural<double> wishart_nat(dim);
+  wishart_nat.n = 5.0;
+  wishart_nat.v.set(mat);
+  wishart = WishartMoments<double>(wishart_nat);
+  VectorXd encoded_vec = wishart.encode_vector(false);
+  wishart_copy.e_log_det = 0.0;
+  wishart_copy.e.mat = MatrixXd::Zero(dim, dim);
+  wishart_copy.decode_vector(encoded_vec, false);
+  EXPECT_DOUBLE_EQ(wishart.e_log_det, wishart_copy.e_log_det) << "natural parameters";
+  EXPECT_MATRIX_EQ(wishart.e.mat, wishart_copy.e.mat, "natural parameters");
+
 }
 
 
@@ -302,6 +326,17 @@ TEST(GammaMoments, encoding) {
     EXPECT_DOUBLE_EQ(gamma.e, gamma_copy.e) << unconstrained_str;
     EXPECT_DOUBLE_EQ(gamma.e_log, gamma_copy.e_log) << unconstrained_str;
   }
+
+  GammaNatural<double> gamma_nat;
+  gamma_nat.alpha = 3.0;
+  gamma_nat.beta = 4.0;
+  gamma = GammaMoments<double>(gamma_nat);
+  VectorXd encoded_vec = gamma.encode_vector(false);
+  gamma_copy.e = 0.0;
+  gamma_copy.e_log = 0.0;
+  gamma_copy.decode_vector(encoded_vec, false);
+  EXPECT_DOUBLE_EQ(gamma.e, gamma_copy.e) << "natural parameters";
+  EXPECT_DOUBLE_EQ(gamma.e_log, gamma_copy.e_log) << "natural parameters";
 }
 
 
@@ -338,6 +373,18 @@ TEST(UnivariateNormalMoments, encoding) {
     EXPECT_DOUBLE_EQ(uvn.e, uvn_copy.e) << unconstrained_str;
     EXPECT_DOUBLE_EQ(uvn.e2, uvn_copy.e2) << unconstrained_str;
   }
+
+  UnivariateNormalNatural<double> uvn_nat;
+  uvn_nat.loc = 3.0;
+  uvn_nat.info = 4.0;
+
+  uvn = UnivariateNormalMoments<double>(uvn_nat);
+  VectorXd encoded_vec = uvn.encode_vector(false);
+  uvn_copy.e = 0.0;
+  uvn_copy.e2 = 0.0;
+  uvn_copy.decode_vector(encoded_vec, false);
+  EXPECT_DOUBLE_EQ(uvn.e, uvn_copy.e) << "natural parameters";
+  EXPECT_DOUBLE_EQ(uvn.e2, uvn_copy.e2) << "natural parameters";
 }
 
 

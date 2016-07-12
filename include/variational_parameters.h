@@ -32,118 +32,120 @@ using fvar = stan::math::fvar<var>;
 // Positive definite matrices
 
 template <class T> class PosDefMatrixParameter {
-// private:
-
+private:
+    void Init(int size) {
+        size_ud = size * (size + 1) / 2;
+        mat = MatrixXT<T>::Zero(size, size);
+    }
 public:
-int size;
-int size_ud;
-MatrixXT<T> mat;
+    int size;
+    int size_ud;
+    MatrixXT<T> mat;
 
-PosDefMatrixParameter(int size_): size(size_) {
-    size_ud = size * (size + 1) / 2;
-    mat = MatrixXT<T>::Zero(size, size);
-}
-
-PosDefMatrixParameter() {
-    PosDefMatrixParameter(1);
-}
-
-template <typename TNumeric>
-void set(MatrixXT<TNumeric> set_value) {
-    for (int row=0; row < size; row++) {
-        for (int col=0; col <= row; col++) {
-            T this_value = T(set_value(row, col));
-            mat(row, col) = this_value;
-            mat(col, row) = this_value;
-        }
+    PosDefMatrixParameter(int size): size(size) {
+        Init(size);
     }
-}
 
-template <typename TNumeric>
-void set_vec(VectorXT<TNumeric> set_value) {
-    for (int row=0; row < size; row++) {
-        for (int col=0; col <= row; col++) {
-            T this_value = T(set_value(get_ud_index(row, col)));
-            mat(row, col) = this_value;
-            mat(col, row) = this_value;
-        }
+    PosDefMatrixParameter() {
+        Init(1);
     }
-}
 
-// TODO: don't use the get() method, just access the matrix directly.
-MatrixXT<T> get() const {
-    return mat;
-}
-
-VectorXT<T> get_vec() const {
-    VectorXT<T> vec_value(size_ud);
-    for (int row=0; row < size; row++) {
-        for (int col=0; col <= row; col++) {
-            vec_value(get_ud_index(row, col)) = mat(row, col);
-        }
-    }
-    return vec_value;
-}
-
-template <typename Tnew>
-operator PosDefMatrixParameter<Tnew>() const {
-    PosDefMatrixParameter<Tnew> pdmp = PosDefMatrixParameter<Tnew>(size);
-    pdmp.set(mat);
-    return pdmp;
-}
-
-// Set from an unconstrained matrix parameterization based on the Cholesky
-// decomposition.
-void set_unconstrained_vec(MatrixXT<T> set_value, T min_diag = 0.0) {
-    if (min_diag < 0) {
-        throw std::runtime_error("min_diag must be non-negative");
-    }
-    MatrixXT<T> chol_mat(size, size);
-    for (int row=0; row < size; row++) {
-        for (int col=0; col <= row; col++) {
-            T this_value = T(set_value(get_ud_index(row, col)));
-            if (col == row) {
-                chol_mat(row, col) = exp(this_value);
-            } else {
-                chol_mat(row, col) = this_value;
-                chol_mat(col, row) = 0.0;
+    template <typename TNumeric>
+    void set(MatrixXT<TNumeric> set_value) {
+        for (int row=0; row < size; row++) {
+            for (int col=0; col <= row; col++) {
+                T this_value = T(set_value(row, col));
+                mat(row, col) = this_value;
+                mat(col, row) = this_value;
             }
         }
     }
-    mat = chol_mat * chol_mat.transpose();
-    if (min_diag > 0) {
-        for (int k = 0; k < size; k++) {
-            mat(k, k) += min_diag;
-        }
-    }
-}
 
-VectorXT<T> get_unconstrained_vec(T min_diag = 0.0)  const {
-    if (min_diag < 0) {
-        throw std::runtime_error("min_diag must be non-negative");
-    }
-    VectorXT<T> free_vec(size_ud);
-    MatrixXT<T> mat_minus_diag(mat);
-    if (min_diag > 0) {
-        for (int k = 0; k < size; k++) {
-            mat_minus_diag(k, k) -= min_diag;
-            if (mat_minus_diag(k, k) <= 0) {
-                throw std::runtime_error("Posdef diagonal entry out of bounds");
+    template <typename TNumeric>
+    void set_vec(VectorXT<TNumeric> set_value) {
+        for (int row=0; row < size; row++) {
+            for (int col=0; col <= row; col++) {
+                T this_value = T(set_value(get_ud_index(row, col)));
+                mat(row, col) = this_value;
+                mat(col, row) = this_value;
             }
         }
     }
-    MatrixXT<T> chol_mat = mat_minus_diag.llt().matrixL();
-    for (int row=0; row < size; row++) {
-        for (int col=0; col <= row; col++) {
-            if (col == row) {
-                free_vec(get_ud_index(row, col)) = log(chol_mat(row, col));
-            } else {
-                free_vec(get_ud_index(row, col)) = chol_mat(row, col);
+
+    // TODO: don't use the get() method, just access the matrix directly.
+    MatrixXT<T> get() const {
+        return mat;
+    }
+
+    VectorXT<T> get_vec() const {
+        VectorXT<T> vec_value(size_ud);
+        for (int row=0; row < size; row++) {
+            for (int col=0; col <= row; col++) {
+                vec_value(get_ud_index(row, col)) = mat(row, col);
+            }
+        }
+        return vec_value;
+    }
+
+    template <typename Tnew>
+    operator PosDefMatrixParameter<Tnew>() const {
+        PosDefMatrixParameter<Tnew> pdmp = PosDefMatrixParameter<Tnew>(size);
+        pdmp.set(mat);
+        return pdmp;
+    }
+
+    // Set from an unconstrained matrix parameterization based on the Cholesky
+    // decomposition.
+    void set_unconstrained_vec(MatrixXT<T> set_value, T min_diag = 0.0) {
+        if (min_diag < 0) {
+            throw std::runtime_error("min_diag must be non-negative");
+        }
+        MatrixXT<T> chol_mat(size, size);
+        for (int row=0; row < size; row++) {
+            for (int col=0; col <= row; col++) {
+                T this_value = T(set_value(get_ud_index(row, col)));
+                if (col == row) {
+                    chol_mat(row, col) = exp(this_value);
+                } else {
+                    chol_mat(row, col) = this_value;
+                    chol_mat(col, row) = 0.0;
+                }
+            }
+        }
+        mat = chol_mat * chol_mat.transpose();
+        if (min_diag > 0) {
+            for (int k = 0; k < size; k++) {
+                mat(k, k) += min_diag;
             }
         }
     }
-    return free_vec;
-}
+
+    VectorXT<T> get_unconstrained_vec(T min_diag = 0.0)  const {
+        if (min_diag < 0) {
+            throw std::runtime_error("min_diag must be non-negative");
+        }
+        VectorXT<T> free_vec(size_ud);
+        MatrixXT<T> mat_minus_diag(mat);
+        if (min_diag > 0) {
+            for (int k = 0; k < size; k++) {
+                mat_minus_diag(k, k) -= min_diag;
+                if (mat_minus_diag(k, k) <= 0) {
+                    throw std::runtime_error("Posdef diagonal entry out of bounds");
+                }
+            }
+        }
+        MatrixXT<T> chol_mat = mat_minus_diag.llt().matrixL();
+        for (int row=0; row < size; row++) {
+            for (int col=0; col <= row; col++) {
+                if (col == row) {
+                    free_vec(get_ud_index(row, col)) = log(chol_mat(row, col));
+                } else {
+                    free_vec(get_ud_index(row, col)) = chol_mat(row, col);
+                }
+            }
+        }
+        return free_vec;
+    }
 };
 
 
@@ -164,6 +166,14 @@ public:
 //////// Gamma
 
 template <class T> class GammaNatural: public Parameter<T> {
+    void Init() {
+        alpha = 3;
+        beta = 3;
+
+        alpha_min = 0;
+        beta_min = 0;
+        encoded_size = 2;
+    }
 public:
 
     using Parameter<T>::encoded_size;
@@ -174,12 +184,8 @@ public:
     T alpha_min;
     T beta_min;
 
-    GammaNatural(): Parameter<T>(2) {
-        alpha = 3;
-        beta = 3;
-
-        alpha_min = 0;
-        beta_min = 0;
+    GammaNatural() {
+        Init();
     };
 
     template <typename Tnew> operator GammaNatural<Tnew>() const {
@@ -217,6 +223,13 @@ public:
 
 
 template <class T> class GammaMoments: public Parameter<T> {
+private:
+    void Init() {
+        e = 1;
+        e_log = 0;
+        e_min = 0;
+        encoded_size = 2;
+    }
 public:
 
     using Parameter<T>::encoded_size;
@@ -228,10 +241,7 @@ public:
     T e_min;
 
     GammaMoments() {
-        e = 1;
-        e_log = 0;
-        e_min = 0;
-        encoded_size = 2;
+        Init();
     };
 
     template <typename Tnew> operator GammaMoments<Tnew>() const {
@@ -243,6 +253,7 @@ public:
     };
 
     GammaMoments(GammaNatural<T> gamma_nat) {
+        Init();
         e = gamma_nat.alpha / gamma_nat.beta;
         e_log = get_e_log_gamma(gamma_nat.alpha, gamma_nat.beta);
     };
@@ -276,6 +287,14 @@ public:
 //////// Wishart
 
 template <class T> class WishartNatural: public Parameter<T> {
+    void Init(int dim) {
+        n = 0;
+        v = PosDefMatrixParameter<T>(dim);
+        v.mat = MatrixXT<T>::Zero(dim, dim);
+        diag_min = 0;
+        n_min = 0;
+        encoded_size = 1 + v.size_ud;
+    }
 public:
 
     using Parameter<T>::encoded_size;
@@ -289,16 +308,11 @@ public:
     T diag_min;
 
     WishartNatural(int dim): dim(dim) {
-        n = 0;
-        v = PosDefMatrixParameter<T>(dim);
-        v.mat = MatrixXT<T>::Zero(dim, dim);
-        diag_min = 0;
-        n_min = 0;
-        encoded_size = 1 + v.size_ud;
+        Init(dim);
     };
 
     WishartNatural() {
-        WishartNatural(1);
+        Init(1);
     }
 
     template <typename Tnew> operator WishartNatural<Tnew>() const {
@@ -338,6 +352,13 @@ public:
 
 
 template <class T> class WishartMoments: public Parameter<T> {
+    void Init(int dim) {
+        e_log_det = 0;
+        e = PosDefMatrixParameter<T>(dim);
+        e.mat = MatrixXT<T>::Zero(dim, dim);
+        diag_min = 0;
+        encoded_size = 1 + e.size_ud;
+    }
 public:
     using Parameter<T>::encoded_size;
     int dim;
@@ -349,20 +370,16 @@ public:
     T diag_min;
 
     WishartMoments(int dim): dim(dim) {
-        e_log_det = 0;
-        e = PosDefMatrixParameter<T>(dim);
-        e.mat = MatrixXT<T>::Zero(dim, dim);
-        diag_min = 0;
-        encoded_size = 1 + e.size_ud;
+        Init(dim);
     };
 
     WishartMoments() {
-        WishartMoments(1);
+        Init(1);
     }
 
     WishartMoments(WishartNatural<T> wishart_nat) {
         dim = wishart_nat.dim;
-        e = PosDefMatrixParameter<T>(dim);
+        Init(dim);
         e.mat = wishart_nat.v.mat * wishart_nat.n;
         e_log_det = GetELogDetWishart(wishart_nat.v.mat, wishart_nat.n);
         encoded_size = 1 + e.size_ud;
@@ -403,6 +420,13 @@ public:
 
 
 template <class T> class MultivariateNormalNatural: public Parameter<T> {
+    void Init(int dim) {
+        loc = VectorXT<T>::Zero(dim);
+        info = PosDefMatrixParameter<T>(dim);
+        info.mat = MatrixXT<T>::Zero(dim, dim);
+        diag_min = 0;
+        encoded_size = dim + info.size_ud;
+    }
 public:
     using Parameter<T>::encoded_size;
     int dim;
@@ -412,15 +436,11 @@ public:
     T diag_min;
 
     MultivariateNormalNatural(int dim): dim(dim) {
-        loc = VectorXT<T>::Zero(dim);
-        info = PosDefMatrixParameter<T>(dim);
-        info.mat = MatrixXT<T>::Zero(dim, dim);
-        diag_min = 0;
-        encoded_size = dim + info.size_ud;
+        Init(dim);
     };
 
     MultivariateNormalNatural() {
-        MultivariateNormalNatural(1);
+        Init(1);
     };
 
     // Convert to another type.
@@ -458,6 +478,13 @@ public:
 
 
 template <class T> class MultivariateNormalMoments: public Parameter<T> {
+    void Init(int dim) {
+        e_vec = VectorXT<T>::Zero(dim);
+        e_outer = PosDefMatrixParameter<T>(dim);
+        e_outer.mat = MatrixXT<T>::Zero(dim, dim);
+        diag_min = 0;
+        encoded_size = dim + e_outer.size_ud;
+    }
 public:
     using Parameter<T>::encoded_size;
     int dim;
@@ -467,38 +494,30 @@ public:
     T diag_min;
 
     MultivariateNormalMoments(int dim): dim(dim) {
-        e_vec = VectorXT<T>::Zero(dim);
-        e_outer = PosDefMatrixParameter<T>(dim);
-        e_outer.mat = MatrixXT<T>::Zero(dim, dim);
-        diag_min = 0;
-        encoded_size = dim + e_outer.size_ud;
+        Init(dim);
     };
 
     MultivariateNormalMoments() {
-        MultivariateNormalMoments(1);
+        Init(1);
     };
 
     // Set from a vector of another type.
     template <typename Tnew> MultivariateNormalMoments(VectorXT<Tnew> mean) {
         dim = mean.size();
-        encoded_size = dim + e_outer.size_ud;
+        Init(dim);
         e_vec = mean.template cast<T>();
         MatrixXT<T> e_vec_outer = e_vec * e_vec.transpose();
-        e_outer = PosDefMatrixParameter<Tnew>(dim);
         e_outer.set(e_vec_outer);
-        diag_min = 0;
     };
 
     // Set from natural parameters.
     MultivariateNormalMoments(MultivariateNormalNatural<T> mvn_nat) {
         dim = mvn_nat.dim;
+        Init(dim);
         e_vec = mvn_nat.loc;
         MatrixXT<T> e_outer_mat =
             e_vec * e_vec.transpose() + mvn_nat.info.mat.inverse();
-        e_outer = PosDefMatrixParameter<T>(e_vec.size());
         e_outer.set(e_outer_mat);
-        encoded_size = dim + e_outer.size_ud;
-        diag_min = 0;
     };
 
     // Convert to another type.
@@ -562,6 +581,12 @@ public:
 //////// Univariate Normal
 
 template <class T> class UnivariateNormalNatural: public Parameter<T> {
+    void Init() {
+        loc = 0;
+        info = 0;
+        info_min = 0;
+        encoded_size = 2;
+    }
 public:
     using Parameter<T>::encoded_size;
     T loc;  // The expectation.
@@ -570,10 +595,7 @@ public:
     T info_min;
 
     UnivariateNormalNatural() {
-        loc = 0;
-        info = 0;
-        info_min = 0;
-        encoded_size = 2;
+        Init();
     };
 
     // Convert to another type.
@@ -610,6 +632,12 @@ public:
 
 
 template <class T> class UnivariateNormalMoments: public Parameter<T> {
+    void Init() {
+        e = 0;
+        e2 = 0;
+        e2_min = 0;
+        encoded_size = 2;
+    }
 public:
 
     using Parameter<T>::encoded_size;
@@ -619,14 +647,12 @@ public:
     T e2_min;
 
     UnivariateNormalMoments() {
-        e = 0;
-        e2 = 0;
-        e2_min = 0;
-        encoded_size = 2;
+        Init();
     };
 
     // Set from natural parameters.
     UnivariateNormalMoments(UnivariateNormalNatural<T> uvn_nat) {
+        Init();
         e = uvn_nat.loc;
         e2 = 1 / uvn_nat.info + pow(uvn_nat.loc, 2);
         e2_min = 0;
