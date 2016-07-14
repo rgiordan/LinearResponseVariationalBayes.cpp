@@ -61,7 +61,7 @@ public:
   }
 
   // We may have to differnetiate with respect to the mean and variance.
-  template  <class T> VectorXT<T> Evaluate(T mean, T var) {
+  template  <class T> VectorXT<T> Evaluate(T mean, T var) const {
     VectorXT<T> output_vec(std_draws.size());
     for (int n=0; n < std_draws.size(); n++) {
       output_vec(n) = sqrt(var) * std_draws(n) + mean;
@@ -72,9 +72,9 @@ public:
 };
 
 # if INSTANTIATE_MONTE_CARLO_PARAMETERS_H
-  extern template VectorXT<double> MonteCarloNormalParameter::Evaluate(double, double);
-  extern template VectorXT<var> MonteCarloNormalParameter::Evaluate(var, var);
-  extern template VectorXT<fvar> MonteCarloNormalParameter::Evaluate(fvar, fvar);
+  extern template VectorXT<double> MonteCarloNormalParameter::Evaluate(double, double) const;
+  extern template VectorXT<var> MonteCarloNormalParameter::Evaluate(var, var) const;
+  extern template VectorXT<fvar> MonteCarloNormalParameter::Evaluate(fvar, fvar) const;
 # endif
 
 
