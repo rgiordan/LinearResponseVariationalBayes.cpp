@@ -1,6 +1,20 @@
 # ifndef KAHAN_SUMMATION_H
 # define KAHAN_SUMMATION_H
 
+// Set to 0 to not instantiate.
+// See https://github.com/stan-dev/math/issues/311#
+# define INSTANTIATE_KAHAN_SUMMATION_H 1
+
+# if INSTANTIATE_KAHAN_SUMMATION_H
+  // For instantiation:
+  # include <stan/math.hpp>
+  # include "stan/math/fwd/scal.hpp"
+
+  using var = stan::math::var;
+  using fvar = stan::math::fvar<var>;
+# endif
+
+
 // Kahan summation
 template <class T> class KahanAccumulator {
 private:
@@ -33,6 +47,10 @@ public:
   }
 };
 
-extern template class KahanAccumulator<double>;
+# if INSTANTIATE_KAHAN_SUMMATION_H
+  extern template class KahanAccumulator<double>;
+  extern template class KahanAccumulator<var>;
+  extern template class KahanAccumulator<fvar>;
+# endif
 
 # endif

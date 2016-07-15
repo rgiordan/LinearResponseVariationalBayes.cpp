@@ -3,10 +3,50 @@
 # include <iostream>
 
 # include "transform_hessian.h"
+# include <stan/math.hpp>
 
 using std::vector;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using Eigen::Dynamic;
+
+template <typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
+template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
+
+
+// Check whether Stan's Jacobian is correct.
+struct TestJacobianObjective {
+  // Evaluates y = A * theta.  The Jacobian of y(theta) is traditionally
+  // the same dimension as A.
+  MatrixXd A;
+  TestJacobianObjective(const MatrixXd A): A(A) {};
+  template <typename T> VectorXT<T> operator()(VectorXT<T> const &theta) const {
+    MatrixXT<T> A_T = A.template cast<T>();
+    VectorXT<T> prod = A_T * theta;
+    return prod;
+  }
+};
+
+
+// A function to check whether Stan is returning the jacobian or its transpose.
+// If true, then the Jacobian returned by Stan is in the standard orientation,
+// otherwise it needs to be transposed.
+bool CheckJacobianCorrectOrientation() {
+
+  MatrixXd A(2, 3);
+  A << 1, 2, 3, 4, 5, 6;
+
+  TestJacobianObjective obj = TestJacobianObjective(A);
+
+  VectorXd theta(3);
+  theta << 1, 2, 3;
+
+  VectorXd val(2);
+  MatrixXd jac(3, 3); // Make it too large on purpose to avoid segfaults.
+  stan::math::jacobian(obj, theta, val, jac);
+
+  return jac.rows() == A.rows();
+}
 
 
 // Input variables:
