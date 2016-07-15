@@ -237,12 +237,12 @@ template <typename T> T GetMultivariateNormalEntropy(MatrixXT<T> info) {
     }
     int k = info.rows();
     T info_det = info.determinant();
-    return 0.5 * k * (1 + log(M_PI)) + 0.5 * log(info_det);
+    return 0.5 * k * (1 + log(M_PI)) - 0.5 * log(info_det);
 }
 
 
 template <typename T> T GetUnivariateNormalEntropy(T info) {
-    return 0.5 * (1 + log(M_PI)) + 0.5 * log(info);
+    return 0.5 * (1 + log(M_PI)) - 0.5 * log(info);
 }
 
 
