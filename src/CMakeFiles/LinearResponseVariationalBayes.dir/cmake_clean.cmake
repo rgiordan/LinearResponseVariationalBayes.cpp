@@ -6,6 +6,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o"
   "libLinearResponseVariationalBayes.pdb"
   "libLinearResponseVariationalBayes.so"
+  "libLinearResponseVariationalBayes.so.0.0.0"
+  "libLinearResponseVariationalBayes.so.0"
 )
 
 # Per-language clean rules from dependency scanning.

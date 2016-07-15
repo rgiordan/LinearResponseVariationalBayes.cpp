@@ -6,8 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/include/kahan_summation.h
-
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/kahan_summation_test.cpp
 kahan_summation.h
 /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/kahan_summation.h
@@ -285,4 +283,6 @@ cxxabi.h
 -
 acxx_demangle.h
 -
+
+include/kahan_summation.h
 

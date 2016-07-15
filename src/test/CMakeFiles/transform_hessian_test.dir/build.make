@@ -35,42 +35,42 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src
+CMAKE_SOURCE_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src
+CMAKE_BINARY_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp
 
 # Include any dependencies generated for this target.
-include test/CMakeFiles/transform_hessian_test.dir/depend.make
+include src/test/CMakeFiles/transform_hessian_test.dir/depend.make
 
 # Include the progress variables for this target.
-include test/CMakeFiles/transform_hessian_test.dir/progress.make
+include src/test/CMakeFiles/transform_hessian_test.dir/progress.make
 
 # Include the compile flags for this target's objects.
-include test/CMakeFiles/transform_hessian_test.dir/flags.make
+include src/test/CMakeFiles/transform_hessian_test.dir/flags.make
 
-test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o: test/CMakeFiles/transform_hessian_test.dir/flags.make
-test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o: test/transform_hessian_test.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o"
+src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o: src/test/CMakeFiles/transform_hessian_test.dir/flags.make
+src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o: src/test/transform_hessian_test.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/CMakeFiles $(CMAKE_PROGRESS_1)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o"
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o -c /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/transform_hessian_test.cpp
 
-test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.i: cmake_force
+src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.i"
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/transform_hessian_test.cpp > CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.i
 
-test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.s: cmake_force
+src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.s"
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/transform_hessian_test.cpp -o CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.s
 
-test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.requires:
-.PHONY : test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.requires
+src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.requires:
+.PHONY : src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.requires
 
-test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.provides: test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.requires
-	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.provides.build
-.PHONY : test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.provides
+src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.provides: src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.requires
+	$(MAKE) -f src/test/CMakeFiles/transform_hessian_test.dir/build.make src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.provides.build
+.PHONY : src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.provides
 
-test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.provides.build: test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o
+src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.provides.build: src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o
 
 # Object files for target transform_hessian_test
 transform_hessian_test_OBJECTS = \
@@ -79,25 +79,25 @@ transform_hessian_test_OBJECTS = \
 # External object files for target transform_hessian_test
 transform_hessian_test_EXTERNAL_OBJECTS =
 
-test/transform_hessian_test: test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o
-test/transform_hessian_test: test/CMakeFiles/transform_hessian_test.dir/build.make
-test/transform_hessian_test: libLinearResponseVariationalBayes.so
-test/transform_hessian_test: test/CMakeFiles/transform_hessian_test.dir/link.txt
+src/test/transform_hessian_test: src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o
+src/test/transform_hessian_test: src/test/CMakeFiles/transform_hessian_test.dir/build.make
+src/test/transform_hessian_test: src/libLinearResponseVariationalBayes.so.0.0.0
+src/test/transform_hessian_test: src/test/CMakeFiles/transform_hessian_test.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable transform_hessian_test"
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/transform_hessian_test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-test/CMakeFiles/transform_hessian_test.dir/build: test/transform_hessian_test
-.PHONY : test/CMakeFiles/transform_hessian_test.dir/build
+src/test/CMakeFiles/transform_hessian_test.dir/build: src/test/transform_hessian_test
+.PHONY : src/test/CMakeFiles/transform_hessian_test.dir/build
 
-test/CMakeFiles/transform_hessian_test.dir/requires: test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.requires
-.PHONY : test/CMakeFiles/transform_hessian_test.dir/requires
+src/test/CMakeFiles/transform_hessian_test.dir/requires: src/test/CMakeFiles/transform_hessian_test.dir/transform_hessian_test.cpp.o.requires
+.PHONY : src/test/CMakeFiles/transform_hessian_test.dir/requires
 
-test/CMakeFiles/transform_hessian_test.dir/clean:
+src/test/CMakeFiles/transform_hessian_test.dir/clean:
 	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test && $(CMAKE_COMMAND) -P CMakeFiles/transform_hessian_test.dir/cmake_clean.cmake
-.PHONY : test/CMakeFiles/transform_hessian_test.dir/clean
+.PHONY : src/test/CMakeFiles/transform_hessian_test.dir/clean
 
-test/CMakeFiles/transform_hessian_test.dir/depend:
-	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/CMakeFiles/transform_hessian_test.dir/DependInfo.cmake --color=$(COLOR)
-.PHONY : test/CMakeFiles/transform_hessian_test.dir/depend
+src/test/CMakeFiles/transform_hessian_test.dir/depend:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/CMakeFiles/transform_hessian_test.dir/DependInfo.cmake --color=$(COLOR)
+.PHONY : src/test/CMakeFiles/transform_hessian_test.dir/depend
 
