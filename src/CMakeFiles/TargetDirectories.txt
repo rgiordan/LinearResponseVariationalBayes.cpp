@@ -1,5 +1,0 @@
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/CMakeFiles/kahan_summation_test.dir
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/LinearResponseVariationalBayes.dir
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/CMakeFiles/variational_parameter_test.dir
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/CMakeFiles/transform_hessian_test.dir
-/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/test/CMakeFiles/monte_carlo_parameter_test.dir

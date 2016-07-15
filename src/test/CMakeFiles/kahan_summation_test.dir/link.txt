@@ -1,1 +1,0 @@
-/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/kahan_summation_test.dir/kahan_summation_test.cpp.o  -o kahan_summation_test -rdynamic -lgtest -lgtest_main ../libLinearResponseVariationalBayes.so.0.0.0 -Wl,-rpath,/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src 
