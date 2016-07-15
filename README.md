@@ -16,11 +16,13 @@ e.g. in bash:
 export GIT_REPO_LOC=/full/path/to/your/git/repos
 ```
 
-Finally, in this directory, run cmake then make install:
+Finally, in a build directory, run cmake then make install:
 
 ```bash
 cd $GIT_REPO_LOC/LinearResponseVariationalBayes.cpp
-cmake .
+mkdir build
+cd build
+cmake ..
 sudo make install
 ```
 
