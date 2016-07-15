@@ -33,15 +33,43 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  foreach(file
+      "$ENV{DESTDIR}/usr/local/lib/libLinearResponseVariationalBayes.so.0.0.0"
+      "$ENV{DESTDIR}/usr/local/lib/libLinearResponseVariationalBayes.so.0"
+      "$ENV{DESTDIR}/usr/local/lib/libLinearResponseVariationalBayes.so"
+      )
+    if(EXISTS "${file}" AND
+       NOT IS_SYMLINK "${file}")
+      file(RPATH_CHECK
+           FILE "${file}"
+           RPATH "")
+    endif()
+  endforeach()
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/usr/lib/libLinearResponseVariationalBayes.so")
+   "/usr/local/lib/libLinearResponseVariationalBayes.so.0.0.0;/usr/local/lib/libLinearResponseVariationalBayes.so.0;/usr/local/lib/libLinearResponseVariationalBayes.so")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/usr/lib" TYPE SHARED_LIBRARY FILES "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/libLinearResponseVariationalBayes.so")
+file(INSTALL DESTINATION "/usr/local/lib" TYPE SHARED_LIBRARY FILES
+    "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/libLinearResponseVariationalBayes.so.0.0.0"
+    "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/libLinearResponseVariationalBayes.so.0"
+    "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/libLinearResponseVariationalBayes.so"
+    )
+  foreach(file
+      "$ENV{DESTDIR}/usr/local/lib/libLinearResponseVariationalBayes.so.0.0.0"
+      "$ENV{DESTDIR}/usr/local/lib/libLinearResponseVariationalBayes.so.0"
+      "$ENV{DESTDIR}/usr/local/lib/libLinearResponseVariationalBayes.so"
+      )
+    if(EXISTS "${file}" AND
+       NOT IS_SYMLINK "${file}")
+      if(CMAKE_INSTALL_DO_STRIP)
+        execute_process(COMMAND "/usr/bin/strip" "${file}")
+      endif()
+    endif()
+  endforeach()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
@@ -50,13 +78,3 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
 
 endif()
 
-if(CMAKE_INSTALL_COMPONENT)
-  set(CMAKE_INSTALL_MANIFEST "install_manifest_${CMAKE_INSTALL_COMPONENT}.txt")
-else()
-  set(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
-endif()
-
-string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
-       "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/${CMAKE_INSTALL_MANIFEST}"
-     "${CMAKE_INSTALL_MANIFEST_CONTENT}")

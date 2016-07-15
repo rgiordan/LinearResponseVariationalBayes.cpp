@@ -1,2 +1,0 @@
-/usr/bin/ar cq libtransform_hessian.a  CMakeFiles/transform_hessian.dir/transform_hessian.cpp.o
-/usr/bin/ranlib libtransform_hessian.a

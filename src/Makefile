@@ -42,13 +42,23 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src
+CMAKE_SOURCE_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src
+CMAKE_BINARY_DIR = /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: install/strip
+.PHONY : install/strip/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -103,14 +113,14 @@ install/local/fast: install/local
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles 0
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/CMakeFiles /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/src/CMakeFiles/progress.marks
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f CMakeFiles/Makefile2 src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f CMakeFiles/Makefile2 src/clean
 .PHONY : clean
 
 # The main clean target
@@ -119,90 +129,39 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named LinearResponseVariationalBayes
+# Convenience name for target.
+src/CMakeFiles/LinearResponseVariationalBayes.dir/rule:
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/LinearResponseVariationalBayes.dir/rule
+.PHONY : src/CMakeFiles/LinearResponseVariationalBayes.dir/rule
 
-# Build rule for target.
-LinearResponseVariationalBayes: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 LinearResponseVariationalBayes
+# Convenience name for target.
+LinearResponseVariationalBayes: src/CMakeFiles/LinearResponseVariationalBayes.dir/rule
 .PHONY : LinearResponseVariationalBayes
 
 # fast build rule for target.
 LinearResponseVariationalBayes/fast:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/build
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/build
 .PHONY : LinearResponseVariationalBayes/fast
-
-#=============================================================================
-# Target rules for targets named kahan_summation_test
-
-# Build rule for target.
-kahan_summation_test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 kahan_summation_test
-.PHONY : kahan_summation_test
-
-# fast build rule for target.
-kahan_summation_test/fast:
-	$(MAKE) -f test/CMakeFiles/kahan_summation_test.dir/build.make test/CMakeFiles/kahan_summation_test.dir/build
-.PHONY : kahan_summation_test/fast
-
-#=============================================================================
-# Target rules for targets named monte_carlo_parameter_test
-
-# Build rule for target.
-monte_carlo_parameter_test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 monte_carlo_parameter_test
-.PHONY : monte_carlo_parameter_test
-
-# fast build rule for target.
-monte_carlo_parameter_test/fast:
-	$(MAKE) -f test/CMakeFiles/monte_carlo_parameter_test.dir/build.make test/CMakeFiles/monte_carlo_parameter_test.dir/build
-.PHONY : monte_carlo_parameter_test/fast
-
-#=============================================================================
-# Target rules for targets named transform_hessian_test
-
-# Build rule for target.
-transform_hessian_test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 transform_hessian_test
-.PHONY : transform_hessian_test
-
-# fast build rule for target.
-transform_hessian_test/fast:
-	$(MAKE) -f test/CMakeFiles/transform_hessian_test.dir/build.make test/CMakeFiles/transform_hessian_test.dir/build
-.PHONY : transform_hessian_test/fast
-
-#=============================================================================
-# Target rules for targets named variational_parameter_test
-
-# Build rule for target.
-variational_parameter_test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 variational_parameter_test
-.PHONY : variational_parameter_test
-
-# fast build rule for target.
-variational_parameter_test/fast:
-	$(MAKE) -f test/CMakeFiles/variational_parameter_test.dir/build.make test/CMakeFiles/variational_parameter_test.dir/build
-.PHONY : variational_parameter_test/fast
 
 exponential_families.o: exponential_families.cpp.o
 .PHONY : exponential_families.o
 
 # target to build an object file
 exponential_families.cpp.o:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.o
 .PHONY : exponential_families.cpp.o
 
 exponential_families.i: exponential_families.cpp.i
@@ -210,7 +169,7 @@ exponential_families.i: exponential_families.cpp.i
 
 # target to preprocess a source file
 exponential_families.cpp.i:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.i
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.i
 .PHONY : exponential_families.cpp.i
 
 exponential_families.s: exponential_families.cpp.s
@@ -218,7 +177,7 @@ exponential_families.s: exponential_families.cpp.s
 
 # target to generate assembly for a file
 exponential_families.cpp.s:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.s
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/exponential_families.cpp.s
 .PHONY : exponential_families.cpp.s
 
 kahan_summation.o: kahan_summation.cpp.o
@@ -226,7 +185,7 @@ kahan_summation.o: kahan_summation.cpp.o
 
 # target to build an object file
 kahan_summation.cpp.o:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.o
 .PHONY : kahan_summation.cpp.o
 
 kahan_summation.i: kahan_summation.cpp.i
@@ -234,7 +193,7 @@ kahan_summation.i: kahan_summation.cpp.i
 
 # target to preprocess a source file
 kahan_summation.cpp.i:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.i
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.i
 .PHONY : kahan_summation.cpp.i
 
 kahan_summation.s: kahan_summation.cpp.s
@@ -242,7 +201,7 @@ kahan_summation.s: kahan_summation.cpp.s
 
 # target to generate assembly for a file
 kahan_summation.cpp.s:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.s
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/kahan_summation.cpp.s
 .PHONY : kahan_summation.cpp.s
 
 monte_carlo_parameters.o: monte_carlo_parameters.cpp.o
@@ -250,7 +209,7 @@ monte_carlo_parameters.o: monte_carlo_parameters.cpp.o
 
 # target to build an object file
 monte_carlo_parameters.cpp.o:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.o
 .PHONY : monte_carlo_parameters.cpp.o
 
 monte_carlo_parameters.i: monte_carlo_parameters.cpp.i
@@ -258,7 +217,7 @@ monte_carlo_parameters.i: monte_carlo_parameters.cpp.i
 
 # target to preprocess a source file
 monte_carlo_parameters.cpp.i:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.i
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.i
 .PHONY : monte_carlo_parameters.cpp.i
 
 monte_carlo_parameters.s: monte_carlo_parameters.cpp.s
@@ -266,7 +225,7 @@ monte_carlo_parameters.s: monte_carlo_parameters.cpp.s
 
 # target to generate assembly for a file
 monte_carlo_parameters.cpp.s:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.s
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/monte_carlo_parameters.cpp.s
 .PHONY : monte_carlo_parameters.cpp.s
 
 transform_hessian.o: transform_hessian.cpp.o
@@ -274,7 +233,7 @@ transform_hessian.o: transform_hessian.cpp.o
 
 # target to build an object file
 transform_hessian.cpp.o:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.o
 .PHONY : transform_hessian.cpp.o
 
 transform_hessian.i: transform_hessian.cpp.i
@@ -282,7 +241,7 @@ transform_hessian.i: transform_hessian.cpp.i
 
 # target to preprocess a source file
 transform_hessian.cpp.i:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.i
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.i
 .PHONY : transform_hessian.cpp.i
 
 transform_hessian.s: transform_hessian.cpp.s
@@ -290,7 +249,7 @@ transform_hessian.s: transform_hessian.cpp.s
 
 # target to generate assembly for a file
 transform_hessian.cpp.s:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.s
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/transform_hessian.cpp.s
 .PHONY : transform_hessian.cpp.s
 
 variational_parameters.o: variational_parameters.cpp.o
@@ -298,7 +257,7 @@ variational_parameters.o: variational_parameters.cpp.o
 
 # target to build an object file
 variational_parameters.cpp.o:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.o
 .PHONY : variational_parameters.cpp.o
 
 variational_parameters.i: variational_parameters.cpp.i
@@ -306,7 +265,7 @@ variational_parameters.i: variational_parameters.cpp.i
 
 # target to preprocess a source file
 variational_parameters.cpp.i:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.i
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.i
 .PHONY : variational_parameters.cpp.i
 
 variational_parameters.s: variational_parameters.cpp.s
@@ -314,7 +273,7 @@ variational_parameters.s: variational_parameters.cpp.s
 
 # target to generate assembly for a file
 variational_parameters.cpp.s:
-	$(MAKE) -f CMakeFiles/LinearResponseVariationalBayes.dir/build.make CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.s
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(MAKE) -f src/CMakeFiles/LinearResponseVariationalBayes.dir/build.make src/CMakeFiles/LinearResponseVariationalBayes.dir/variational_parameters.cpp.s
 .PHONY : variational_parameters.cpp.s
 
 # Help Target
@@ -323,16 +282,13 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... install/strip"
 	@echo "... LinearResponseVariationalBayes"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... install/local"
-	@echo "... kahan_summation_test"
-	@echo "... variational_parameter_test"
-	@echo "... transform_hessian_test"
-	@echo "... monte_carlo_parameter_test"
 	@echo "... exponential_families.o"
 	@echo "... exponential_families.i"
 	@echo "... exponential_families.s"
@@ -359,6 +315,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayes.cpp && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
