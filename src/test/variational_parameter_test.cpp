@@ -411,6 +411,10 @@ TEST(UnivariateNormalNatural, encoding) {
   }
 }
 
+
+//////////////////////////////
+// Covariance tests.
+
 MatrixXd MatrixFromTriplets(std::vector<Triplet> terms, int dim) {
     // Construct a sparse matrix.
     Eigen::SparseMatrix<double> sp_mat(dim, dim);
@@ -421,7 +425,7 @@ MatrixXd MatrixFromTriplets(std::vector<Triplet> terms, int dim) {
 }
 
 
-TEST(UnivariateNormalNatural, covariance) {
+TEST(UnivariateNormalNatural, moments) {
     double loc = 2;
     double info = 2.4;
     UnivariateNormalNatural<double> uvn_nat;
@@ -453,6 +457,119 @@ TEST(UnivariateNormalNatural, covariance) {
         MatrixFromTriplets(GetMomentCovariance(uvn_nat, 0), uvn_nat.encoded_size);
     EXPECT_VECTOR_NEAR(uvn_moments, sample_mean, 3 / sqrt(n_sim), "UVN mean");
     EXPECT_MATRIX_NEAR(MatrixXd(uvn_cov), sample_cov, 3 / sqrt(n_sim), "UVN cov");
+}
+
+
+TEST(MultivariateNormalNatural, moments) {
+    int k = 2;
+    VectorXd loc(k);
+    loc << 1, 2;
+    MatrixXd info(k, k);
+    info  << 1, 0.2, 0.2, 1;
+    MatrixXd cov = info.inverse();
+    MultivariateNormalNatural<double> mvn_nat(k);
+    mvn_nat.loc = loc;
+    mvn_nat.info.set(info);
+    MultivariateNormalMoments<double> mvn_mom(k);
+
+    int n_sim = 3e5;
+    boost::mt19937 rng;
+    MatrixXd sample_cov = MatrixXd::Zero(mvn_nat.encoded_size, mvn_nat.encoded_size);
+    VectorXd sample_mean = VectorXd::Zero(mvn_nat.encoded_size);
+    for (int n = 0; n  < n_sim; n++) {
+        VectorXd draw = stan::math::multi_normal_rng(mvn_nat.loc, cov, rng);
+        mvn_mom.e_vec = draw;
+        mvn_mom.e_outer.mat = draw * draw.transpose();
+        VectorXd mom_param_vec = mvn_mom.encode_vector(false);
+        MatrixXd mom_param_outer = mom_param_vec * mom_param_vec.transpose();
+        sample_mean += mom_param_vec;
+        sample_cov += mom_param_outer;
+    }
+    sample_mean /= n_sim;
+    sample_cov /= n_sim;
+    sample_cov -= sample_mean * sample_mean.transpose();
+
+    mvn_mom = MultivariateNormalMoments<double>(mvn_nat);
+    VectorXd mvn_moments = mvn_mom.encode_vector(false);
+    MatrixXd mvn_cov =
+        MatrixFromTriplets(GetMomentCovariance(mvn_nat, 0), mvn_nat.encoded_size);
+
+    // TODO: there's a principled way to set these tolerances.
+    EXPECT_VECTOR_NEAR(mvn_moments, sample_mean, 8 / sqrt(n_sim), "MVN mean");
+    EXPECT_MATRIX_NEAR(MatrixXd(mvn_cov), sample_cov, 25 / sqrt(n_sim), "MVN cov");
+}
+
+
+TEST(GammaNatural, moments) {
+    double alpha = 2.6;
+    double beta = 3.2;
+    GammaNatural<double> gamma_nat;
+    gamma_nat.alpha = alpha;
+    gamma_nat.beta = beta;
+    GammaMoments<double> gamma_mom;
+
+    int n_sim = 100000;
+    boost::mt19937 rng;
+    MatrixXd sample_cov = MatrixXd::Zero(2, 2);
+    VectorXd sample_mean = VectorXd::Zero(2);
+    for (int n = 0; n  < n_sim; n++) {
+        double draw =
+            stan::math::gamma_rng(gamma_nat.alpha, gamma_nat.beta, rng);
+        gamma_mom.e = draw;
+        gamma_mom.e_log = log(draw);
+        VectorXd mom_param_vec = gamma_mom.encode_vector(false);
+        MatrixXd mom_param_outer = mom_param_vec * mom_param_vec.transpose();
+        sample_mean += mom_param_vec;
+        sample_cov += mom_param_outer;
+    }
+    sample_mean /= n_sim;
+    sample_cov /= n_sim;
+    sample_cov -= sample_mean * sample_mean.transpose();
+
+    gamma_mom = GammaMoments<double>(gamma_nat);
+    VectorXd gamma_moments = gamma_mom.encode_vector(false);
+    MatrixXd gamma_cov =
+        MatrixFromTriplets(GetMomentCovariance(gamma_nat, 0), gamma_nat.encoded_size);
+    EXPECT_VECTOR_NEAR(gamma_moments, sample_mean, 3 / sqrt(n_sim), "Gamma mean");
+    EXPECT_MATRIX_NEAR(MatrixXd(gamma_cov), sample_cov, 3 / sqrt(n_sim), "Gamma cov");
+}
+
+
+TEST(WishartNatural, moments) {
+    int k = 2;
+    double n = 3.5;
+    MatrixXd v(k, k);
+    v  << 1, 0.2, 0.2, 1;
+    WishartNatural<double> w_nat(k);
+    w_nat.n = n;
+    w_nat.v.set(v);
+    WishartMoments<double> w_mom(k);
+
+    int n_sim = 3e5;
+    boost::mt19937 rng;
+    MatrixXd sample_cov = MatrixXd::Zero(w_nat.encoded_size, w_nat.encoded_size);
+    VectorXd sample_mean = VectorXd::Zero(w_nat.encoded_size);
+    for (int n = 0; n  < n_sim; n++) {
+        MatrixXd draw = stan::math::wishart_rng(w_nat.n, w_nat.v.mat, rng);
+        w_mom.e.mat = draw;
+        w_mom.e_log_det = log(draw.determinant());
+        VectorXd mom_param_vec = w_mom.encode_vector(false);
+        MatrixXd mom_param_outer = mom_param_vec * mom_param_vec.transpose();
+        sample_mean += mom_param_vec;
+        sample_cov += mom_param_outer;
+    }
+    sample_mean /= n_sim;
+    sample_cov /= n_sim;
+    sample_cov -= sample_mean * sample_mean.transpose();
+
+    w_mom = WishartMoments<double>(w_nat);
+    VectorXd w_moments = w_mom.encode_vector(false);
+    MatrixXd w_cov =
+        MatrixFromTriplets(GetMomentCovariance(w_nat, 0), w_nat.encoded_size);
+
+    // TODO: there's a principled way to set these tolerances.
+    EXPECT_VECTOR_NEAR(w_moments, sample_mean, 8 / sqrt(n_sim), "Wishart mean");
+    EXPECT_MATRIX_NEAR(MatrixXd(w_cov), sample_cov, 25 / sqrt(n_sim), "Wishart cov");
 }
 
 
