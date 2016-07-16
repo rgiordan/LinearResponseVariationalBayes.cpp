@@ -4,6 +4,9 @@
 # include <string>
 # include <Eigen/Dense>
 
+# include "boost/random.hpp"
+# include <stan/math.hpp>
+
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
 
@@ -406,6 +409,50 @@ TEST(UnivariateNormalNatural, encoding) {
     EXPECT_DOUBLE_EQ(uvn.loc, uvn_copy.loc) << unconstrained_str;
     EXPECT_DOUBLE_EQ(uvn.info, uvn_copy.info) << unconstrained_str;
   }
+}
+
+MatrixXd MatrixFromTriplets(std::vector<Triplet> terms, int dim) {
+    // Construct a sparse matrix.
+    Eigen::SparseMatrix<double> sp_mat(dim, dim);
+    sp_mat.setFromTriplets(terms.begin(), terms.end());
+    sp_mat.makeCompressed();
+    MatrixXd mat(sp_mat);
+    return mat;
+}
+
+
+TEST(UnivariateNormalNatural, covariance) {
+    double loc = 2;
+    double info = 2.4;
+    UnivariateNormalNatural<double> uvn_nat;
+    uvn_nat.loc = loc;
+    uvn_nat.info = info;
+    UnivariateNormalMoments<double> uvn_mom;
+
+    int n_sim = 100000;
+    boost::mt19937 rng;
+    MatrixXd sample_cov = MatrixXd::Zero(2, 2);
+    VectorXd sample_mean = VectorXd::Zero(2);
+    for (int n = 0; n  < n_sim; n++) {
+        double draw =
+            stan::math::normal_rng(uvn_nat.loc, 1 / sqrt(uvn_nat.info), rng);
+        uvn_mom.e = draw;
+        uvn_mom.e2 = pow(draw, 2);
+        VectorXd mom_param_vec = uvn_mom.encode_vector(false);
+        MatrixXd mom_param_outer = mom_param_vec * mom_param_vec.transpose();
+        sample_mean += mom_param_vec;
+        sample_cov += mom_param_outer;
+    }
+    sample_mean /= n_sim;
+    sample_cov /= n_sim;
+    sample_cov -= sample_mean * sample_mean.transpose();
+
+    uvn_mom = UnivariateNormalMoments<double>(uvn_nat);
+    VectorXd uvn_moments = uvn_mom.encode_vector(false);
+    MatrixXd uvn_cov =
+        MatrixFromTriplets(GetMomentCovariance(uvn_nat, 0), uvn_nat.encoded_size);
+    EXPECT_VECTOR_NEAR(uvn_moments, sample_mean, 3 / sqrt(n_sim), "UVN mean");
+    EXPECT_MATRIX_NEAR(MatrixXd(uvn_cov), sample_cov, 3 / sqrt(n_sim), "UVN cov");
 }
 
 

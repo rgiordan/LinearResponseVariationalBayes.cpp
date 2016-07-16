@@ -269,11 +269,13 @@ std::vector<Triplet> get_mvn_covariance_terms(
 std::vector<Triplet> get_wishart_covariance_terms(
     MatrixXd v_par, double n_par, int e_lambda_offset, int e_log_det_lambda_offset);
 
-
 std::vector<Triplet> get_gamma_covariance_terms(
     double alpha, double beta, int e_tau_offset, int e_log_tau_offset);
 
 std::vector<Triplet> get_dirichlet_covariance_terms(VectorXd alpha, int offset);
+
+std::vector<Triplet> get_normal_covariance_terms(
+    double mean, double info, int e_mu_offset, int e_mu2_offset);
 
 
 

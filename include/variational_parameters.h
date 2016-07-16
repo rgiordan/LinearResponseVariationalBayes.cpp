@@ -222,6 +222,9 @@ public:
 };
 
 
+std::vector<Triplet> GetMomentCovariance(GammaNatural<double>, int);
+
+
 template <class T> class GammaMoments: public Parameter<T> {
 private:
     void Init() {
@@ -415,6 +418,8 @@ public:
     };
 };
 
+std::vector<Triplet> GetMomentCovariance(WishartNatural<double>, int);
+
 
 //////// Multivariate Normal
 
@@ -577,6 +582,7 @@ public:
     };
 };
 
+std::vector<Triplet> GetMomentCovariance(MultivariateNormalNatural<double>, int);
 
 //////// Univariate Normal
 
@@ -703,6 +709,8 @@ public:
         return -0.5 * info * (e2 - 2 * mean * e + mean * mean) + 0.5 * log(info);
     };
 };
+
+std::vector<Triplet> GetMomentCovariance(UnivariateNormalNatural<double>, int);
 
 
 # if INSTANTIATE_VARIATIONAL_PARAMETERS_H

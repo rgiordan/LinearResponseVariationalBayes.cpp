@@ -52,9 +52,9 @@ double GetNormalFourthOrderCovariance(
 
   return (cov_mu(i1, j1) * cov_mu(i2, j2) +
           cov_mu(i1, j2) * cov_mu(i2, j1) +
-	        cov_mu(i1, j1) * e_mu(i2) * e_mu(j2) +
+	      cov_mu(i1, j1) * e_mu(i2) * e_mu(j2) +
           cov_mu(i1, j2) * e_mu(i2) * e_mu(j1) +
-	        cov_mu(i2, j1) * e_mu(i1) * e_mu(j2) +
+	      cov_mu(i2, j1) * e_mu(i1) * e_mu(j2) +
           cov_mu(i2, j2) * e_mu(i1) * e_mu(j1));
 };
 
@@ -193,6 +193,7 @@ MatrixXd GetLogDirichletCovariance(VectorXd alpha) {
 
 // Assumes that e_mu and e_mu2_offset are stored linearly starting
 // at their respective offsets.
+// TODO: like everything else, express this in terms of natural parameters.
 std::vector<Triplet> get_mvn_covariance_terms(
     VectorXd e_mu, MatrixXd e_mu2, int e_mu_offset, int e_mu2_offset) {
 
@@ -238,6 +239,26 @@ std::vector<Triplet> get_mvn_covariance_terms(
   }}
 
   return terms;
+};
+
+
+
+std::vector<Triplet> get_normal_covariance_terms(
+    double mean, double info, int e_mu_offset, int e_mu2_offset) {
+
+    MatrixXd cov_mu(1, 1);
+    cov_mu << 1 / info;
+    VectorXd e_mu(1);
+    e_mu << mean;
+
+    std::vector<Triplet> terms;
+    terms.push_back(Triplet(e_mu_offset, e_mu_offset, cov_mu(0, 0)));
+    double cov_mu_mu2 = GetNormalThirdOrderCovariance(e_mu, cov_mu, 0, 0, 0);
+    terms.push_back(Triplet(e_mu_offset, e_mu2_offset, cov_mu_mu2));
+    terms.push_back(Triplet(e_mu2_offset, e_mu_offset, cov_mu_mu2));
+    double cov_mu2_mu2 = GetNormalFourthOrderCovariance(e_mu, cov_mu, 0, 0, 0, 0);
+    terms.push_back(Triplet(e_mu2_offset, e_mu2_offset, cov_mu2_mu2));
+    return terms;
 };
 
 
