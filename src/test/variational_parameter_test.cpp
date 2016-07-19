@@ -413,7 +413,7 @@ TEST(UnivariateNormalNatural, encoding) {
 
 
 //////////////////////////////
-// Covariance tests.
+// Covariance and moment tests.
 
 MatrixXd MatrixFromTriplets(std::vector<Triplet> terms, int dim) {
     // Construct a sparse matrix.
