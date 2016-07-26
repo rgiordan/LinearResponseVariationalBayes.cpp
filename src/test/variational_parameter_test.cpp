@@ -130,14 +130,6 @@ TEST(MultivariateNormalMoments, encoding) {
     EXPECT_VECTOR_EQ(mvn.e_vec, mvn_copy.e_vec, unconstrained_str);
     EXPECT_MATRIX_EQ(mvn.e_outer.mat, mvn_copy.e_outer.mat, unconstrained_str);
   }
-
-  MultivariateNormalNatural<double> mvn_nat(vec, mat);
-  mvn = MultivariateNormalMoments<double>(mvn_nat);
-  VectorXd encoded_vec = mvn.encode_vector(false);
-  mvn_copy = MultivariateNormalMoments<double>(dim);
-  mvn_copy.decode_vector(encoded_vec, false);
-  EXPECT_VECTOR_EQ(mvn.e_vec, mvn_copy.e_vec, "natural parameters");
-  EXPECT_MATRIX_EQ(mvn.e_outer.mat, mvn_copy.e_outer.mat, "natural parameters");
 }
 
 
@@ -161,8 +153,8 @@ TEST(MultivariateNormalNatural, encoding) {
     bool unconstrained = (ind == 0 ? true: false);
     std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
     VectorXd encoded_vec = mvn.encode_vector(unconstrained);
-    mvn_copy.loc = VectorXd::Zero(dim);
-    mvn_copy.info.mat = MatrixXd::Zero(dim, dim);
+    mvn_copy = MultivariateNormalNatural<double>(dim);
+    mvn_copy.diag_min = mvn.diag_min;
     mvn_copy.decode_vector(encoded_vec, unconstrained);
     EXPECT_VECTOR_EQ(mvn.loc, mvn_copy.loc, unconstrained_str);
     EXPECT_MATRIX_EQ(mvn.info.mat, mvn_copy.info.mat, unconstrained_str);
@@ -179,9 +171,16 @@ TEST(Wishart, basic) {
   WishartNatural<double> wishart_nat(n, v);
   WishartMoments<double> wishart(wishart_nat);
 
+  // Test setting from natural parameters
   MatrixXd e_wishart = v * n;
-  EXPECT_MATRIX_EQ(e_wishart, wishart.e.mat, "e_wishart");
+  EXPECT_MATRIX_EQ(e_wishart, wishart.e.mat, "natural");
   EXPECT_DOUBLE_EQ(GetELogDetWishart(v, n), wishart.e_log_det);
+
+  // Test simple initialization
+  double e_log_det = 3.0;
+  wishart = WishartMoments<double>(e_log_det, v);
+  EXPECT_MATRIX_EQ(v, wishart.e.mat, "simple initialization");
+  EXPECT_DOUBLE_EQ(e_log_det, wishart.e_log_det);
 
   // Test copying
   WishartNatural<float> wishart_nat_float(wishart_nat);
@@ -192,7 +191,6 @@ TEST(Wishart, basic) {
   WishartMoments<float> wishart_float(wishart);
   EXPECT_FLOAT_MATRIX_EQ(wishart_float.e.mat, wishart.e.mat, "e_mat");
   EXPECT_FLOAT_EQ(wishart_float.e_log_det, wishart.e_log_det);
-
 }
 
 
@@ -236,22 +234,12 @@ TEST(WishartMoments, encoding) {
     bool unconstrained = (ind == 0 ? true: false);
     std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
     VectorXd encoded_vec = wishart.encode_vector(unconstrained);
-    wishart_copy.e_log_det = 0.0;
-    wishart_copy.e.mat = MatrixXd::Zero(dim, dim);
+    wishart_copy = WishartMoments<double>(dim);
+    wishart_copy.diag_min = 0.2;
     wishart_copy.decode_vector(encoded_vec, unconstrained);
     EXPECT_DOUBLE_EQ(wishart.e_log_det, wishart_copy.e_log_det) << unconstrained_str;
     EXPECT_MATRIX_EQ(wishart.e.mat, wishart_copy.e.mat, unconstrained_str);
   }
-
-  WishartNatural<double> wishart_nat(5.0, mat);
-  wishart = WishartMoments<double>(wishart_nat);
-  VectorXd encoded_vec = wishart.encode_vector(false);
-  wishart_copy.e_log_det = 0.0;
-  wishart_copy.e.mat = MatrixXd::Zero(dim, dim);
-  wishart_copy.decode_vector(encoded_vec, false);
-  EXPECT_DOUBLE_EQ(wishart.e_log_det, wishart_copy.e_log_det) << "natural parameters";
-  EXPECT_MATRIX_EQ(wishart.e.mat, wishart_copy.e.mat, "natural parameters");
-
 }
 
 
@@ -265,9 +253,16 @@ TEST(Gamma, basic) {
   double alpha = 4;
   double beta = 5;
   GammaNatural<double> gamma_nat(alpha, beta);
+
+  // Set from natural parameters
   gamma = GammaMoments<double>(gamma_nat);
   EXPECT_DOUBLE_EQ(alpha / beta, gamma.e);
   EXPECT_DOUBLE_EQ(get_e_log_gamma(alpha, beta), gamma.e_log);
+
+  // Set from moments directly (just reuse alpha and beta for convenience)
+  gamma = GammaMoments<double>(alpha, beta);
+  EXPECT_DOUBLE_EQ(alpha, gamma.e);
+  EXPECT_DOUBLE_EQ(beta, gamma.e_log);
 
   // Just test that this runs.
   double e_log_lik = gamma.ExpectedLogLikelihood(alpha, beta);
@@ -294,41 +289,30 @@ TEST(GammaNatural, encoding) {
 
 
 TEST(GammaMoments, encoding) {
-  GammaMoments<double> gamma;
+  GammaMoments<double> gamma(3.0, 4.0);
   GammaMoments<double> gamma_copy;
-  gamma.e = 3.0;
-  gamma.e_log = 4.0;
-  gamma.e_min = 0.1;
-  gamma_copy.e_min = gamma.e_min;
+  gamma_copy.e_min = gamma.e_min = 0.1;
 
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
     std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
     VectorXd encoded_vec = gamma.encode_vector(unconstrained);
-    gamma_copy.e = 0.0;
-    gamma_copy.e_log = 0.0;
+    gamma_copy = GammaMoments<double>();
+    gamma_copy.e_min = gamma.e_min;
     gamma_copy.decode_vector(encoded_vec, unconstrained);
     EXPECT_DOUBLE_EQ(gamma.e, gamma_copy.e) << unconstrained_str;
     EXPECT_DOUBLE_EQ(gamma.e_log, gamma_copy.e_log) << unconstrained_str;
   }
-
-  GammaNatural<double> gamma_nat;
-  gamma_nat.alpha = 3.0;
-  gamma_nat.beta = 4.0;
-  gamma = GammaMoments<double>(gamma_nat);
-  VectorXd encoded_vec = gamma.encode_vector(false);
-  gamma_copy.e = 0.0;
-  gamma_copy.e_log = 0.0;
-  gamma_copy.decode_vector(encoded_vec, false);
-  EXPECT_DOUBLE_EQ(gamma.e, gamma_copy.e) << "natural parameters";
-  EXPECT_DOUBLE_EQ(gamma.e_log, gamma_copy.e_log) << "natural parameters";
 }
 
 
 TEST(UnivariateNormal, basic) {
-  UnivariateNormalNatural<double> uvn_nat;
-  uvn_nat.loc = 3.0;
-  uvn_nat.info = 4.0;
+  double loc = 3.0;
+  double info = 4.0;
+
+  UnivariateNormalNatural<double> uvn_nat(loc, info);
+  EXPECT_DOUBLE_EQ(loc, uvn_nat.loc);
+  EXPECT_DOUBLE_EQ(info, uvn_nat.info);
 
   UnivariateNormalMoments<double> uvn(uvn_nat);
   EXPECT_DOUBLE_EQ(uvn_nat.loc, uvn.e);
@@ -341,52 +325,34 @@ TEST(UnivariateNormal, basic) {
 
 
 TEST(UnivariateNormalMoments, encoding) {
-  UnivariateNormalMoments<double> uvn;
+  UnivariateNormalMoments<double> uvn(3.0, 4.0);
   UnivariateNormalMoments<double> uvn_copy;
-  uvn.e = 3.0;
-  uvn.e2 = 4.0;
-  uvn.e2_min = 0.1;
-  uvn_copy.e2_min = uvn.e2_min;
+  uvn_copy.e2_min = uvn.e2_min = 0.1;
 
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
     std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
     VectorXd encoded_vec = uvn.encode_vector(unconstrained);
-    uvn_copy.e = 0.0;
-    uvn_copy.e2 = 0.0;
+    uvn_copy = UnivariateNormalMoments<double>();
+    uvn_copy.e2_min = uvn.e2_min;
     uvn_copy.decode_vector(encoded_vec, unconstrained);
     EXPECT_DOUBLE_EQ(uvn.e, uvn_copy.e) << unconstrained_str;
     EXPECT_DOUBLE_EQ(uvn.e2, uvn_copy.e2) << unconstrained_str;
   }
-
-  UnivariateNormalNatural<double> uvn_nat;
-  uvn_nat.loc = 3.0;
-  uvn_nat.info = 4.0;
-
-  uvn = UnivariateNormalMoments<double>(uvn_nat);
-  VectorXd encoded_vec = uvn.encode_vector(false);
-  uvn_copy.e = 0.0;
-  uvn_copy.e2 = 0.0;
-  uvn_copy.decode_vector(encoded_vec, false);
-  EXPECT_DOUBLE_EQ(uvn.e, uvn_copy.e) << "natural parameters";
-  EXPECT_DOUBLE_EQ(uvn.e2, uvn_copy.e2) << "natural parameters";
 }
 
 
 TEST(UnivariateNormalNatural, encoding) {
-  UnivariateNormalNatural<double> uvn;
+  UnivariateNormalNatural<double> uvn(3.0, 4.0);
   UnivariateNormalNatural<double> uvn_copy;
-  uvn.loc = 3.0;
-  uvn.info = 4.0;
-  uvn.info_min = 0.1;
-  uvn_copy.info_min = uvn.info_min;
+  uvn_copy.info_min = uvn.info_min = 0.1;
 
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
     std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
     VectorXd encoded_vec = uvn.encode_vector(unconstrained);
-    uvn_copy.loc = 0.0;
-    uvn_copy.info = 0.0;
+    uvn_copy = UnivariateNormalNatural<double>();
+    uvn_copy.info_min = uvn.info_min;
     uvn_copy.decode_vector(encoded_vec, unconstrained);
     EXPECT_DOUBLE_EQ(uvn.loc, uvn_copy.loc) << unconstrained_str;
     EXPECT_DOUBLE_EQ(uvn.info, uvn_copy.info) << unconstrained_str;
@@ -410,9 +376,7 @@ MatrixXd MatrixFromTriplets(std::vector<Triplet> terms, int dim) {
 TEST(UnivariateNormalNatural, moments) {
     double loc = 2;
     double info = 2.4;
-    UnivariateNormalNatural<double> uvn_nat;
-    uvn_nat.loc = loc;
-    uvn_nat.info = info;
+    UnivariateNormalNatural<double> uvn_nat(loc, info);
     UnivariateNormalMoments<double> uvn_mom;
 
     int n_sim = 100000;
@@ -422,8 +386,7 @@ TEST(UnivariateNormalNatural, moments) {
     for (int n = 0; n  < n_sim; n++) {
         double draw =
             stan::math::normal_rng(uvn_nat.loc, 1 / sqrt(uvn_nat.info), rng);
-        uvn_mom.e = draw;
-        uvn_mom.e2 = pow(draw, 2);
+        uvn_mom.set(draw, pow(draw, 2));
         VectorXd mom_param_vec = uvn_mom.encode_vector(false);
         MatrixXd mom_param_outer = mom_param_vec * mom_param_vec.transpose();
         sample_mean += mom_param_vec;
@@ -449,9 +412,7 @@ TEST(MultivariateNormalNatural, moments) {
     MatrixXd info(k, k);
     info  << 1, 0.2, 0.2, 1;
     MatrixXd cov = info.inverse();
-    MultivariateNormalNatural<double> mvn_nat(k);
-    mvn_nat.loc = loc;
-    mvn_nat.info.set(info);
+    MultivariateNormalNatural<double> mvn_nat(loc, info);
     MultivariateNormalMoments<double> mvn_mom(k);
 
     int n_sim = 3e5;
@@ -460,8 +421,8 @@ TEST(MultivariateNormalNatural, moments) {
     VectorXd sample_mean = VectorXd::Zero(mvn_nat.encoded_size);
     for (int n = 0; n  < n_sim; n++) {
         VectorXd draw = stan::math::multi_normal_rng(mvn_nat.loc, cov, rng);
-        mvn_mom.e_vec = draw;
-        mvn_mom.e_outer.mat = draw * draw.transpose();
+        MatrixXd draw_outer = draw * draw.transpose();
+        mvn_mom.set(draw, draw_outer);
         VectorXd mom_param_vec = mvn_mom.encode_vector(false);
         MatrixXd mom_param_outer = mom_param_vec * mom_param_vec.transpose();
         sample_mean += mom_param_vec;
@@ -485,9 +446,7 @@ TEST(MultivariateNormalNatural, moments) {
 TEST(GammaNatural, moments) {
     double alpha = 2.6;
     double beta = 3.2;
-    GammaNatural<double> gamma_nat;
-    gamma_nat.alpha = alpha;
-    gamma_nat.beta = beta;
+    GammaNatural<double> gamma_nat(alpha, beta);
     GammaMoments<double> gamma_mom;
 
     int n_sim = 100000;
@@ -497,8 +456,7 @@ TEST(GammaNatural, moments) {
     for (int n = 0; n  < n_sim; n++) {
         double draw =
             stan::math::gamma_rng(gamma_nat.alpha, gamma_nat.beta, rng);
-        gamma_mom.e = draw;
-        gamma_mom.e_log = log(draw);
+        gamma_mom.set(draw, log(draw));
         VectorXd mom_param_vec = gamma_mom.encode_vector(false);
         MatrixXd mom_param_outer = mom_param_vec * mom_param_vec.transpose();
         sample_mean += mom_param_vec;
@@ -522,9 +480,7 @@ TEST(WishartNatural, moments) {
     double n = 3.5;
     MatrixXd v(k, k);
     v  << 1, 0.2, 0.2, 1;
-    WishartNatural<double> w_nat(k);
-    w_nat.n = n;
-    w_nat.v.set(v);
+    WishartNatural<double> w_nat(n, v);
     WishartMoments<double> w_mom(k);
 
     int n_sim = 3e5;
@@ -533,8 +489,7 @@ TEST(WishartNatural, moments) {
     VectorXd sample_mean = VectorXd::Zero(w_nat.encoded_size);
     for (int n = 0; n  < n_sim; n++) {
         MatrixXd draw = stan::math::wishart_rng(w_nat.n, w_nat.v.mat, rng);
-        w_mom.e.mat = draw;
-        w_mom.e_log_det = log(draw.determinant());
+        w_mom.set(log(draw.determinant()), draw);
         VectorXd mom_param_vec = w_mom.encode_vector(false);
         MatrixXd mom_param_outer = mom_param_vec * mom_param_vec.transpose();
         sample_mean += mom_param_vec;
