@@ -7,6 +7,7 @@
 
 # include <Eigen/Dense>
 # include <vector>
+# include <iostream>
 
 # include "exponential_families.h"
 
@@ -33,7 +34,8 @@ using fvar = stan::math::fvar<var>;
 
 template <class T> class PosDefMatrixParameter {
 private:
-    void Init(int size) {
+    void Init(int _size) {
+        size = _size;
         size_ud = size * (size + 1) / 2;
         mat = MatrixXT<T>::Zero(size, size);
     }
@@ -42,8 +44,8 @@ public:
     int size_ud;
     MatrixXT<T> mat;
 
-    PosDefMatrixParameter(int size): size(size) {
-        Init(size);
+    PosDefMatrixParameter(int _size): size(_size) {
+        Init(_size);
     }
 
     PosDefMatrixParameter() {
@@ -188,6 +190,16 @@ public:
         Init();
     };
 
+    GammaNatural(T _alpha, T _beta) {
+        Init();
+        set(_alpha, _beta);
+    };
+
+    void set(T _alpha, T _beta) {
+        alpha = _alpha;
+        beta = _beta;
+    };
+
     template <typename Tnew> operator GammaNatural<Tnew>() const {
         GammaNatural<Tnew> gamma_new;
         gamma_new.alpha = alpha;
@@ -247,6 +259,16 @@ public:
         Init();
     };
 
+    GammaMoments(T _e, T _e_log) {
+        Init();
+        set(_e, _e_log);
+    };
+
+    void set(T _e, T _e_log) {
+        e = _e;
+        e_log = _e_log;
+    };
+
     template <typename Tnew> operator GammaMoments<Tnew>() const {
         GammaMoments<Tnew> gamma_new;
         gamma_new.e = e;
@@ -290,7 +312,8 @@ public:
 //////// Wishart
 
 template <class T> class WishartNatural: public Parameter<T> {
-    void Init(int dim) {
+    void Init(int _dim) {
+        dim = _dim;
         n = 0;
         v = PosDefMatrixParameter<T>(dim);
         v.mat = MatrixXT<T>::Zero(dim, dim);
@@ -310,13 +333,32 @@ public:
     T n_min;
     T diag_min;
 
-    WishartNatural(int dim): dim(dim) {
-        Init(dim);
+    WishartNatural(int _dim) {
+        Init(_dim);
     };
 
     WishartNatural() {
         Init(1);
-    }
+    };
+
+    WishartNatural(T _n, MatrixXT<T> _v) {
+        Init(_v.rows());
+        set(_n, _v);
+    };
+
+    void set(T _n, MatrixXT<T> _v) {
+        if (_v.rows() != dim) {
+            std::ostringstream msg;
+            msg << "set called for wrong sized matrix. " <<
+                "dim = " << dim << " size = " << _v.rows() << "\n";
+            throw std::runtime_error(msg.str());
+        }
+        if (_v.rows() != _v.cols()) {
+            throw std::runtime_error("v is not square");
+        }
+        n = _n;
+        v.set(_v);
+    };
 
     template <typename Tnew> operator WishartNatural<Tnew>() const {
         WishartNatural<Tnew> wishart_new(dim);
@@ -355,7 +397,8 @@ public:
 
 
 template <class T> class WishartMoments: public Parameter<T> {
-    void Init(int dim) {
+    void Init(int _dim) {
+        dim = _dim;
         e_log_det = 0;
         e = PosDefMatrixParameter<T>(dim);
         e.mat = MatrixXT<T>::Zero(dim, dim);
@@ -372,13 +415,32 @@ public:
     // For the unconstrained parameterization.
     T diag_min;
 
-    WishartMoments(int dim): dim(dim) {
-        Init(dim);
+    WishartMoments(int _dim) {
+        Init(_dim);
     };
 
     WishartMoments() {
         Init(1);
+    };
+
+    WishartMoments(T _e_log_det, MatrixXT<T> _e) {
+        Init(_e.rows());
+        set(_e_log_det, _e);
     }
+
+    void set(T _e_log_det, MatrixXT<T> _e) {
+        if (_e.rows() != dim) {
+            std::ostringstream msg;
+            msg << "set called for wrong sized matrix. " <<
+                "dim = " << dim << " size = " << _e.rows() << "\n";
+            throw std::runtime_error(msg.str());
+        }
+        if (_e.rows() != _e.cols()) {
+            throw std::runtime_error("e is not square");
+        }
+        e_log_det = _e_log_det;
+        e.set(_e);
+    };
 
     WishartMoments(WishartNatural<T> wishart_nat) {
         dim = wishart_nat.dim;
@@ -425,7 +487,8 @@ std::vector<Triplet> GetMomentCovariance(WishartNatural<double>, int);
 
 
 template <class T> class MultivariateNormalNatural: public Parameter<T> {
-    void Init(int dim) {
+    void Init(int _dim) {
+        dim = _dim;
         loc = VectorXT<T>::Zero(dim);
         info = PosDefMatrixParameter<T>(dim);
         info.mat = MatrixXT<T>::Zero(dim, dim);
@@ -440,12 +503,34 @@ public:
 
     T diag_min;
 
-    MultivariateNormalNatural(int dim): dim(dim) {
-        Init(dim);
+    MultivariateNormalNatural(int _dim) {
+        Init(_dim);
     };
 
     MultivariateNormalNatural() {
         Init(1);
+    };
+
+    MultivariateNormalNatural(VectorXT<T> _loc, MatrixXT<T> _info) {
+        Init(_loc.size());
+        set(_loc, _info);
+    };
+
+    void set(VectorXT<T> _loc, MatrixXT<T> _info) {
+        if (dim != _loc.size()) {
+            std::ostringstream msg;
+            msg << "set called for wrong sized vector. " <<
+                "dim = " << dim << " size = " << loc.size() << "\n";
+            throw std::runtime_error(msg.str());
+        }
+        if (_info.cols() != _info.rows()) {
+            throw std::runtime_error("info is not square");
+        }
+        if (_loc.size() != _info.rows()) {
+            throw std::runtime_error("loc and info have different sizes");
+        }
+        loc = _loc;
+        info.set(_info);
     };
 
     // Convert to another type.
@@ -483,7 +568,8 @@ public:
 
 
 template <class T> class MultivariateNormalMoments: public Parameter<T> {
-    void Init(int dim) {
+    void Init(int _dim) {
+        dim = _dim;
         e_vec = VectorXT<T>::Zero(dim);
         e_outer = PosDefMatrixParameter<T>(dim);
         e_outer.mat = MatrixXT<T>::Zero(dim, dim);
@@ -498,18 +584,39 @@ public:
 
     T diag_min;
 
-    MultivariateNormalMoments(int dim): dim(dim) {
-        Init(dim);
+    MultivariateNormalMoments(int _dim) {
+        Init(_dim);
     };
 
     MultivariateNormalMoments() {
         Init(1);
     };
 
+    MultivariateNormalMoments(VectorXT<T> _e_vec, MatrixXT<T> _e_outer) {
+        Init(_e_vec.size());
+        set(_e_vec, _e_outer);
+    };
+
+    void set(VectorXT<T> _e_vec, MatrixXT<T> _e_outer) {
+        if (dim != _e_vec.size()) {
+            std::ostringstream msg;
+            msg << "set called for wrong sized vector. " <<
+                "dim = " << dim << " size = " << e_vec.size() << "\n";
+            throw std::runtime_error(msg.str());
+        }
+        if (_e_outer.cols() != _e_outer.rows()) {
+            throw std::runtime_error("e_outer is not square");
+        }
+        if (_e_vec.size() != _e_outer.rows()) {
+            throw std::runtime_error("e_vec and e_outer have different sizes");
+        }
+        e_vec = _e_vec;
+        e_outer.set(_e_outer);
+    };
+
     // Set from a vector of another type.
     template <typename Tnew> MultivariateNormalMoments(VectorXT<Tnew> mean) {
-        dim = mean.size();
-        Init(dim);
+        Init(mean.size());
         e_vec = mean.template cast<T>();
         MatrixXT<T> e_vec_outer = e_vec * e_vec.transpose();
         e_outer.set(e_vec_outer);
@@ -517,12 +624,10 @@ public:
 
     // Set from natural parameters.
     MultivariateNormalMoments(MultivariateNormalNatural<T> mvn_nat) {
-        dim = mvn_nat.dim;
-        Init(dim);
-        e_vec = mvn_nat.loc;
+        Init(mvn_nat.dim);
         MatrixXT<T> e_outer_mat =
-            e_vec * e_vec.transpose() + mvn_nat.info.mat.inverse();
-        e_outer.set(e_outer_mat);
+            mvn_nat.loc * mvn_nat.loc.transpose() + mvn_nat.info.mat.inverse();
+        set(mvn_nat.loc, e_outer_mat);
     };
 
     // Convert to another type.
@@ -604,6 +709,16 @@ public:
         Init();
     };
 
+    UnivariateNormalNatural(T _loc, T _info) {
+        Init();
+        set(_loc, _info);
+    };
+
+    void set(T _loc, T _info) {
+        loc = _loc;
+        info = _info;
+    };
+
     // Convert to another type.
     template <typename Tnew> operator UnivariateNormalNatural<Tnew>() const {
         UnivariateNormalNatural<Tnew> uvn;
@@ -654,6 +769,16 @@ public:
 
     UnivariateNormalMoments() {
         Init();
+    };
+
+    UnivariateNormalMoments(T _e, T _e2) {
+        Init();
+        set(_e, _e2);
+    };
+
+    void set(T _e, T _e2) {
+        e = _e;
+        e2 = _e2;
     };
 
     // Set from natural parameters.

@@ -49,9 +49,14 @@ TEST(MultivariateNormal, basic) {
   mean << 1, 2, 3;
   MatrixXd mean_outer = mean * mean.transpose();
 
-  MultivariateNormalMoments<double> mvn(dim);
-  mvn.e_vec = mean;
-  mvn.e_outer.set(mean_outer);
+  MatrixXd info_mat(dim, dim);
+  info_mat << 1,   0.1, 0.1,
+              0.1, 1,   0.1,
+              0.1, 0.1, 1;
+
+  MultivariateNormalMoments<double> mvn(mean, mean_outer);
+  EXPECT_VECTOR_EQ(mean, mvn.e_vec, "init");
+  EXPECT_MATRIX_EQ(mvn.e_outer.mat, mean_outer, "init");
 
   MultivariateNormalMoments<float> mvn_float(mean);
   EXPECT_FLOAT_VECTOR_EQ(mean, mvn_float.e_vec, "mean");
@@ -61,37 +66,41 @@ TEST(MultivariateNormal, basic) {
   EXPECT_FLOAT_VECTOR_EQ(mvn.e_vec, mvn_float2.e_vec, "e_vec");
   EXPECT_FLOAT_MATRIX_EQ(mvn.e_outer.mat, mvn_float2.e_outer.mat, "e_outer");
 
-  MatrixXd info_mat(dim, dim);
-  info_mat << 1,   0.1, 0.1,
-              0.1, 1,   0.1,
-              0.1, 0.1, 1;
-  WishartNatural<double> info_nat(dim);
-  info_nat.v.mat = info_mat;
-  info_nat.n = 1;
-  WishartMoments<double> info(dim);
-  info.e.mat = info_mat;
-  info.e_log_det = log(info_mat.determinant());
-
-  VectorXd mean_center(dim);
-  mean_center << 1.1, 2.1, 3.1;
-  MultivariateNormalMoments<double> mvn_center(mean_center);
-
-  double log_lik_1 = mvn.ExpectedLogLikelihood(mvn_center, info);
-  double log_lik_2 = mvn.ExpectedLogLikelihood(mean_center, info);
-  double log_lik_3 = mvn.ExpectedLogLikelihood(mean_center, info_mat);
-
-  EXPECT_DOUBLE_EQ(log_lik_1, log_lik_2);
-  EXPECT_DOUBLE_EQ(log_lik_1, log_lik_3);
-
   // Test conversion from natural parameters.
-  MultivariateNormalNatural<double> mvn_nat(dim);
-  mvn_nat.loc = 2 * mean;
-  mvn_nat.info.mat = info_mat;
+  MultivariateNormalNatural<double> mvn_nat(2 * mean, info_mat);
   mvn = MultivariateNormalMoments<double>(mvn_nat);
-  EXPECT_VECTOR_EQ(mvn_nat.loc, mvn.e_vec, "loc");
+
+  EXPECT_VECTOR_EQ(mvn_nat.loc, mvn.e_vec, "loc from nat");
   MatrixXd expected_outer =
-    info_mat.inverse() + mvn_nat.loc * mvn_nat.loc.transpose();
-  EXPECT_MATRIX_EQ(expected_outer, mvn.e_outer.mat, "outer");
+    mvn_nat.info.mat.inverse() + mvn_nat.loc * mvn_nat.loc.transpose();
+  EXPECT_MATRIX_EQ(expected_outer, mvn.e_outer.mat, "outer from nat");
+}
+
+
+TEST(MultivariateNormal, loglik) {
+    int dim = 3;
+    VectorXd mean(dim);
+    mean << 1, 2, 3;
+    MatrixXd mean_outer = mean * mean.transpose();
+    MultivariateNormalMoments<double> mvn(mean, mean_outer);
+
+    MatrixXd info_mat(dim, dim);
+    info_mat << 1,   0.1, 0.1,
+                0.1, 1,   0.1,
+                0.1, 0.1, 1;
+    WishartNatural<double> info_nat(1, info_mat);
+    WishartMoments<double> info(log(info_mat.determinant()), info_mat);
+
+    VectorXd mean_center(dim);
+    mean_center << 1.1, 2.1, 3.1;
+    MultivariateNormalMoments<double> mvn_center(mean_center);
+
+    double log_lik_1 = mvn.ExpectedLogLikelihood(mvn_center, info);
+    double log_lik_2 = mvn.ExpectedLogLikelihood(mean_center, info);
+    double log_lik_3 = mvn.ExpectedLogLikelihood(mean_center, info_mat);
+
+    EXPECT_DOUBLE_EQ(log_lik_1, log_lik_2);
+    EXPECT_DOUBLE_EQ(log_lik_1, log_lik_3);
 }
 
 
@@ -104,34 +113,28 @@ TEST(MultivariateNormalMoments, encoding) {
           0.1, 1,   0.1,
           0.1, 0.1, 1;
 
-  MultivariateNormalMoments<double> mvn(dim);
+  MultivariateNormalMoments<double> mvn(vec, mat);
   MultivariateNormalMoments<double> mvn_copy(dim);
 
-  mvn.e_vec = vec;
-  mvn.e_outer.set(mat);
   // The matrix must still be positive definite after
   // subtracting this from the diagonal.
-  mvn.diag_min = 0.2;
-  mvn_copy.diag_min = mvn.diag_min;
+  mvn_copy.diag_min = mvn.diag_min = 0.2;
 
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
     std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
     VectorXd encoded_vec = mvn.encode_vector(unconstrained);
-    mvn_copy.e_vec = VectorXd::Zero(dim);
-    mvn_copy.e_outer.mat = MatrixXd::Zero(dim, dim);
+    mvn_copy = MultivariateNormalMoments<double>(dim);
+    mvn_copy.diag_min = mvn.diag_min;
     mvn_copy.decode_vector(encoded_vec, unconstrained);
     EXPECT_VECTOR_EQ(mvn.e_vec, mvn_copy.e_vec, unconstrained_str);
     EXPECT_MATRIX_EQ(mvn.e_outer.mat, mvn_copy.e_outer.mat, unconstrained_str);
   }
 
-  MultivariateNormalNatural<double> mvn_nat(dim);
-  mvn_nat.loc = vec;
-  mvn_nat.info.set(mat);
+  MultivariateNormalNatural<double> mvn_nat(vec, mat);
   mvn = MultivariateNormalMoments<double>(mvn_nat);
   VectorXd encoded_vec = mvn.encode_vector(false);
-  mvn_copy.e_vec = VectorXd::Zero(dim);
-  mvn_copy.e_outer.mat = MatrixXd::Zero(dim, dim);
+  mvn_copy = MultivariateNormalMoments<double>(dim);
   mvn_copy.decode_vector(encoded_vec, false);
   EXPECT_VECTOR_EQ(mvn.e_vec, mvn_copy.e_vec, "natural parameters");
   EXPECT_MATRIX_EQ(mvn.e_outer.mat, mvn_copy.e_outer.mat, "natural parameters");
@@ -147,14 +150,12 @@ TEST(MultivariateNormalNatural, encoding) {
           0.1, 1,   0.1,
           0.1, 0.1, 1;
 
-  MultivariateNormalNatural<double> mvn(dim);
+  MultivariateNormalNatural<double> mvn(vec, mat);
   MultivariateNormalNatural<double> mvn_copy(dim);
-  mvn.loc = vec;
-  mvn.info.set(mat);
+
   // The matrix must still be positive definite after
   // subtracting this from the diagonal.
-  mvn.diag_min = 0.2;
-  mvn_copy.diag_min = mvn.diag_min;
+  mvn_copy.diag_min = mvn.diag_min = 0.2;
 
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
@@ -175,11 +176,9 @@ TEST(Wishart, basic) {
        0.1, 1,   0.1,
        0.1, 0.1, 1;
   double n = 3;
-  WishartNatural<double> wishart_nat(3);
-  wishart_nat.v.mat = v;
-  wishart_nat.n = n;
-
+  WishartNatural<double> wishart_nat(n, v);
   WishartMoments<double> wishart(wishart_nat);
+
   MatrixXd e_wishart = v * n;
   EXPECT_MATRIX_EQ(e_wishart, wishart.e.mat, "e_wishart");
   EXPECT_DOUBLE_EQ(GetELogDetWishart(v, n), wishart.e_log_det);
@@ -204,14 +203,10 @@ TEST(WishartNatural, encoding) {
           0.1, 1,   0.1,
           0.1, 0.1, 1;
 
-  WishartNatural<double> wishart(dim);
+  WishartNatural<double> wishart(5.0, mat);
   WishartNatural<double> wishart_copy(dim);
-  wishart.n = 5.0;
-  wishart.v.set(mat);
-  wishart.diag_min = 0.2;
-  wishart.n_min = 0.4;
-  wishart_copy.diag_min = wishart.diag_min;
-  wishart_copy.n_min = wishart.n_min;
+  wishart_copy.diag_min = wishart.diag_min = 0.2;
+  wishart_copy.n_min = wishart.n_min = 0.4;
 
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
@@ -233,12 +228,9 @@ TEST(WishartMoments, encoding) {
           0.1, 1,   0.1,
           0.1, 0.1, 1;
 
-  WishartMoments<double> wishart(dim);
+  WishartMoments<double> wishart(5.0, mat);
   WishartMoments<double> wishart_copy(dim);
-  wishart.e_log_det = 5.0;
-  wishart.e.set(mat);
-  wishart.diag_min = 0.2;
-  wishart_copy.diag_min = wishart.diag_min;
+  wishart_copy.diag_min = wishart.diag_min = 0.2;
 
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
@@ -251,9 +243,7 @@ TEST(WishartMoments, encoding) {
     EXPECT_MATRIX_EQ(wishart.e.mat, wishart_copy.e.mat, unconstrained_str);
   }
 
-  WishartNatural<double> wishart_nat(dim);
-  wishart_nat.n = 5.0;
-  wishart_nat.v.set(mat);
+  WishartNatural<double> wishart_nat(5.0, mat);
   wishart = WishartMoments<double>(wishart_nat);
   VectorXd encoded_vec = wishart.encode_vector(false);
   wishart_copy.e_log_det = 0.0;
@@ -267,18 +257,14 @@ TEST(WishartMoments, encoding) {
 
 
 TEST(Gamma, basic) {
-  GammaMoments<double> gamma;
-  gamma.e = 5;
-  gamma.e_log = -3;
+  GammaMoments<double> gamma(2, 3);
   GammaMoments<float> gamma2(gamma);
   EXPECT_FLOAT_EQ(gamma.e, gamma2.e);
   EXPECT_FLOAT_EQ(gamma.e_log, gamma2.e_log);
 
-  GammaNatural<double> gamma_nat;
   double alpha = 4;
   double beta = 5;
-  gamma_nat.alpha = alpha;
-  gamma_nat.beta = beta;
+  GammaNatural<double> gamma_nat(alpha, beta);
   gamma = GammaMoments<double>(gamma_nat);
   EXPECT_DOUBLE_EQ(alpha / beta, gamma.e);
   EXPECT_DOUBLE_EQ(get_e_log_gamma(alpha, beta), gamma.e_log);
@@ -289,14 +275,10 @@ TEST(Gamma, basic) {
 
 
 TEST(GammaNatural, encoding) {
-  GammaNatural<double> gamma;
+  GammaNatural<double> gamma(3.0, 4.0);
   GammaNatural<double> gamma_copy;
-  gamma.alpha = 3.0;
-  gamma.beta = 4.0;
-  gamma.alpha_min = 0.1;
-  gamma.beta_min = 0.2;
-  gamma_copy.alpha_min = gamma.alpha_min;
-  gamma_copy.beta_min = gamma.beta_min;
+  gamma_copy.alpha_min = gamma.alpha_min = 0.1;
+  gamma_copy.beta_min = gamma.beta_min = 0.2;
 
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
