@@ -8,6 +8,7 @@
 # include <Eigen/Dense>
 # include <vector>
 # include <iostream>
+# include <string>
 
 # include "exponential_families.h"
 
@@ -28,6 +29,28 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 using var = stan::math::var;
 using fvar = stan::math::fvar<var>;
 # endif
+
+
+template <typename T> void PrintVector(VectorXT<T> vec, std::string name) {
+    std::cout << name << ":\n(";
+    for (int i=0; i < vec.size() - 1; i++) {
+        std::cout << vec(i) << "\n";
+    }
+    std::cout << vec(vec.size() - 1)  << ")\n";
+};
+
+
+template <typename T> void PrintMatrix(MatrixXT<T> mat, std::string name) {
+    std::cout << name << ":\n(";
+    for (int i=0; i < mat.rows(); i++) {
+        std::cout << "[ ";
+        for (int j=0; j < mat.cols() - 1; j++) {
+            std::cout << mat(i, j) << ",";
+        }
+        std::cout << mat(i, mat.cols()) << " ]\n";
+    }
+};
+
 
 ////////////////////////////////////
 // Positive definite matrices
@@ -231,6 +254,11 @@ public:
             beta = vec(1);
         }
     }
+
+    void print(std::string name) {
+        std::cout << "GammaNatural " << name << ": ";
+        std::cout << "alpha = " << alpha << " beta = " << beta << "\n";
+    }
 };
 
 
@@ -305,6 +333,11 @@ public:
         } else {
             e = vec(0);
         }
+    }
+
+    void print(std::string name) {
+        std::cout << "GammaMoments " << name << ": ";
+        std::cout << "e = " << e << " e_log = " << e_log << "\n";
     }
 };
 
@@ -393,6 +426,12 @@ public:
             v.set_vec(v_vec);
         }
     };
+
+    void print(std::string name) {
+        std::cout << "WishartNatural " << name << ":\n";
+        std::cout << "n = " << n << "\n";
+        PrintMatrix(v.mat, "v = ");
+    }
 };
 
 
@@ -478,6 +517,12 @@ public:
             e.set_vec(e_vec);
         }
     };
+
+    void print(std::string name) {
+        std::cout << "WishartMoments " << name << ":\n";
+        std::cout << "e_log_det = " << e_log_det << "\n";
+        PrintMatrix(e.mat, "e = ");
+    }
 };
 
 std::vector<Triplet> GetMomentCovariance(WishartNatural<double>, int);
@@ -563,6 +608,12 @@ public:
         } else {
             info.set_vec(sub_vec);
         }
+    };
+
+    void print(std::string name) {
+        std::cout << "MultivariateNormalNatural " << name << ":\n";
+        PrintVector(loc, "loc = ");
+        PrintMatrix(info.mat, "info = ");
     };
 };
 
@@ -685,6 +736,12 @@ public:
             -0.5 * (info * (e_outer.mat - mean_outer_prods + mean_outer)).trace() +
             0.5 * log(info.determinant());
     };
+
+    void print(std::string name) {
+        std::cout << "MultivariateNormalMoments " << name << ":\n";
+        PrintVector(e_vec, "e_vec = ");
+        PrintMatrix(e_outer.mat, "e_outer = ");
+    };
 };
 
 std::vector<Triplet> GetMomentCovariance(MultivariateNormalNatural<double>, int);
@@ -748,7 +805,12 @@ public:
             loc = vec(0);
             info = vec(1);
         }
-    }
+    };
+
+    void print(std::string name) {
+        std::cout << "UnivariateNormalNatural " << name << ": ";
+        std::cout << "loc = " << loc << " info = " << info << "\n";
+    };
 };
 
 
@@ -820,7 +882,6 @@ public:
         }
     }
 
-
     // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
     T ExpectedLogLikelihood(UnivariateNormalMoments<T> mean, GammaMoments<T> info) const {
         return -0.5 * info.e * (e2 - 2 * mean.e * e + mean.e2) + 0.5 * info.e_log;
@@ -832,6 +893,11 @@ public:
 
     T ExpectedLogLikelihood(T mean, T info) const {
         return -0.5 * info * (e2 - 2 * mean * e + mean * mean) + 0.5 * log(info);
+    };
+
+    void print(std::string name) {
+        std::cout << "UnivariateNormalMoments " << name << ":\n";
+        std::cout << "e = " << e << " e2 = " << e2 << "\n";
     };
 };
 
