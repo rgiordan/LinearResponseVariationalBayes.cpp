@@ -41,13 +41,13 @@ template <typename T> void PrintVector(VectorXT<T> vec, std::string name) {
 
 
 template <typename T> void PrintMatrix(MatrixXT<T> mat, std::string name) {
-    std::cout << name << ":\n(";
+    std::cout << name << ":\n";
     for (int i=0; i < mat.rows(); i++) {
         std::cout << "[ ";
         for (int j=0; j < mat.cols() - 1; j++) {
-            std::cout << mat(i, j) << ",";
+            std::cout << mat(i, j) << ",\t";
         }
-        std::cout << mat(i, mat.cols()) << " ]\n";
+        std::cout << mat(i, mat.cols() - 1) << " ]\n";
     }
 };
 
@@ -61,11 +61,15 @@ private:
         size = _size;
         size_ud = size * (size + 1) / 2;
         mat = MatrixXT<T>::Zero(size, size);
+        scale_cholesky = false;
     }
 public:
     int size;
     int size_ud;
     MatrixXT<T> mat;
+
+    // An alternative unconstrained parameterization.
+    bool scale_cholesky;
 
     PosDefMatrixParameter(int _size): size(_size) {
         Init(_size);
@@ -121,7 +125,7 @@ public:
 
     // Set from an unconstrained matrix parameterization based on the Cholesky
     // decomposition.
-    void set_unconstrained_vec(MatrixXT<T> set_value, T min_diag = 0.0) {
+    void set_cholesky_unconstrained_vec(VectorXT<T> set_value, T min_diag = 0.0) {
         if (min_diag < 0) {
             throw std::runtime_error("min_diag must be non-negative");
         }
@@ -145,7 +149,7 @@ public:
         }
     }
 
-    VectorXT<T> get_unconstrained_vec(T min_diag = 0.0)  const {
+    VectorXT<T> get_cholesky_unconstrained_vec(T min_diag = 0.0)  const {
         if (min_diag < 0) {
             throw std::runtime_error("min_diag must be non-negative");
         }
@@ -170,7 +174,92 @@ public:
             }
         }
         return free_vec;
+    };
+
+    // Set from an unconstrained matrix parameterization based on a Cholesky
+    // decomposition where all the diagonals are scaled to one.
+    // This is also called an "LDL decomposition".
+    void set_scale_cholesky_unconstrained_vec(VectorXT<T> set_value, T min_diag = 0.0) {
+        if (min_diag < 0) {
+            throw std::runtime_error("min_diag must be non-negative");
+        }
+        MatrixXT<T> chol_mat(size, size);
+        MatrixXT<T> scale_mat = MatrixXT<T>::Zero(size, size);
+        for (int row=0; row < size; row++) {
+            for (int col=0; col <= row; col++) {
+                T this_value = T(set_value(get_ud_index(row, col)));
+                if (col == row) {
+                    scale_mat(row, col) = exp(this_value);
+                    chol_mat(row, col) = 1.0;
+                } else {
+                    scale_mat(row, col) = 0.0;
+                    chol_mat(row, col) = this_value;
+                    chol_mat(col, row) = 0.0;
+                }
+            }
+        }
+        MatrixXT<T> scaled_chol_mat = scale_mat * chol_mat;
+        mat = scaled_chol_mat * scaled_chol_mat.transpose();
+        if (min_diag > 0) {
+            for (int k = 0; k < size; k++) {
+                mat(k, k) += min_diag;
+            }
+        }
     }
+
+    VectorXT<T> get_scale_cholesky_unconstrained_vec(T min_diag = 0.0)  const {
+        if (min_diag < 0) {
+            throw std::runtime_error("min_diag must be non-negative");
+        }
+        VectorXT<T> free_vec(size_ud);
+        MatrixXT<T> mat_minus_diag(mat);
+        if (min_diag > 0) {
+            for (int k = 0; k < size; k++) {
+                mat_minus_diag(k, k) -= min_diag;
+                if (mat_minus_diag(k, k) <= 0) {
+                    throw std::runtime_error("Posdef diagonal entry out of bounds");
+                }
+            }
+        }
+        MatrixXT<T> chol_mat = mat_minus_diag.llt().matrixL();
+
+        MatrixXT<T> scale_vec = VectorXT<T>::Zero(size, size);
+        MatrixXT<T> unscale_mat = MatrixXT<T>::Zero(size, size);
+        for (int k = 0; k < size; k++) {
+            scale_vec(k) = chol_mat(k, k);
+            unscale_mat(k, k) = 1 / chol_mat(k, k);
+        }
+
+        MatrixXT<T> scale_free_chol_mat = unscale_mat * chol_mat;
+        for (int row=0; row < size; row++) {
+            for (int col=0; col <= row; col++) {
+                if (col == row) {
+                    free_vec(get_ud_index(row, col)) = log(scale_vec(row));
+                } else {
+                    free_vec(get_ud_index(row, col)) =
+                        scale_free_chol_mat(row, col);
+                }
+            }
+        }
+        return free_vec;
+    };
+
+    void set_unconstrained_vec(VectorXT<T> set_value, T min_diag = 0.0) {
+        if (!scale_cholesky) {
+            set_cholesky_unconstrained_vec(set_value, min_diag);
+        } else {
+            set_scale_cholesky_unconstrained_vec(set_value, min_diag);
+        }
+    };
+
+    VectorXT<T> get_unconstrained_vec(T min_diag = 0.0)  const {
+        if (!scale_cholesky) {
+            return get_cholesky_unconstrained_vec(min_diag);
+        } else {
+            return get_scale_cholesky_unconstrained_vec(min_diag);
+        }
+    }
+
 };
 
 

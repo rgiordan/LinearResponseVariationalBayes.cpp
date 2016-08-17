@@ -28,18 +28,40 @@ TEST(PosDefMatrixParameter, basic) {
   pd_mat2.set_vec(pd_mat_vec);
   EXPECT_MATRIX_EQ(pd_mat.get(), pd_mat2.get(), "copy");
 
+  // Test unconstrained parameterizations.
+  double min_diag = 2.0;
+
+  // Test scale cholesky.
+  pd_mat.scale_cholesky = pd_mat2.scale_cholesky = true;
   pd_mat2.set(zero_mat);
   EXPECT_MATRIX_EQ(zero_mat, pd_mat2.get(), "set zero");
   pd_mat_vec = pd_mat.get_unconstrained_vec();
   pd_mat2.set_unconstrained_vec(pd_mat_vec);
-  EXPECT_MATRIX_EQ(pd_mat.get(), pd_mat2.get(), "set unconstrained");
+  EXPECT_MATRIX_EQ(pd_mat.get(), pd_mat2.get(),
+                   "scale_cholesky set unconstrained");
 
-  double min_diag = 2.0;
   pd_mat2.set(zero_mat);
   EXPECT_MATRIX_EQ(zero_mat, pd_mat2.get(), "set zero");
   pd_mat_vec = pd_mat.get_unconstrained_vec(min_diag);
   pd_mat2.set_unconstrained_vec(pd_mat_vec, min_diag);
-  EXPECT_MATRIX_EQ(pd_mat.get(), pd_mat2.get(), "set unconstrained");
+  EXPECT_MATRIX_EQ(pd_mat.get(), pd_mat2.get(),
+                   "scale_cholesky set unconstrained min_diag");
+
+  // Test simple cholesky.
+  pd_mat.scale_cholesky = pd_mat2.scale_cholesky = false;
+  pd_mat2.set(zero_mat);
+  EXPECT_MATRIX_EQ(zero_mat, pd_mat2.get(), "set zero");
+  pd_mat_vec = pd_mat.get_unconstrained_vec();
+  pd_mat2.set_unconstrained_vec(pd_mat_vec);
+  EXPECT_MATRIX_EQ(pd_mat.get(), pd_mat2.get(),
+                   "cholesky set unconstrained");
+
+  pd_mat2.set(zero_mat);
+  EXPECT_MATRIX_EQ(zero_mat, pd_mat2.get(), "set zero");
+  pd_mat_vec = pd_mat.get_unconstrained_vec(min_diag);
+  pd_mat2.set_unconstrained_vec(pd_mat_vec, min_diag);
+  EXPECT_MATRIX_EQ(pd_mat.get(), pd_mat2.get(),
+                   "cholesky set unconstrained min_diag");
 }
 
 
@@ -55,6 +77,7 @@ TEST(MultivariateNormal, basic) {
               0.1, 0.1, 1;
 
   MultivariateNormalMoments<double> mvn(mean, mean_outer);
+
   EXPECT_VECTOR_EQ(mean, mvn.e_vec, "init");
   EXPECT_MATRIX_EQ(mvn.e_outer.mat, mean_outer, "init");
 
@@ -74,6 +97,9 @@ TEST(MultivariateNormal, basic) {
   MatrixXd expected_outer =
     mvn_nat.info.mat.inverse() + mvn_nat.loc * mvn_nat.loc.transpose();
   EXPECT_MATRIX_EQ(expected_outer, mvn.e_outer.mat, "outer from nat");
+
+  mvn.print("MVN moment test");
+  mvn_nat.print("MVN natural test");
 }
 
 
@@ -191,6 +217,9 @@ TEST(Wishart, basic) {
   WishartMoments<float> wishart_float(wishart);
   EXPECT_FLOAT_MATRIX_EQ(wishart_float.e.mat, wishart.e.mat, "e_mat");
   EXPECT_FLOAT_EQ(wishart_float.e_log_det, wishart.e_log_det);
+
+  wishart.print("Wishart moment test");
+  wishart_nat.print("Wishart moment test");
 }
 
 
@@ -266,6 +295,9 @@ TEST(Gamma, basic) {
 
   // Just test that this runs.
   double e_log_lik = gamma.ExpectedLogLikelihood(alpha, beta);
+
+  gamma.print("Gamma moment test");
+  gamma_nat.print("Gamma natural test");
 }
 
 
@@ -321,6 +353,9 @@ TEST(UnivariateNormal, basic) {
   UnivariateNormalMoments<float> uvn_float(uvn);
   EXPECT_FLOAT_EQ(uvn.e, uvn_float.e);
   EXPECT_FLOAT_EQ(uvn.e2, uvn_float.e2);
+
+  uvn.print("UVN moment test");
+  uvn_nat.print("UVN natural test");
 }
 
 
