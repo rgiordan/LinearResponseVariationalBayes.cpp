@@ -29,3 +29,7 @@ target_link_libraries(monte_carlo_parameter_test LinearResponseVariationalBayes)
 add_executable(variational_parameter_test variational_parameter_test.cpp)
 target_link_libraries(variational_parameter_test gtest gtest_main)
 target_link_libraries(variational_parameter_test LinearResponseVariationalBayes)
+
+add_executable(box_parameters_test box_parameters_test.cpp)
+target_link_libraries(box_parameters_test gtest gtest_main)
+# target_link_libraries(box_parameter_test LinearResponseVariationalBayes)

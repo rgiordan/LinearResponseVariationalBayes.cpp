@@ -9,8 +9,10 @@
 # include <vector>
 # include <iostream>
 # include <string>
+# include <limits>
 
 # include "exponential_families.h"
+# include "box_parameters.h"
 
 using Eigen::Matrix;
 using Eigen::MatrixXd;
@@ -20,6 +22,7 @@ using Eigen::Dynamic;
 template <typename T> using VectorXT = Eigen::Matrix<T, Dynamic, 1>;
 template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
+# define DOUBLE_INF std::numeric_limits<double>::infinity()
 
 # if INSTANTIATE_VARIATIONAL_PARAMETERS_H
 // For instantiation:
@@ -286,6 +289,8 @@ template <class T> class GammaNatural: public Parameter<T> {
 
         alpha_min = 0;
         beta_min = 0;
+        alpha_max = DOUBLE_INF;
+        beta_max = DOUBLE_INF;
         encoded_size = 2;
     }
 public:
@@ -295,8 +300,10 @@ public:
     T beta;
 
     // For unconstrained encoding.
-    T alpha_min;
-    T beta_min;
+    double alpha_min;
+    double beta_min;
+    double alpha_max;
+    double beta_max;
 
     GammaNatural() {
         Init();
@@ -318,6 +325,8 @@ public:
         gamma_new.beta = beta;
         gamma_new.alpha_min = alpha_min;
         gamma_new.beta_min = beta_min;
+        gamma_new.alpha_max = alpha_max;
+        gamma_new.beta_max = beta_max;
 
         return gamma_new;
     };
@@ -325,8 +334,8 @@ public:
     VectorXT<T> encode_vector(bool unconstrained) const {
         VectorXT<T> vec(encoded_size);
         if (unconstrained) {
-            vec(0) = log(alpha - alpha_min);
-            vec(1) = log(beta - beta_min);
+            vec(0) = unbox_parameter(alpha, alpha_min, alpha_max, 1.0);
+            vec(1) = unbox_parameter(beta, beta_min, beta_max, 1.0);
         } else {
             vec(0) = alpha;
             vec(1) = beta;
@@ -336,8 +345,8 @@ public:
 
     void decode_vector(VectorXT<T> vec, bool unconstrained) {
         if (unconstrained) {
-            alpha = exp(vec(0)) + alpha_min;
-            beta = exp(vec(1)) + beta_min;
+            alpha = box_parameter(vec(0), alpha_min, alpha_max, 1.0);
+            beta = box_parameter(vec(1), beta_min, beta_max, 1.0);
         } else {
             alpha = vec(0);
             beta = vec(1);

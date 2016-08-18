@@ -307,6 +307,9 @@ TEST(GammaNatural, encoding) {
   gamma_copy.alpha_min = gamma.alpha_min = 0.1;
   gamma_copy.beta_min = gamma.beta_min = 0.2;
 
+  gamma_copy.alpha_max = gamma.alpha_max = 15.1;
+  gamma_copy.beta_max = gamma.beta_max = 8.2;
+
   for (int ind = 0; ind < 2; ind++) {
     bool unconstrained = (ind == 0 ? true: false);
     std::string unconstrained_str = (unconstrained ? "unconstrained": "constrained");
