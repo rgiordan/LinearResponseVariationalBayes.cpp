@@ -410,7 +410,7 @@ public:
     };
 
     T ExpectedLogLikelihood(T alpha, T beta) {
-        return (alpha - 1) * e - beta * e_log;
+        return (alpha - 1) * e_log - beta * e;
     }
 
     VectorXT<T> encode_vector(bool unconstrained) const {
