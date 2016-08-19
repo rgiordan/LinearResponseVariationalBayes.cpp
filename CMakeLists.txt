@@ -4,8 +4,11 @@ project(LinearResponseVariationalBayes)
 set(CMAKE_BUILD_TYPE Release)
 
 set(GIT_REPO_LOC $ENV{GIT_REPO_LOC})
+
+# TOOD: can you glob these?
 set(EIGEN_HEADER ${GIT_REPO_LOC}/math/lib/eigen_3.2.8/)
 set(BOOST_HEADER ${GIT_REPO_LOC}/math/lib/boost_1.60.0/)
+set(CVODES_HEADER ${GIT_REPO_LOC}/math/lib/cvodes_2.8.2/)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)

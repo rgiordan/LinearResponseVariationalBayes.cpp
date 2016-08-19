@@ -12,6 +12,7 @@ include_directories(${GIT_REPO_LOC}/stan/)
 include_directories(${GIT_REPO_LOC}/math/)
 include_directories(${EIGEN_HEADER})
 include_directories(${BOOST_HEADER})
+include_directories(${CVODES_HEADER})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_executable(transform_hessian_test transform_hessian_test.cpp)

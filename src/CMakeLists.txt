@@ -14,6 +14,7 @@ include_directories(${GIT_REPO_LOC}/stan/)
 include_directories(${GIT_REPO_LOC}/math/)
 include_directories(${EIGEN_HEADER})
 include_directories(${BOOST_HEADER})
+include_directories(${CVODES_HEADER})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(CC_SOURCES kahan_summation.cpp
