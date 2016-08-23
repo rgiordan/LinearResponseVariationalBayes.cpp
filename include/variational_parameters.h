@@ -645,7 +645,7 @@ public:
     // The expected log likelihood up to a constant.
     T ExpectedLogLikelihood(MatrixXT<T> v, T n) {
         // A different inverse might be appropriate.
-        MatrixXT<T> v_inv_e = v.fullPivHouseholderQr().solve(e.mat);
+        MatrixXT<T> v_inv_e = v.ldlt().solve(e.mat);
         return 0.5 * (n - dim - 1) * e_log_det - 0.5 * (v_inv_e).trace();
     }
 };
@@ -744,10 +744,10 @@ public:
     T log_lik(VectorXT<T> obs) {
         // For some reason these can't be passed directly to Stan.
         VectorXT<T> mean_vec = loc;
-        // MatrixXT<T> info_mat = info.mat;
-        // return stan::math::multi_normal_prec_log(obs, mean_vec, info_mat);
-        MatrixXT<T> sigma = info.mat.inverse();
-        return stan::math::multi_normal_log(obs, mean_vec, sigma);
+        MatrixXT<T> info_mat = info.mat;
+        return stan::math::multi_normal_prec_log(obs, mean_vec, info_mat);
+        // MatrixXT<T> sigma = info.mat.inverse();
+        // return stan::math::multi_normal_log(obs, mean_vec, sigma);
     }
 };
 
@@ -945,6 +945,12 @@ public:
         std::cout << "UnivariateNormalNatural " << name << ": ";
         std::cout << "loc = " << loc << " info = " << info << "\n";
     };
+
+    T log_lik(T obs) {
+        T mean = loc;
+        T stddev = 1 / sqrt(info);
+        return stan::math::normal_log(obs, mean, stddev);
+    }
 };
 
 

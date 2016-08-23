@@ -129,10 +129,28 @@ TEST(MultivariateNormal, log_lik) {
 }
 
 
+TEST(UnivariateNormal, log_lik) {
+    double sigmasq = 1.8;
+    double mean = -0.1;
+    UnivariateNormalNatural<double> uvn_nat(mean, 1 / sigmasq);
+
+    int num_i = 50;
+    VectorXd log_lik_diff_vec(num_i);
+    double obs_min = mean - 3 * sqrt(sigmasq);
+    double obs_max = mean + 3 * sqrt(sigmasq);
+    for (int i = 0; i < num_i; i++) {
+        double obs = obs_min + i * (obs_max - obs_min) / num_i;
+        UnivariateNormalMoments<double> uvn_mom(obs, pow(obs, 2));
+        log_lik_diff_vec(i) =
+            uvn_nat.log_lik(obs) -
+            uvn_mom.ExpectedLogLikelihood(mean, 1 / sigmasq);
+    }
+    EXPECT_NEAR(0, Variance(log_lik_diff_vec), 1e-12);
+}
 
 
 int main(int argc, char **argv) {
-    Sandbox();
+    // Sandbox();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
