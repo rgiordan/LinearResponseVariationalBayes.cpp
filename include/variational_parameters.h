@@ -28,6 +28,7 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 // For instantiation:
 # include <stan/math.hpp>
 # include "stan/math/fwd/scal.hpp"
+# include "stan/math/fwd/mat.hpp"
 
 using var = stan::math::var;
 using fvar = stan::math::fvar<var>;
@@ -296,6 +297,9 @@ template <class T> class GammaNatural: public Parameter<T> {
 public:
 
     using Parameter<T>::encoded_size;
+
+    // Alpha and beta are shape and rate parameters, i.e.
+    // E(obs) = alpha / beta
     T alpha;
     T beta;
 
@@ -357,6 +361,14 @@ public:
         std::cout << "GammaNatural " << name << ": ";
         std::cout << "alpha = " << alpha << " beta = " << beta << "\n";
     }
+
+    // Return the log likelihood of an observation obs.
+    T log_lik(T obs) {
+        // Stan needs us to define other variables for some reason.
+        T this_alpha = alpha;
+        T this_beta = beta;
+        return stan::math::gamma_log<false>(obs, this_alpha, this_beta);
+    }
 };
 
 
@@ -409,6 +421,7 @@ public:
         e_log = get_e_log_gamma(gamma_nat.alpha, gamma_nat.beta);
     };
 
+    // Return the expected log likelihood up to a constant.
     T ExpectedLogLikelihood(T alpha, T beta) {
         return (alpha - 1) * e_log - beta * e;
     }
@@ -530,6 +543,13 @@ public:
         std::cout << "n = " << n << "\n";
         PrintMatrix(v.mat, "v = ");
     }
+
+    T log_lik(MatrixXT<T> obs) {
+        // For some reason these can't be passed directly to Stan.
+        T this_n = n;
+        MatrixXT<T> this_v(v.mat);
+        return stan::math::wishart_log(obs, this_n, this_v);
+    }
 };
 
 
@@ -621,6 +641,13 @@ public:
         std::cout << "e_log_det = " << e_log_det << "\n";
         PrintMatrix(e.mat, "e = ");
     }
+
+    // The expected log likelihood up to a constant.
+    T ExpectedLogLikelihood(MatrixXT<T> v, T n) {
+        // A different inverse might be appropriate.
+        MatrixXT<T> v_inv_e = v.fullPivHouseholderQr().solve(e.mat);
+        return 0.5 * (n - dim - 1) * e_log_det - 0.5 * (v_inv_e).trace();
+    }
 };
 
 std::vector<Triplet> GetMomentCovariance(WishartNatural<double>, int);
@@ -646,19 +673,6 @@ public:
 
     T diag_min;
 
-    MultivariateNormalNatural(int _dim) {
-        Init(_dim);
-    };
-
-    MultivariateNormalNatural() {
-        Init(1);
-    };
-
-    MultivariateNormalNatural(VectorXT<T> _loc, MatrixXT<T> _info) {
-        Init(_loc.size());
-        set(_loc, _info);
-    };
-
     void set(VectorXT<T> _loc, MatrixXT<T> _info) {
         if (dim != _loc.size()) {
             std::ostringstream msg;
@@ -674,6 +688,19 @@ public:
         }
         loc = _loc;
         info.set(_info);
+    };
+
+    MultivariateNormalNatural(int _dim) {
+        Init(_dim);
+    };
+
+    MultivariateNormalNatural() {
+        Init(1);
+    };
+
+    MultivariateNormalNatural(VectorXT<T> _loc, MatrixXT<T> _info) {
+        Init(_loc.size());
+        set(_loc, _info);
     };
 
     // Convert to another type.
@@ -713,6 +740,15 @@ public:
         PrintVector(loc, "loc = ");
         PrintMatrix(info.mat, "info = ");
     };
+
+    T log_lik(VectorXT<T> obs) {
+        // For some reason these can't be passed directly to Stan.
+        VectorXT<T> mean_vec = loc;
+        // MatrixXT<T> info_mat = info.mat;
+        // return stan::math::multi_normal_prec_log(obs, mean_vec, info_mat);
+        MatrixXT<T> sigma = info.mat.inverse();
+        return stan::math::multi_normal_log(obs, mean_vec, sigma);
+    }
 };
 
 

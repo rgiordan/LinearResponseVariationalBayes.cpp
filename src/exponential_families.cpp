@@ -121,12 +121,12 @@ double GetWishartLogDetVariance(double n_par, int k) {
 // Return a matrix with Cov((g, log(g))) where
 // g ~ Gamma(alpha, beta) (parameterization E[g] = alpha / beta)
 MatrixXd get_gamma_covariance(double alpha, double beta) {
-	MatrixXd gamma_cov(2, 2);
-  gamma_cov(0, 0) = alpha / pow(beta, 2);
-  gamma_cov(0, 1) = 1 / beta;
-  gamma_cov(1, 0) = gamma_cov(0, 1);
-  gamma_cov(1, 1) = boost::math::trigamma(alpha);
-  return gamma_cov;
+    MatrixXd gamma_cov(2, 2);
+    gamma_cov(0, 0) = alpha / pow(beta, 2);
+    gamma_cov(0, 1) = 1 / beta;
+    gamma_cov(1, 0) = gamma_cov(0, 1);
+    gamma_cov(1, 1) = boost::math::trigamma(alpha);
+    return gamma_cov;
 }
 
 ////////////////////////////

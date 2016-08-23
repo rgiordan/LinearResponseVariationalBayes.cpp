@@ -13,15 +13,15 @@ struct MeanAndVar {
 
 
 MeanAndVar GetMeanAndVar(VectorXd vec) {
-  MeanAndVar result; // (mean, variance)
-  result.mean = vec.sum() / vec.size();
-  double sum_sq = 0.0;
-  for (int i = 0; i < vec.size(); i++) {
-    sum_sq += pow(vec(i), 2);
-  }
-  // vec.unaryExpr([](double x) { return pow(x, 2); });  // Why u no work?
-  result.var = sum_sq / vec.size() - pow(result.mean, 2);
-  return result;
+    MeanAndVar result; // (mean, variance)
+    result.mean = vec.sum() / vec.size();
+    double sum_sq = 0.0;
+    for (int i = 0; i < vec.size(); i++) {
+        sum_sq += pow(vec(i), 2);
+    }
+    // vec.unaryExpr([](double x) { return pow(x, 2); });  // Why u no work?
+    result.var = sum_sq / vec.size() - pow(result.mean, 2);
+    return result;
 };
 
 
