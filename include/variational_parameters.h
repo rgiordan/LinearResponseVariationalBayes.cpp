@@ -27,7 +27,7 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 # if INSTANTIATE_VARIATIONAL_PARAMETERS_H
 // For instantiation:
 # include <stan/math.hpp>
-# include "stan/math/fwd/scal.hpp"
+// # include "stan/math/fwd/scal.hpp"
 # include "stan/math/fwd/mat.hpp"
 
 using var = stan::math::var;
@@ -847,7 +847,8 @@ public:
     };
 
     // If this MVN is distributed N(mean, info^-1), get the expected log likelihood.
-    T ExpectedLogLikelihood(MultivariateNormalMoments<T> mean, WishartMoments<T> info) const {
+    T ExpectedLogLikelihood(MultivariateNormalMoments<T> mean,
+                            WishartMoments<T> info) const {
         MatrixXT<T> mean_outer_prods =
             mean.e_vec * e_vec.transpose() + e_vec * mean.e_vec.transpose();
         return

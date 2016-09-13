@@ -35,6 +35,10 @@ class MonteCarloNormalParameter {
 public:
   VectorXd std_draws;
 
+  MonteCarloNormalParameter() {
+    SetDraws(1);
+  }
+
   MonteCarloNormalParameter(int n_sim) {
     SetDraws(n_sim);
   }
@@ -61,7 +65,7 @@ public:
   }
 
   // We may have to differnetiate with respect to the mean and variance.
-  template  <class T> VectorXT<T> Evaluate(T mean, T var) const {
+  template <class T> VectorXT<T> Evaluate(T mean, T var) const {
     VectorXT<T> output_vec(std_draws.size());
     for (int n=0; n < std_draws.size(); n++) {
       output_vec(n) = sqrt(var) * std_draws(n) + mean;
