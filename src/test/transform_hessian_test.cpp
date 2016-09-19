@@ -4,13 +4,15 @@
 # include "transform_hessian.h"
 # include "differentiate_jacobian.h"
 
-# include <stan/math.hpp>
-# include <stan/math/mix/mat/functor/hessian.hpp>
+# include "stan/math/mix/mat.hpp"
 
-# include <stan/math/fwd/scal/fun/pow.hpp>
-# include <stan/math/fwd/scal/fun/exp.hpp>
-# include <stan/math/fwd/scal/fun/log.hpp>
-# include <stan/math/fwd/scal/fun/abs.hpp>
+// # include <stan/math.hpp>
+// # include <stan/math/mix/mat/functor/hessian.hpp>
+
+// # include <stan/math/fwd/scal/fun/pow.hpp>
+// # include <stan/math/fwd/scal/fun/exp.hpp>
+// # include <stan/math/fwd/scal/fun/log.hpp>
+// # include <stan/math/fwd/scal/fun/abs.hpp>
 
 # include "gtest/gtest.h"
 

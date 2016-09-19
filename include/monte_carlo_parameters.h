@@ -22,8 +22,7 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
 # if INSTANTIATE_MONTE_CARLO_PARAMETERS_H
   // For instantiation:
-  # include <stan/math.hpp>
-  # include "stan/math/fwd/scal.hpp"
+  # include "stan/math/mix/mat.hpp"
 
   using var = stan::math::var;
   using fvar = stan::math::fvar<var>;

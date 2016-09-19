@@ -6,8 +6,10 @@
 
 # include "transform_hessian.h"
 
-# include <stan/math.hpp>
-# include <stan/math/mix/mat/functor/hessian.hpp>
+# include "stan/math/mix/mat.hpp"
+
+// # include <stan/math.hpp>
+// # include <stan/math/mix/mat/functor/hessian.hpp>
 
 
 using std::vector;

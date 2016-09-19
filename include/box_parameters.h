@@ -2,7 +2,8 @@
 # define BOX_PARAMETERS_H
 
 # include <limits>
-# include <stan/math.hpp>
+// # include <stan/math.hpp>
+# include "stan/math/mix/mat.hpp"
 
 using stan::math::logit;
 using stan::math::inv_logit;

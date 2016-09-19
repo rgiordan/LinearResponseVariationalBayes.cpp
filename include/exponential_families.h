@@ -2,7 +2,8 @@
 # define EXPONENTIAL_FAMILIES_H
 
 // Set to 0 to not instantiate.
-// See https://github.com/stan-dev/math/issues/311#
+// Instantiation will help compile times, but is potentially subject to
+// bugs in stan.
 # define INSTANTIATE_EXPONENTIAL_FAMILIES_H 1
 
 #include <cmath>
@@ -11,6 +12,7 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
+#include <Eigen/Dense>
 #include <Eigen/Sparse>
 typedef Eigen::Triplet<double> Triplet; // For populating sparse matrices
 
@@ -28,8 +30,7 @@ template <typename T> using MatrixXT = Eigen::Matrix<T, Dynamic, Dynamic>;
 
 # if INSTANTIATE_EXPONENTIAL_FAMILIES_H
   // For instantiation:
-  # include <stan/math.hpp>
-  # include "stan/math/fwd/scal.hpp"
+  # include "stan/math/mix/mat.hpp"
 
   using var = stan::math::var;
   using fvar = stan::math::fvar<var>;
