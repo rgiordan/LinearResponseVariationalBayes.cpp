@@ -3,7 +3,7 @@
 # project(LinearResponseVariationalBayes)
 # set(CMAKE_BUILD_TYPE Release)
 
-# set(GIT_REPO_LOC $ENV{GIT_REPO_LOC})
+set(GIT_REPO_LOC $ENV{GIT_REPO_LOC})
 
 add_definitions(-std=c++11 -fPIC)
 add_definitions(-Wno-deprecated)

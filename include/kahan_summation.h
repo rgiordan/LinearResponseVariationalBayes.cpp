@@ -7,7 +7,7 @@
 
 # if INSTANTIATE_KAHAN_SUMMATION_H
   // For instantiation:
-  # include <stan/math.hpp>
+  # include "stan/math.hpp"
   # include "stan/math/fwd/scal.hpp"
 
   using var = stan::math::var;
