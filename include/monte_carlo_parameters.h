@@ -1,6 +1,7 @@
 # ifndef MONTE_CARLO_PARAMETERS_H
 # define MONTE_CARLO_PARAMETERS_H
 
+# include "variational_parameters.h"
 
 // Set to 0 to not instantiate.
 // See https://github.com/stan-dev/math/issues/311#
@@ -73,6 +74,32 @@ public:
   }
 
 };
+
+
+// A simpler function for multivariate normals that converts a
+// standard multivariate normal to a non-standard multivariate normal
+// with the given parameters.
+template <typename T> VectorXT<T> MVNDrawFromStandardNormalDraw(
+    VectorXd std_draw,
+    VectorXT<T> loc,
+    MatrixXT<T> cov_chol_t) {
+
+    return loc + cov_chol_t * std_draw;
+}
+
+
+// A simpler function for multivariate normals that converts a
+// standard multivariate normal to a non-standard multivariate normal
+// with the given parameters.
+template <typename T> VectorXT<T> MVNDrawFromStandardNormalDraw(
+    VectorXd std_draw,
+    MultivariateNormalNatural<T> mvn_par) {
+
+    MatrixXT<T> cov_chol_t =
+        mvn_par.info.mat.inverse().llt().matrixL();
+    return MVNDrawFromStandardNormalDraw(std_draw, mvn_par.loc, cov_chol_t);
+}
+
 
 # if INSTANTIATE_MONTE_CARLO_PARAMETERS_H
   extern template VectorXT<double> MonteCarloNormalParameter::Evaluate(double, double) const;

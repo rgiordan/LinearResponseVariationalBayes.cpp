@@ -57,6 +57,50 @@ TEST(monte_carlo_parameters, is_correct) {
 };
 
 
+TEST(mvn_draw_from_std_normal_draw, is_correct) {
+    int k = 2;
+    VectorXd loc(k);
+    loc << 1, 2;
+    MatrixXd info(k, k);
+    info  << 1, 0.2, 0.2, 1;
+    MatrixXd cov = info.inverse();
+    MatrixXd cov_chol_t = cov.llt().matrixL();
+    MultivariateNormalNatural<double> mvn_nat(loc, info);
+
+    MatrixXd id_cov = MatrixXd::Zero(k, k);
+    for (int ind = 0; ind < k; ind++) {
+        id_cov(ind, ind) = 1.0;
+    }
+    VectorXd id_mean = VectorXd::Zero(k);
+
+    int n_sim = 3e5;
+    boost::mt19937 rng;
+    MatrixXd sample_cov = MatrixXd::Zero(k, k);
+    VectorXd sample_mean = VectorXd::Zero(k);
+
+    // Make sure both conversion methods do the same thing.
+    VectorXd std_draw = stan::math::multi_normal_rng(id_mean, id_cov, rng);
+    VectorXd mvn_draw_1 = MVNDrawFromStandardNormalDraw(std_draw, loc, cov_chol_t);
+    VectorXd mvn_draw_2 = MVNDrawFromStandardNormalDraw(std_draw, mvn_nat);
+    EXPECT_VECTOR_EQ(mvn_draw_1, mvn_draw_2, "Conversion from natural parameters");
+
+    // Make sure the moments match.
+    for (int n = 0; n  < n_sim; n++) {
+        VectorXd std_draw = stan::math::multi_normal_rng(id_mean, id_cov, rng);
+        VectorXd mvn_draw = MVNDrawFromStandardNormalDraw(std_draw, loc, cov_chol_t);
+        sample_mean += mvn_draw;
+        sample_cov += mvn_draw * mvn_draw.transpose();
+    }
+    sample_mean /= n_sim;
+    sample_cov /= n_sim;
+    sample_cov -= sample_mean * sample_mean.transpose();
+
+    // TODO: there's a principled way to set these tolerances.
+    EXPECT_VECTOR_NEAR(loc, sample_mean, 8 / sqrt(n_sim), "MVN mean");
+    EXPECT_MATRIX_NEAR(cov, sample_cov, 25 / sqrt(n_sim), "MVN cov");
+};
+
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
